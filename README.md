@@ -41,3 +41,8 @@ En GitHub:
 - Clientes: 4
 - Orígenes: 3
 - Destinos: 3
+
+
+## GitHub Actions
+
+Incluye el flujo `.github/workflows/build-apk.yml` para compilar la APK desde Actions.
