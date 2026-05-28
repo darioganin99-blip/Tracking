@@ -26,7 +26,7 @@ En GitHub:
 
 ## Versión
 
-1.4.2
+1.5
 
 
 ## Datos actualizados
@@ -46,3 +46,12 @@ En GitHub:
 ## GitHub Actions
 
 Incluye el flujo `.github/workflows/build-apk.yml` para compilar la APK desde Actions.
+
+
+## Cambios visuales v1.5
+
+- Estilo oscuro moderno tipo GPS.
+- Título cambiado a Track - Seguimiento GPS.
+- Logo ELTA visible en encabezado y pie.
+- Textos de ELTA y versión reducidos.
+- Títulos internos de vistas removidos.
