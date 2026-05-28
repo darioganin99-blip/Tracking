@@ -26,7 +26,7 @@ En GitHub:
 
 ## Versión
 
-1.4
+1.4.2
 
 
 ## Datos actualizados
