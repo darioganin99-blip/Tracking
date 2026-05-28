@@ -20,9 +20,9 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
 
-      - name: Permisos Gradle
+      - name: Dar permisos Gradle
         run: chmod +x gradlew
 
       - name: Compilar APK
