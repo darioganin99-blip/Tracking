@@ -1,10 +1,6 @@
 
 const $ = id => document.getElementById(id);
-function safeEl(id){ return document.getElementById(id); }
-function safeSetWidth(id,value){ const e=safeEl(id); if(e && e.style){ e.style.width=value; } }
-function safeSetText(id,value){ const e=safeEl(id); if(e){ e.innerText=value; } }
-function safeShow(id){ const e=safeEl(id); if(e && e.classList){ e.classList.remove("hidden"); } }
-function safeHide(id){ const e=safeEl(id); if(e && e.classList){ e.classList.add("hidden"); } }
+const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function fmtDate(v){return new Date(v).toLocaleString("es-AR")}
@@ -12,33 +8,7 @@ function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
 function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
 function transit(){return load(LS.transit,null)}
-function show(id){
-  const views=["inicio","tracking","alertas","usuario","ultimo"];
-  const buttons=["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"];
-
-  views.forEach(v=>{
-    const e=safeEl(v);
-    if(e && e.classList){
-      if(v===id){ e.classList.remove("hidden"); }
-      else{ e.classList.add("hidden"); }
-    }
-  });
-
-  buttons.forEach(b=>{
-    const e=safeEl(b);
-    if(e && e.classList){ e.classList.remove("active"); }
-  });
-
-  const active=safeEl("btn-"+id);
-  if(active && active.classList){ active.classList.add("active"); }
-
-  if(id==="inicio") renderInicio();
-  if(id==="tracking") renderTracking();
-  if(id==="alertas") renderAlertas();
-  if(id==="usuario") loadUserForm();
-  if(id==="ultimo") renderUltimo();
-}
-
+function show(id){["inicio","tracking","alertas","usuario","ultimo"].forEach(v=>$(v).classList.toggle("hidden",v!==id));["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"].forEach(b=>$(b).classList.remove("active"));$("btn-"+id).classList.add("active");if(id==="inicio")renderInicio();if(id==="tracking")renderTracking();if(id==="alertas")renderAlertas();if(id==="usuario")loadUserForm();if(id==="ultimo")renderUltimo();}
 function initSelectors(){
   $("clienteSelect").innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("");
   $("origenSelect").innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("");
@@ -65,145 +35,71 @@ function onOrigenDestinoChange(){
 }
 function renderInicio(){const u=user();$("inicioUser").value=(u.fleet||"Sin flota")+" - "+(u.driver||"Sin chofer");const t=transit();if(t){$("lote").value=t.lote||"";}}
 function getGps(){return new Promise((resolve,reject)=>{if(!navigator.geolocation){reject(new Error("GPS no disponible"));return;}navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy||0,time:now()}),e=>reject(e),{enableHighAccuracy:true,timeout:20000,maximumAge:0});});}
-async function iniciarTransito(){const u=user();if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}const route=selectedRoute();const lote=$("lote").value.trim();if(!lote){alert("Ingresá número de lote/carga.");return;}try{const gps=await getGps();const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};save(LS.transit,t);alert("Tránsito iniciado correctamente."); show("tracking");}catch(e){alert("No se pudo tomar GPS de inicio: "+(e.message||e));}}
+async function iniciarTransito(){const u=user();if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}const route=selectedRoute();const lote=$("lote").value.trim();if(!lote){alert("Ingresá número de lote/carga.");return;}try{const gps=await getGps();const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};save(LS.transit,t);alert("Tránsito iniciado correctamente.");show("tracking");}catch(e){alert("No se pudo tomar GPS de inicio: "+(e.message||e));}}
 async function cerrarTransito(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const moved=distKm(t.start.lat,t.start.lng,gps.lat,gps.lng);if(moved<0.05){alert("La posición GPS de cierre debe ser distinta a la de inicio.");return;}if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?"))return;t.closed=gps;const msg=buildCierreMsg(t);save(LS.last,{msg,date:now()});localStorage.removeItem(LS.transit);sendToPhones(msg);alert("Tránsito cerrado.");show("inicio");}catch(e){alert("No se pudo cerrar tránsito: "+(e.message||e));}}
 function renderTracking(){
   const t=transit();
   if(!t){
-    safeSetText("trackingBox","No hay tránsito iniciado.");
-    safeSetWidth("routeProgress","0");
+    const box=document.getElementById("trackingBox");
+    if(box) box.innerText="No hay tránsito iniciado.";
     renderTrackingMap(null);
-    safeHide("chileBox");
     return;
   }
-
   const total=distanciaRuta(t.route);
   const current=t.updates && t.updates.length ? t.updates[t.updates.length-1].gps : t.start;
   const done=Math.min(total,distKm(t.start.lat,t.start.lng,current.lat,current.lng));
   const pct=total ? Math.min(100,Math.round(done/total*100)) : 0;
   const faltan=Math.max(0,total-done);
-
-  safeSetWidth("routeProgress",pct+"%");
-
-  safeSetText("trackingBox",
-`Distancia total: ${total.toFixed(1)} km
+  const box=document.getElementById("trackingBox");
+  if(box) box.innerText=`Distancia total: ${total.toFixed(1)} km
 Avance: ${pct}%
 KM por recorrer: ${faltan.toFixed(1)} km
-ETA: ${calcEta(faltan)}`);
-
+ETA: ${calcEta(faltan)}`;
   renderTrackingMap(t);
-
-  const chile=safeEl("chileBox");
-  if(chile && chile.classList){
-    if(String(t.route.destino_pais||"").toLowerCase().includes("chile")){
-      chile.classList.remove("hidden");
-      chile.innerHTML="<b>Paso fronterizo Uspallata</b><br>Verificar estado de paso, clima, alertas y demoras antes de continuar.";
-    }else{
-      chile.classList && $&;
-    }
-  }
 }
-
 function renderTrackingMap(t){
-  const box=safeEl("mapMarkers");
-  const routeLine=safeEl("mapRouteLine");
-  const progressLine=safeEl("mapProgressLine");
-
+  const box=document.getElementById("mapMarkers");
+  const routeLine=document.getElementById("mapRouteLine");
+  const progressLine=document.getElementById("mapProgressLine");
   if(!box || !routeLine || !progressLine) return;
-
-  box.innerHTML="";
-  routeLine.setAttribute("points","");
-  progressLine.setAttribute("points","");
-
+  box.innerHTML=""; routeLine.setAttribute("points",""); progressLine.setAttribute("points","");
   if(!t || !t.route || !t.start) return;
-
-  const origin = {
-    lat: Number(t.route.origen_lat || t.start.lat),
-    lng: Number(t.route.origen_lng || t.start.lng)
-  };
-
-  const dest = {
-    lat: Number(t.route.destino_lat),
-    lng: Number(t.route.destino_lng)
-  };
-
-  const current = t.updates && t.updates.length ? t.updates[t.updates.length-1].gps : t.start;
-  const cur = {lat:Number(current.lat), lng:Number(current.lng)};
-  const alerts = (t.alerts || []).map(a=>a.gps).filter(Boolean).map(g=>({lat:Number(g.lat),lng:Number(g.lng)}));
-
-  const pts=[origin,cur,dest,...alerts].filter(p=>p && isFinite(p.lat) && isFinite(p.lng));
+  const origin={lat:Number(t.route.origen_lat||t.start.lat),lng:Number(t.route.origen_lng||t.start.lng)};
+  const dest={lat:Number(t.route.destino_lat),lng:Number(t.route.destino_lng)};
+  const current=t.updates&&t.updates.length?t.updates[t.updates.length-1].gps:t.start;
+  const cur={lat:Number(current.lat),lng:Number(current.lng)};
+  const alerts=(t.alerts||[]).map(a=>a.gps).filter(Boolean).map(g=>({lat:Number(g.lat),lng:Number(g.lng)}));
+  const pts=[origin,cur,dest,...alerts].filter(p=>p&&isFinite(p.lat)&&isFinite(p.lng));
   if(pts.length<2) return;
-
-  const lats=pts.map(p=>p.lat);
-  const lngs=pts.map(p=>p.lng);
-
-  let minLat=Math.min(...lats), maxLat=Math.max(...lats);
-  let minLng=Math.min(...lngs), maxLng=Math.max(...lngs);
-
+  const lats=pts.map(p=>p.lat), lngs=pts.map(p=>p.lng);
+  let minLat=Math.min(...lats),maxLat=Math.max(...lats),minLng=Math.min(...lngs),maxLng=Math.max(...lngs);
   if(Math.abs(maxLat-minLat)<0.01){maxLat+=0.01;minLat-=0.01;}
   if(Math.abs(maxLng-minLng)<0.01){maxLng+=0.01;minLng-=0.01;}
-
   const pad=10;
-  function project(p){
-    return {
-      x:pad+((p.lng-minLng)/(maxLng-minLng))*(100-pad*2),
-      y:pad+((maxLat-p.lat)/(maxLat-minLat))*(100-pad*2)
-    };
-  }
-
-  const po=project(origin);
-  const pc=project(cur);
-
-  let pd=null;
-  if(isFinite(dest.lat) && isFinite(dest.lng)) pd=project(dest);
-
-  if(pd){
-    routeLine.setAttribute("points",`${po.x},${po.y} ${pd.x},${pd.y}`);
-  }
+  const project=p=>({x:pad+((p.lng-minLng)/(maxLng-minLng))*(100-pad*2),y:pad+((maxLat-p.lat)/(maxLat-minLat))*(100-pad*2)});
+  const po=project(origin), pc=project(cur); let pd=null;
+  if(isFinite(dest.lat)&&isFinite(dest.lng)) pd=project(dest);
+  if(pd) routeLine.setAttribute("points",`${po.x},${po.y} ${pd.x},${pd.y}`);
   progressLine.setAttribute("points",`${po.x},${po.y} ${pc.x},${pc.y}`);
-
-  addMapMarker("origin",po.x,po.y,"Origen");
-  if(pd) addMapMarker("dest",pd.x,pd.y,"Destino");
-  addMapMarker("current",pc.x,pc.y,"Última ubicación");
-
-  alerts.forEach((a,i)=>{
-    const pa=project(a);
-    addMapMarker("alert",pa.x,pa.y,"Alerta "+(i+1));
-  });
+  addMapMarker("origin",po.x,po.y,"Origen"); if(pd) addMapMarker("dest",pd.x,pd.y,"Destino"); addMapMarker("current",pc.x,pc.y,"Última ubicación");
+  alerts.forEach((a,i)=>{const pa=project(a); addMapMarker("alert",pa.x,pa.y,"Alerta "+(i+1));});
 }
-
 function addMapMarker(type,x,y,title){
-  const box=safeEl("mapMarkers");
-  if(!box) return;
-  const marker=document.createElement("div");
-  marker.className="mapMarker "+type;
-  marker.style.left=x+"%";
-  marker.style.top=y+"%";
-  marker.title=title||"";
-  box.appendChild(marker);
+  const box=document.getElementById("mapMarkers"); if(!box) return;
+  const marker=document.createElement("div"); marker.className="mapMarker "+type; marker.style.left=x+"%"; marker.style.top=y+"%"; marker.title=title||""; box.appendChild(marker);
 }
 async function actualizarGps(){
   const t=transit();
-
-  if(!t){
-    alert("No hay tránsito iniciado.");
-    safeSetText("trackingBox","No hay tránsito iniciado.");
-    safeSetWidth("routeProgress","0");
-    renderTrackingMap(null);
-    return;
-  }
-
-  try{
-    const gps=await getGps();
-    if(!t.updates) t.updates=[];
-    t.updates.push({gps,time:now()});
-    save(LS.transit,t);
-    renderTracking();
-  }catch(e){
-    alert("No se pudo actualizar GPS: "+(e.message||e));
-  }
+  if(!t){ alert("No hay tránsito iniciado."); const box=document.getElementById("trackingBox"); if(box) box.innerText="No hay tránsito iniciado."; renderTrackingMap(null); return; }
+  try{ const gps=await getGps(); if(!t.updates)t.updates=[]; t.updates.push({gps,time:now()}); save(LS.transit,t); renderTracking(); }
+  catch(e){ alert("No se pudo actualizar GPS: "+(e.message||e)); }
 }
-async function enviarActualizacion(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}await actualizarGps();const msg=buildUpdateMsg(transit());save(LS.last,{msg,date:now()});sendToPhones(msg);}
+async function enviarActualizacion(){
+  const t=transit(); if(!t){alert("No hay tránsito iniciado."); return;}
+  await actualizarGps(); const updated=transit(); if(!updated)return;
+  const msg=buildUpdateMsg(updated); save(LS.last,{msg,date:now()}); sendToPhones(msg);
+}
+
 async function registrarAlerta(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const alert={type:$("alertType").value,detail:$("alertDetail").value.trim(),gps,time:now()};t.alerts.push(alert);save(LS.transit,t);$("alertDetail").value="";renderAlertas();alert("Alerta registrada.");}catch(e){alert("No se pudo registrar alerta: "+(e.message||e));}}
 function renderAlertas(){const t=transit(),box=$("alertList");if(!t||!t.alerts.length){box.innerText="Sin alertas registradas.";return;}box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${escapeHtml(a.detail||"Sin detalle")}<br>${fmtDate(a.time)}<br>GPS: ${a.gps.lat.toFixed(6)}, ${a.gps.lng.toFixed(6)}</div>`).join("");}
 function loadUserForm(){const u=user();$("userFleet").value=u.fleet||"";$("userDriver").value=u.driver||"";$("userPhones").value=u.phones||"";}

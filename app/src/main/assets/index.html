@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.10</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.11</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
@@ -32,17 +32,15 @@
       <div id="trackingBox" class="summary"></div>
       <div class="mapBox">
         <div class="mapGrid"></div>
-        <svg id="trackingMapSvg" class="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg class="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
           <polyline id="mapRouteLine" points="" fill="none" stroke="rgba(34,197,94,.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           <polyline id="mapProgressLine" points="" fill="none" stroke="rgba(59,130,246,.95)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div id="mapMarkers"></div>
       </div>
       <div class="mapLegend">
-        <span><b class="dot origin"></b>Origen</span>
-        <span><b class="dot current"></b>Última ubicación</span>
-        <span><b class="dot dest"></b>Destino</span>
-        <span><b class="dot alert"></b>Alertas</span>
+        <span><b class="dot origin"></b>Origen</span><span><b class="dot current"></b>Última ubicación</span>
+        <span><b class="dot dest"></b>Destino</span><span><b class="dot alert"></b>Alertas</span>
       </div>
       <button class="btn secondary" onclick="actualizarGps()">Actualizar GPS</button>
       <button class="btn" onclick="enviarActualizacion()">Enviar actualización de tránsito</button>
