@@ -4,13 +4,7 @@ function safeEl(id){ return document.getElementById(id); }
 function safeSetWidth(id,value){ const e=safeEl(id); if(e && e.style){ e.style.width=value; } }
 function safeSetText(id,value){ const e=safeEl(id); if(e){ e.innerText=value; } }
 function safeShow(id){ const e=safeEl(id); if(e && e.classList){ e.classList.remove("hidden"); } }
-function safeHide(id){ const e=safeEl(id); if(e && e.classList){ e.classList && $&; } }
-function el(id){ return document.getElementById(id); }
-function setText(id, value){ const e=el(id); if(e) e.innerText=value; }
-function setHtml(id, value){ const e=el(id); if(e) e.innerHTML=value; }
-function setWidth(id, value){ const e=el(id); if(e && e.style) e.style.width=value; }
-function showHide(id, hidden){ const e=el(id); if(e) e.classList.toggle("hidden", hidden); }
-const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
+function safeHide(id){ const e=safeEl(id); if(e && e.classList){ e.classList.add("hidden"); } }
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function fmtDate(v){return new Date(v).toLocaleString("es-AR")}
@@ -19,16 +13,24 @@ function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
 function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
 function transit(){return load(LS.transit,null)}
 function show(id){
-  ["inicio","tracking","alertas","usuario","ultimo"].forEach(v=>{
+  const views=["inicio","tracking","alertas","usuario","ultimo"];
+  const buttons=["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"];
+
+  views.forEach(v=>{
     const e=safeEl(v);
-    if(e && e.classList) e.classList.toggle("hidden",v!==id);
+    if(e && e.classList){
+      if(v===id){ e.classList.remove("hidden"); }
+      else{ e.classList.add("hidden"); }
+    }
   });
-  ["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"].forEach(b=>{
+
+  buttons.forEach(b=>{
     const e=safeEl(b);
-    if(e && e.classList) e.classList.remove("active");
+    if(e && e.classList){ e.classList.remove("active"); }
   });
+
   const active=safeEl("btn-"+id);
-  if(active && active.classList) active.classList.add("active");
+  if(active && active.classList){ active.classList.add("active"); }
 
   if(id==="inicio") renderInicio();
   if(id==="tracking") renderTracking();
@@ -36,6 +38,7 @@ function show(id){
   if(id==="usuario") loadUserForm();
   if(id==="ultimo") renderUltimo();
 }
+
 function initSelectors(){
   $("clienteSelect").innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("");
   $("origenSelect").innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("");
