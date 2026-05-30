@@ -86,6 +86,15 @@ function destinoCompacto(route){
   return (pais && localidad) ? `${pais} - ${localidad}` : (pais || localidad || "");
 }
 
+function aplicarColorResumenInicio(){
+  const box=$("rutaInfo");
+  if(!box) return;
+  const t=transit();
+  const activo=!!(t && !t.closed);
+  box.classList.remove("rutaActiva","rutaInactiva");
+  box.classList.add(activo ? "rutaActiva" : "rutaInactiva");
+}
+
 function onOrigenDestinoChange(){
   const r=selectedRoute();
   const km=distanciaRuta(r);
@@ -95,20 +104,12 @@ function onOrigenDestinoChange(){
       `<b>Distancia estimada:</b> ${km.toFixed(1)} km<br>`+
       `<b>Destino:</b> ${escapeHtml(destinoCompacto(r))}`;
   }
+  aplicarColorResumenInicio();
 }
 
 function renderTransitStatus(){
-  const box=$("transitStatus");
-  if(!box) return;
-
-  const t=transit();
-  if(t && !t.closed){
-    box.className="statusBox activeTransit";
-    box.innerHTML=`🟢 <b>TRÁNSITO ACTIVO</b><br><span>Registro: ${escapeHtml(t.id||"")}</span>`;
-  }else{
-    box.className="statusBox inactiveTransit";
-    box.innerHTML=`⚪ <b>SIN TRÁNSITO ACTIVO</b>`;
-  }
+  // Estado visual removido de Inicio/Fin por pedido.
+  aplicarColorResumenInicio();
 }
 
 function bloquearFormularioTransito(){
@@ -144,6 +145,7 @@ function renderInicio(){
   if(t && $("lote")) $("lote").value=t.lote||"";
 
   renderTransitStatus();
+    aplicarColorResumenInicio();
   bloquearFormularioTransito();
 }
 
@@ -197,6 +199,7 @@ async function iniciarTransito(){
     save(LS.transit,t);
     bloquearFormularioTransito();
     renderTransitStatus();
+    aplicarColorResumenInicio();
     window.alert("Tránsito iniciado correctamente.");
     show("tracking");
 
@@ -225,6 +228,7 @@ async function cerrarTransito(){
     limpiarCamposInicio();
     bloquearFormularioTransito();
     renderTransitStatus();
+    aplicarColorResumenInicio();
 
     sendToPhones(msg);
     window.alert("Tránsito cerrado.");

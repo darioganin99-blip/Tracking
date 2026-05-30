@@ -539,3 +539,29 @@ input:disabled{
 
 /* Clima view v1.4.25 */
 .climaCard{padding:14px!important}.weatherHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.weatherTitle{font-size:16px;font-weight:950;color:#0f172a}.weatherSub{font-size:11px;color:#64748b;font-weight:800;margin-top:2px}.weatherBtn{width:auto!important;min-width:96px!important;margin:0!important;padding:10px 12px!important;font-size:12px!important}.weatherNowBox,.passStatusBox{background:rgba(15,23,42,.05);border:1px solid rgba(148,163,184,.28);border-radius:16px;padding:12px;font-size:13px;line-height:1.35;margin-bottom:12px}.weatherMain{display:flex;align-items:flex-end;gap:10px;margin-bottom:8px}.weatherMain b{font-size:34px;line-height:1;color:#0f172a}.weatherMain span{font-size:14px;font-weight:900;color:#334155;margin-bottom:3px}.weatherDetails{display:grid;grid-template-columns:1fr 1fr;gap:6px}.weatherDetails span{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:10px;padding:7px;font-size:11px;font-weight:800;color:#334155}.weatherSectionTitle{font-size:13px;font-weight:950;color:#0f172a;margin:12px 0 7px}.forecastGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:330px;overflow:auto;padding-right:2px}.forecastItem{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:13px;padding:9px;display:flex;flex-direction:column;gap:3px}.forecastItem b{font-size:11px;color:#0f172a}.forecastItem span{font-size:18px;font-weight:950;color:#2563eb}.forecastItem small{font-size:10px;color:#64748b;font-weight:800}.passStatusBox b{color:#0f172a;font-size:13px}.passStatusBox span{display:block;margin-top:5px;color:#334155;font-size:12px}.passNote{margin-top:8px;padding:7px;background:#fff7ed;color:#9a3412;border-radius:10px;font-size:11px;font-weight:900}.passActions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.passActions .btn{margin-top:0!important;padding:10px 6px!important;font-size:11px!important;border-radius:13px!important}
+
+
+/* v1.4.26 Inicio/Fin colors */
+.statusBox{
+  display:none !important;
+}
+
+.rutaActiva{
+  border-color:rgba(34,197,94,.55) !important;
+  background:rgba(34,197,94,.12) !important;
+  color:#166534 !important;
+}
+
+.rutaActiva b{
+  color:#15803d !important;
+}
+
+.rutaInactiva{
+  border-color:rgba(245,158,11,.55) !important;
+  background:rgba(245,158,11,.12) !important;
+  color:#9a3412 !important;
+}
+
+.rutaInactiva b{
+  color:#c2410c !important;
+}
