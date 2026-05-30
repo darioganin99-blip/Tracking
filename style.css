@@ -143,3 +143,115 @@ main{
     max-height:300px !important;
   }
 }
+
+
+/* Compact Tracking layout v1.4.16 */
+.trackingCard{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:6px !important;
+  padding:12px !important;
+}
+
+.realMap{
+  height:390px !important;
+  min-height:390px !important;
+  max-height:390px !important;
+  margin:0 !important;
+  border-radius:18px !important;
+}
+
+.compactLegend{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:4px !important;
+  margin:4px 0 2px !important;
+  font-size:10px !important;
+  line-height:1 !important;
+}
+
+.compactLegend span{
+  justify-content:center !important;
+  gap:4px !important;
+}
+
+.compactLegend .dot{
+  width:8px !important;
+  height:8px !important;
+}
+
+.compactStats{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:6px !important;
+  margin:4px 0 6px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+}
+
+.compactStats .statItem{
+  padding:7px 5px !important;
+  border-radius:12px !important;
+  text-align:center !important;
+  min-height:48px !important;
+}
+
+.compactStats .statItem b{
+  font-size:13px !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+}
+
+.compactStats .statItem span{
+  font-size:9px !important;
+  line-height:1 !important;
+  margin-top:3px !important;
+  white-space:nowrap !important;
+}
+
+.bottomActions{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-top:4px !important;
+  position:relative !important;
+  z-index:3 !important;
+}
+
+.bottomActions .compactBtn{
+  margin:0 !important;
+  padding:10px 6px !important;
+  font-size:12px !important;
+  line-height:1.1 !important;
+  border-radius:13px !important;
+  min-height:42px !important;
+}
+
+@media (max-width:390px){
+  .compactStats .statItem b{
+    font-size:12px !important;
+  }
+  .compactStats .statItem span{
+    font-size:8px !important;
+  }
+  .bottomActions .compactBtn{
+    font-size:11px !important;
+  }
+}
+
+@media (max-height:740px){
+  .realMap{
+    height:330px !important;
+    min-height:330px !important;
+    max-height:330px !important;
+  }
+}
+
+@media (max-height:650px){
+  .realMap{
+    height:285px !important;
+    min-height:285px !important;
+    max-height:285px !important;
+  }
+}

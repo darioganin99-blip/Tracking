@@ -88,9 +88,9 @@ function renderTracking(){
   const box=document.getElementById("trackingBox");
   if(box){
     box.innerHTML=
-`<div class="statItem"><b>${total.toFixed(1)} km</b><span>Distancia total</span></div>
+`<div class="statItem"><b>${total.toFixed(1)} km</b><span>Total</span></div>
  <div class="statItem"><b>${pct}%</b><span>Avance</span></div>
- <div class="statItem"><b>${faltan.toFixed(1)} km</b><span>KM por recorrer</span></div>
+ <div class="statItem"><b>${faltan.toFixed(1)} km</b><span>Restan</span></div>
  <div class="statItem"><b>${calcEta(faltan)}</b><span>ETA</span></div>`;
   }
 
