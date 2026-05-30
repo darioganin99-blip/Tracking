@@ -78,12 +78,22 @@ function onOrigenDestinoChange(){
   }
 }
 
+function bloquearFormularioTransito(){
+  const t=transit();
+  const bloqueado=!!(t && !t.closed);
+  ["clienteSelect","origenSelect","destinoSelect","lote"].forEach(id=>{
+    const e=$(id);
+    if(e) e.disabled=bloqueado;
+  });
+}
+
 function renderInicio(){
   const u=user();
   const inp=$("inicioUser");
   if(inp) inp.value=(u.fleet||"Sin flota")+" - "+(u.driver||"Sin chofer");
   const t=transit();
   if(t && $("lote")) $("lote").value=t.lote||"";
+  bloquearFormularioTransito();
 }
 
 function getGps(){
@@ -100,23 +110,24 @@ function getGps(){
 async function iniciarTransito(){
   const abierto=transit();
   if(abierto && !abierto.closed){
-    alert("Ya hay un tránsito iniciado sin cerrar. Primero debe cerrar el tránsito actual.");
+    window.alert("Ya hay un tránsito iniciado sin cerrar. Primero debe cerrar el tránsito actual.");
     show("tracking");
     return;
   }
 
   const u=user();
-  if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}
+  if(!u.fleet){window.alert("Cargá la flota en Usuario.");show("usuario");return;}
 
   const route=selectedRoute();
   const lote=$("lote").value.trim();
-  if(!lote){alert("Ingresá número de lote/carga.");return;}
+  if(!lote){window.alert("Ingresá número de lote/carga.");return;}
 
   try{
     const gps=await getGps();
     const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};
     save(LS.transit,t);
-    alert("Tránsito iniciado correctamente.");
+    bloquearFormularioTransito();
+    window.alert("Tránsito iniciado correctamente.");
     show("tracking");
   }catch(e){
     alert("No se pudo tomar GPS de inicio: "+(e.message||e));
@@ -125,7 +136,7 @@ async function iniciarTransito(){
 
 async function cerrarTransito(){
   const t=transit();
-  if(!t){alert("No hay tránsito iniciado.");return;}
+  if(!t){window.alert("No hay tránsito iniciado.");return;}
 
   try{
     const gps=await getGps();
@@ -137,8 +148,9 @@ async function cerrarTransito(){
     const msg=buildCierreMsg(t);
     save(LS.last,{msg,date:now()});
     localStorage.removeItem(LS.transit);
+    bloquearFormularioTransito();
     sendToPhones(msg);
-    alert("Tránsito cerrado.");
+    window.alert("Tránsito cerrado.");
     show("inicio");
   }catch(e){
     alert("No se pudo cerrar tránsito: "+(e.message||e));
@@ -289,7 +301,7 @@ function renderTrackingMap(t){
 
 async function actualizarGps(){
   const t=transit();
-  if(!t){alert("No hay tránsito iniciado.");renderTracking();return;}
+  if(!t){window.alert("No hay tránsito iniciado.");renderTracking();return;}
 
   try{
     const gps=await getGps();
@@ -304,7 +316,7 @@ async function actualizarGps(){
 
 async function enviarActualizacion(){
   const t=transit();
-  if(!t){alert("No hay tránsito iniciado.");return;}
+  if(!t){window.alert("No hay tránsito iniciado.");return;}
   await actualizarGps();
   const updated=transit();
   if(!updated) return;
@@ -316,17 +328,17 @@ async function enviarActualizacion(){
 /* ===== ALERTAS ===== */
 async function registrarAlerta(){
   const t=transit();
-  if(!t){alert("No hay tránsito iniciado.");return;}
+  if(!t){window.window.alert("No hay tránsito iniciado.");return;}
 
   try{
     const gps=await getGps();
-    const alert={type:$("alertType").value,detail:"",gps,time:now()};
-    t.alerts.push(alert);
+    const alerta={type:$("alertType").value,detail:"",gps,time:now()};
+    t.alerts.push(alerta);
     save(LS.transit,t);
     renderAlertas();
-    alert("Alerta registrada.");
+    window.alert("Alerta registrada.");
   }catch(e){
-    alert("No se pudo registrar alerta: "+(e.message||e));
+    window.alert("No se pudo registrar alerta: "+(e.message||e));
   }
 }
 

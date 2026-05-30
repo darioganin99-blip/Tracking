@@ -443,3 +443,13 @@ main{
   font-size:12px !important;
   line-height:1.2 !important;
 }
+
+
+/* v1.4.20 alert fix + transit lock */
+select:disabled,
+input:disabled{
+  opacity:.65 !important;
+  background:#e5e7eb !important;
+  color:#64748b !important;
+  cursor:not-allowed !important;
+}
