@@ -889,3 +889,32 @@ input:disabled{
   background:rgba(100,116,139,.45);
   border-radius:999px;
 }
+
+
+/* v1.4.34 Ultimo envio scroll interno */
+#ultimo .card{
+  display:flex !important;
+  flex-direction:column !important;
+  max-height:calc(100vh - 190px) !important;
+  overflow:hidden !important;
+}
+
+#lastBox{
+  flex:1 1 auto !important;
+  max-height:52vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-right:6px !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
+  white-space:pre-wrap !important;
+}
+
+#lastBox::-webkit-scrollbar{
+  width:6px;
+}
+
+#lastBox::-webkit-scrollbar-thumb{
+  background:rgba(100,116,139,.45);
+  border-radius:999px;
+}

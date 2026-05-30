@@ -521,17 +521,25 @@ function buildUpdateMsg(t){
   const current=t.updates.length?t.updates[t.updates.length-1].gps:t.start;
   const done=distKm(t.start.lat,t.start.lng,current.lat,current.lng);
   const faltan=Math.max(0,total-done);
-  return `Actualización de tránsito
-Registro: ${t.id}
-Flota: ${t.user.fleet}
-Chofer: ${t.user.driver}
-Cliente: ${t.route.cliente}
-Número de carga: ${t.lote}
-Ubicación actual: ${current.lat.toFixed(6)}, ${current.lng.toFixed(6)}
-Destino: ${t.route.destino}
-Kilómetros faltantes: ${faltan.toFixed(1)} km
-ETA estimada: ${calcEta(faltan)}
-Alertas ocurridas: ${formatAlerts(t)}`;
+
+  return `🚚 Actualización de tránsito
+
+🚛 Flota: ${t.user.fleet}
+👤 Chofer: ${t.user.driver}
+
+🏢 Cliente: ${t.route.cliente}
+
+📦 Número de carga: ${t.lote}
+
+📍 Ubicación: ${current.lat.toFixed(6)}, ${current.lng.toFixed(6)}
+
+🎯 Destino: ${t.route.destino}
+
+🛣️ Kilómetros faltantes: ${faltan.toFixed(1)} km
+⏱️ ETA estimada: ${calcEta(faltan)}
+
+⚠️ Alertas ocurridas:
+${formatAlertsMultiline(t)}`;
 }
 
 function buildCierreMsg(t){
@@ -554,6 +562,12 @@ Alertas ocurridas: ${formatAlerts(t)}`;
 function formatAlerts(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
   return t.alerts.map(a=>`${a.type} (${fmtDate(a.time)})`).join(" | ");
+}
+
+function formatAlertsMultiline(t){
+  if(!t.alerts||!t.alerts.length)return "Sin alertas";
+  return t.alerts.map(a=>`• ${a.type} (${fmtDate(a.time)})`).join("
+");
 }
 
 function sendToPhones(msg){
