@@ -30,12 +30,18 @@ function selectedRoute(){
   return {cliente:c.cliente||"",origen:o.nombre||"",origen_lat:o.lat,origen_lng:o.lng,origen_pais:o.pais,destino:d.nombre||"",destino_lat:d.lat,destino_lng:d.lng,destino_pais:d.pais};
 }
 function onOrigenDestinoChange(){
-  const r=selectedRoute(), km=distanciaRuta(r);
-  $("rutaInfo").innerHTML=`<b>Cliente:</b> ${escapeHtml(r.cliente)}<br><b>Origen:</b> ${escapeHtml(r.origen)}<br><b>Destino:</b> ${escapeHtml(r.destino)}<br><b>Distancia estimada:</b> ${km.toFixed(1)} km`;
+  const r=selectedRoute();
+  const km=distanciaRuta(r);
+  const pais=r.destino_pais || "";
+  const localidad=r.destino || "";
+  $("rutaInfo").innerHTML=
+    `<b>Distancia estimada:</b> ${km.toFixed(1)} km<br>`+
+    `<b>País destino:</b> ${escapeHtml(pais)}<br>`+
+    `<b>Localidad destino:</b> ${escapeHtml(localidad)}`;
 }
 function renderInicio(){const u=user();$("inicioUser").value=(u.fleet||"Sin flota")+" - "+(u.driver||"Sin chofer");const t=transit();if(t){$("lote").value=t.lote||"";}}
 function getGps(){return new Promise((resolve,reject)=>{if(!navigator.geolocation){reject(new Error("GPS no disponible"));return;}navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy||0,time:now()}),e=>reject(e),{enableHighAccuracy:true,timeout:20000,maximumAge:0});});}
-async function iniciarTransito(){const u=user();if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}const route=selectedRoute();const lote=$("lote").value.trim();if(!lote){alert("Ingresá número de lote/carga.");return;}try{const gps=await getGps();const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};save(LS.transit,t);alert("Tránsito iniciado correctamente.");show("tracking");}catch(e){alert("No se pudo tomar GPS de inicio: "+(e.message||e));}}
+async function iniciarTransito(){const u=user();if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}const route=selectedRoute();const lote=$("lote").value.trim();if(!lote){alert("Ingresá número de lote/carga.");return;}try{const gps=await getGps();const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};save(LS.transit,t);alert("Tránsito iniciado correctamente."); show("tracking");}catch(e){alert("No se pudo tomar GPS de inicio: "+(e.message||e));}}
 async function cerrarTransito(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const moved=distKm(t.start.lat,t.start.lng,gps.lat,gps.lng);if(moved<0.05){alert("La posición GPS de cierre debe ser distinta a la de inicio.");return;}if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?"))return;t.closed=gps;const msg=buildCierreMsg(t);save(LS.last,{msg,date:now()});localStorage.removeItem(LS.transit);sendToPhones(msg);alert("Tránsito cerrado.");show("inicio");}catch(e){alert("No se pudo cerrar tránsito: "+(e.message||e));}}
 let leafletMap=null;
 let leafletLayers=[];
@@ -211,9 +217,14 @@ async function enviarActualizacion(){
 }
 
 async function registrarAlerta(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const alert={type:$("alertType").value,detail:$("alertDetail").value.trim(),gps,time:now()};t.alerts.push(alert);save(LS.transit,t);$("alertDetail").value="";renderAlertas();alert("Alerta registrada.");}catch(e){alert("No se pudo registrar alerta: "+(e.message||e));}}
-function renderAlertas(){const t=transit(),box=$("alertList");if(!t||!t.alerts.length){box.innerText="Sin alertas registradas.";return;}box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${escapeHtml(a.detail||"Sin detalle")}<br>${fmtDate(a.time)}<br>GPS: ${a.gps.lat.toFixed(6)}, ${a.gps.lng.toFixed(6)}</div>`).join("");}
+function renderAlertas(){const t=transit(),box=$("alertList");if(!t||!t.alerts.length){box.innerText="Sin alertas registradas.";return;}box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}<br>GPS: ${a.gps.lat.toFixed(6)}, ${a.gps.lng.toFixed(6)}</div>`).join("");}
 function loadUserForm(){const u=user();$("userFleet").value=u.fleet||"";$("userDriver").value=u.driver||"";$("userPhones").value=u.phones||"";}
-function saveUser(){save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:$("userPhones").value.trim()});$("userMsg").innerHTML='<p class="ok">Usuario guardado correctamente.</p>';renderInicio();}
+function saveUser(){
+  save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:$("userPhones").value.trim()});
+  $("userMsg").innerHTML='<p class="ok">Usuario guardado correctamente.</p>';
+  renderInicio();
+  setTimeout(()=>show("inicio"),300);
+});$("userMsg").innerHTML='<p class="ok">Usuario guardado correctamente.</p>';renderInicio();}
 function renderUltimo(){const last=load(LS.last,null);$("lastBox").innerText=last?last.msg:"No hay envíos registrados.";}
 function reenviarUltimo(){const last=load(LS.last,null);if(!last){alert("No hay último envío.");return;}sendToPhones(last.msg);}
 function buildUpdateMsg(t){const total=distanciaRuta(t.route);const current=t.updates.length?t.updates[t.updates.length-1].gps:t.start;const done=distKm(t.start.lat,t.start.lng,current.lat,current.lng);const faltan=Math.max(0,total-done);return `Actualización de tránsito\nRegistro: ${t.id}\nFlota: ${t.user.fleet}\nChofer: ${t.user.driver}\nCliente: ${t.route.cliente}\nNúmero de carga: ${t.lote}\nUbicación actual: ${current.lat.toFixed(6)}, ${current.lng.toFixed(6)}\nDestino: ${t.route.destino}\nKilómetros faltantes: ${faltan.toFixed(1)} km\nETA estimada: ${calcEta(faltan)}\nAlertas ocurridas: ${formatAlerts(t)}`;}
