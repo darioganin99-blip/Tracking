@@ -677,10 +677,27 @@ async function cargarClimaGps(lat,lng){
 
 function detectarEstadoPaso(texto){
   const t=String(texto||"").toLowerCase();
-  if(t.includes("cerrado")||t.includes("cierre preventivo")||t.includes("no habilitado")||t.includes("suspendido"))return{label:"CERRADO",cls:"passClosed",icon:"🔴"};
-  if(t.includes("restric")||t.includes("precauc")||t.includes("cadenas")||t.includes("nieve")||t.includes("viento")||t.includes("hielo"))return{label:"HABILITADO CON RESTRICCIONES",cls:"passWarn",icon:"🟡"};
-  if(t.includes("habilitado")||t.includes("abierto")||t.includes("transitable")||t.includes("restablece el tránsito"))return{label:"HABILITADO",cls:"passOpen",icon:"🟢"};
-  return{label:"VERIFICAR ESTADO OFICIAL",cls:"passWarn",icon:"🟡"};
+
+  if(
+    t.includes("cerrado") ||
+    t.includes("cierre preventivo") ||
+    t.includes("no habilitado") ||
+    t.includes("suspendido") ||
+    t.includes("interrumpido")
+  ){
+    return {label:"CERRADO",cls:"passClosedOrange",icon:"🟠"};
+  }
+
+  if(
+    t.includes("habilitado") ||
+    t.includes("abierto") ||
+    t.includes("transitable") ||
+    t.includes("restablece el tránsito")
+  ){
+    return {label:"ABIERTO",cls:"passOpenGreen",icon:"🟢"};
+  }
+
+  return {label:"VERIFICAR",cls:"passClosedOrange",icon:"🟠"};
 }
 
 function extraerAlertasPaso(texto){
@@ -759,13 +776,17 @@ async function consultarPasoCristoRedentor(){
   const actualizado=new Date().toLocaleString("es-AR");
 
   box.dataset.loaded="1";
-  box.innerHTML=`<div class="passStateNew ${estado.cls}"><b>${estado.icon} ${estado.label}</b><span>${fuenteUsada} · Actualizado ${actualizado}</span></div><div class="passTextNew">${escapeHtml(ext)}</div>`;
+  box.innerHTML=`<div class="passStateNew ${estado.cls}">
+      <b>${estado.icon} PASO ${estado.label}</b>
+      <span>${fuenteUsada} · Actualizado ${actualizado}</span>
+    </div>
+    <div class="passTextNew">${escapeHtml(ext)}</div>`;
 
   if(alertsBox){
     alertsBox.dataset.loaded="1";
     alertsBox.innerHTML=alertas.length
       ? alertas.map(x=>`<div class="passAlertItem">• ${escapeHtml(x)}</div>`).join("")
-      : `<div class="passOkItem">✓ Sin alertas detectadas en la consulta automática.</div>`;
+      : `<div class="passOkItem">✓ Sin alertas informadas por la consulta automática.</div>`;
   }
 }
 

@@ -777,3 +777,45 @@ input:disabled{
   font-size:12px !important;
   border-radius:15px !important;
 }
+
+
+/* v1.4.30 Paso estado claro */
+.forecastTitleNew{
+  display:none !important;
+}
+
+.forecastCardNew{
+  margin-top:8px !important;
+}
+
+.passOpenGreen{
+  background:rgba(34,197,94,.18) !important;
+  color:#14532d !important;
+  border:1px solid rgba(34,197,94,.55) !important;
+}
+
+.passClosedOrange{
+  background:rgba(245,158,11,.20) !important;
+  color:#7c2d12 !important;
+  border:1px solid rgba(245,158,11,.60) !important;
+}
+
+.passStateNew b{
+  font-size:13px !important;
+  letter-spacing:.02em !important;
+}
+
+.passAlertItem{
+  color:#7c2d12 !important;
+  background:rgba(245,158,11,.10) !important;
+  border-radius:10px !important;
+  padding:7px 8px !important;
+  margin-bottom:5px !important;
+  border-bottom:0 !important;
+}
+
+.passOkItem{
+  color:#14532d !important;
+  background:rgba(34,197,94,.12) !important;
+  border:1px solid rgba(34,197,94,.25) !important;
+}
