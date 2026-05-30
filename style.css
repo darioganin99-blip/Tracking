@@ -53,77 +53,93 @@
 .mapBox,.mapGrid,.mapSvg,.mapMarker{display:none!important}
 
 
-/* Tracking layout v1.4.14 */
+
+
+
+/* Map scroll/container fix v1.4.15 */
+body{
+  overflow-x:hidden !important;
+}
+
+main{
+  overflow:hidden !important;
+  padding-bottom:24px !important;
+}
+
+.view{
+  overflow:hidden !important;
+}
+
+.trackingCard{
+  overflow:hidden !important;
+  position:relative !important;
+  padding-bottom:16px !important;
+}
+
 .realMap{
-  height:520px !important;
-  min-height:520px !important;
-  width:100%;
-  margin:0 0 8px !important;
-  border-radius:22px;
-  overflow:hidden;
-  border:1px solid rgba(148,163,184,.25);
-  box-shadow:0 16px 30px rgba(0,0,0,.22);
-  background:#dbeafe;
+  position:relative !important;
+  z-index:1 !important;
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  height:420px !important;
+  min-height:420px !important;
+  max-height:420px !important;
+  overflow:hidden !important;
+  contain:layout paint !important;
+  touch-action:pan-x pan-y !important;
 }
 
+.realMap .leaflet-pane,
+.realMap .leaflet-map-pane,
+.realMap .leaflet-tile-pane,
+.realMap .leaflet-overlay-pane,
+.realMap .leaflet-marker-pane,
+.realMap .leaflet-shadow-pane,
+.realMap .leaflet-popup-pane,
+.realMap .leaflet-control-container{
+  z-index:auto !important;
+}
+
+.leaflet-container{
+  width:100% !important;
+  height:100% !important;
+  position:relative !important;
+  z-index:1 !important;
+  overflow:hidden !important;
+}
+
+.leaflet-control-container{
+  position:absolute !important;
+  z-index:20 !important;
+}
+
+.tabs{
+  position:sticky !important;
+  top:0 !important;
+  z-index:1000 !important;
+}
+
+.trackingActions,
+.mapLegend,
 .trackingStats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin:8px 0 10px;
-}
-
-.statItem{
-  background:rgba(15,23,42,.06);
-  border:1px solid rgba(148,163,184,.24);
-  border-radius:14px;
-  padding:8px 10px;
-  line-height:1.15;
-}
-
-.statItem b{
-  display:block;
-  font-size:15px;
-  color:#0f172a;
-  font-weight:950;
-}
-
-.statItem span{
-  display:block;
-  font-size:10px;
-  color:#64748b;
-  font-weight:800;
-  margin-top:3px;
-}
-
-.trackingActions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:6px;
-}
-
-.compactBtn{
-  margin-top:0 !important;
-  padding:12px 10px !important;
-  font-size:13px !important;
-  border-radius:15px !important;
-}
-
-.mapLegend{
-  margin:6px 0 8px !important;
-  font-size:11px !important;
+  position:relative !important;
+  z-index:2 !important;
+  background:transparent !important;
 }
 
 @media (max-height:740px){
   .realMap{
-    height:430px !important;
-    min-height:430px !important;
+    height:340px !important;
+    min-height:340px !important;
+    max-height:340px !important;
   }
-  .statItem{
-    padding:7px 8px;
-  }
-  .compactBtn{
-    padding:11px 8px !important;
+}
+
+@media (max-height:650px){
+  .realMap{
+    height:300px !important;
+    min-height:300px !important;
+    max-height:300px !important;
   }
 }
