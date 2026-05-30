@@ -1,4 +1,7 @@
 const $ = id => document.getElementById(id);
+let climaAutoLoading=false;
+let climaLastUpdate=0;
+
 const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
 
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
@@ -789,12 +792,20 @@ function sendToPhones(msg){
 /* ===== CLIMA ===== */
 function renderClima(){
   const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
   if(n && !n.dataset.loaded){
-    n.innerHTML='<div class="weatherIconBig">🌤️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Presioná actualizar</div><div class="weatherLocNew">Ubicación GPS</div></div>';
+    n.innerHTML='<div class="weatherIconBig">🌤️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Según posición GPS</div></div>';
   }
-  if(f && !f.innerHTML.trim()) f.innerHTML='<div class="forecastEmpty">Sin pronóstico actualizado.</div>';
-  if(p && !p.dataset.loaded) p.innerHTML='Estado pendiente de actualizar.';
-  if(a && !a.dataset.loaded) a.innerHTML='Sin datos actualizados.';
+  if(f && !f.innerHTML.trim()) f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
+  if(p && !p.dataset.loaded) p.innerHTML='Consultando situación del paso...';
+  if(a && !a.dataset.loaded) a.innerHTML='Consultando alertas...';
+
+  const ahora=Date.now();
+  const debeActualizar=!climaLastUpdate || (ahora-climaLastUpdate)>300000;
+
+  if(debeActualizar && !climaAutoLoading){
+    actualizarClima();
+  }
 }
 
 function weatherCodeText(code){
@@ -839,10 +850,14 @@ async function obtenerLocalidadGps(lat,lng){
 }
 
 async function actualizarClima(){
+  if(climaAutoLoading) return;
+  climaAutoLoading=true;
+
   const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
   if(n)n.innerHTML='<div class="weatherIconBig">⏳</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Tomando GPS</div></div>';
   if(f)f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
-  if(p)p.innerHTML='Consultando situación actual del paso...';
+  if(p)p.innerHTML='Consultando situación del paso...';
   if(a)a.innerHTML='Consultando alertas...';
 
   try{
@@ -852,7 +867,14 @@ async function actualizarClima(){
     if(n)n.innerHTML='<div class="weatherIconBig">⚠️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">No se pudo obtener GPS</div><div class="weatherLocNew">'+escapeHtml(e.message||e)+'</div></div>';
   }
 
-  consultarPasoCristoRedentor();
+  try{
+    await consultarPasoCristoRedentor();
+  }catch(e){
+    console.log("Error consultando paso",e);
+  }
+
+  climaLastUpdate=Date.now();
+  climaAutoLoading=false;
 }
 
 async function cargarClimaGps(lat,lng){

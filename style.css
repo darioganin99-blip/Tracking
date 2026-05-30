@@ -945,3 +945,9 @@ button:disabled{
   opacity:.65 !important;
   cursor:wait !important;
 }
+
+
+/* v1.4.43 Clima auto */
+.weatherFullBtn{
+  display:none !important;
+}
