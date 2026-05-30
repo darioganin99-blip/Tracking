@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Track - Seguimiento GPS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.11</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.12</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
@@ -29,19 +30,14 @@
       <button class="btn danger" onclick="cerrarTransito()">Cierre tránsito</button>
     </div></section>
     <section id="tracking" class="view hidden"><div class="card trackingCard">
-      <div id="trackingBox" class="summary"></div>
-      <div class="mapBox">
-        <div class="mapGrid"></div>
-        <svg class="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <polyline id="mapRouteLine" points="" fill="none" stroke="rgba(34,197,94,.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <polyline id="mapProgressLine" points="" fill="none" stroke="rgba(59,130,246,.95)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div id="mapMarkers"></div>
-      </div>
+      <div id="realMap" class="realMap"></div>
       <div class="mapLegend">
-        <span><b class="dot origin"></b>Origen</span><span><b class="dot current"></b>Última ubicación</span>
-        <span><b class="dot dest"></b>Destino</span><span><b class="dot alert"></b>Alertas</span>
+        <span><b class="dot origin"></b>Origen</span>
+        <span><b class="dot current"></b>Última ubicación</span>
+        <span><b class="dot dest"></b>Destino</span>
+        <span><b class="dot alert"></b>Alertas</span>
       </div>
+      <div id="trackingBox" class="summary"></div>
       <button class="btn secondary" onclick="actualizarGps()">Actualizar GPS</button>
       <button class="btn" onclick="enviarActualizacion()">Enviar actualización de tránsito</button>
     </div></section>
@@ -63,5 +59,6 @@
       <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar información</button>
     </div></section>
   </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="data.js"></script><script src="app.js"></script>
 </body></html>

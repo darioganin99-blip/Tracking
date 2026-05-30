@@ -37,67 +37,147 @@ function renderInicio(){const u=user();$("inicioUser").value=(u.fleet||"Sin flot
 function getGps(){return new Promise((resolve,reject)=>{if(!navigator.geolocation){reject(new Error("GPS no disponible"));return;}navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy||0,time:now()}),e=>reject(e),{enableHighAccuracy:true,timeout:20000,maximumAge:0});});}
 async function iniciarTransito(){const u=user();if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}const route=selectedRoute();const lote=$("lote").value.trim();if(!lote){alert("Ingresá número de lote/carga.");return;}try{const gps=await getGps();const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};save(LS.transit,t);alert("Tránsito iniciado correctamente.");show("tracking");}catch(e){alert("No se pudo tomar GPS de inicio: "+(e.message||e));}}
 async function cerrarTransito(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const moved=distKm(t.start.lat,t.start.lng,gps.lat,gps.lng);if(moved<0.05){alert("La posición GPS de cierre debe ser distinta a la de inicio.");return;}if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?"))return;t.closed=gps;const msg=buildCierreMsg(t);save(LS.last,{msg,date:now()});localStorage.removeItem(LS.transit);sendToPhones(msg);alert("Tránsito cerrado.");show("inicio");}catch(e){alert("No se pudo cerrar tránsito: "+(e.message||e));}}
+let leafletMap=null;
+let leafletLayers=[];
+
+function clearLeafletLayers(){
+  if(!leafletMap) return;
+  leafletLayers.forEach(layer=>{try{leafletMap.removeLayer(layer);}catch(e){}});
+  leafletLayers=[];
+}
+
+function addLeafletLayer(layer){
+  if(!leafletMap) return layer;
+  layer.addTo(leafletMap);
+  leafletLayers.push(layer);
+  return layer;
+}
+
+function initLeafletMap(){
+  const mapDiv=document.getElementById("realMap");
+  if(!mapDiv || typeof L==="undefined") return null;
+
+  if(!leafletMap){
+    leafletMap=L.map("realMap",{zoomControl:true,attributionControl:true}).setView([-34.6037,-58.3816],6);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,
+      attribution:"© OpenStreetMap"
+    }).addTo(leafletMap);
+  }
+
+  setTimeout(()=>{try{leafletMap.invalidateSize();}catch(e){}},250);
+  return leafletMap;
+}
+
 function renderTracking(){
   const t=transit();
+
   if(!t){
     const box=document.getElementById("trackingBox");
     if(box) box.innerText="No hay tránsito iniciado.";
     renderTrackingMap(null);
     return;
   }
+
   const total=distanciaRuta(t.route);
-  const current=t.updates && t.updates.length ? t.updates[t.updates.length-1].gps : t.start;
+  const current=t.updates&&t.updates.length?t.updates[t.updates.length-1].gps:t.start;
   const done=Math.min(total,distKm(t.start.lat,t.start.lng,current.lat,current.lng));
-  const pct=total ? Math.min(100,Math.round(done/total*100)) : 0;
+  const pct=total?Math.min(100,Math.round(done/total*100)):0;
   const faltan=Math.max(0,total-done);
+
   const box=document.getElementById("trackingBox");
-  if(box) box.innerText=`Distancia total: ${total.toFixed(1)} km
+  if(box){
+    box.innerText=`Distancia total: ${total.toFixed(1)} km
 Avance: ${pct}%
 KM por recorrer: ${faltan.toFixed(1)} km
 ETA: ${calcEta(faltan)}`;
+  }
+
   renderTrackingMap(t);
 }
+
 function renderTrackingMap(t){
-  const box=document.getElementById("mapMarkers");
-  const routeLine=document.getElementById("mapRouteLine");
-  const progressLine=document.getElementById("mapProgressLine");
-  if(!box || !routeLine || !progressLine) return;
-  box.innerHTML=""; routeLine.setAttribute("points",""); progressLine.setAttribute("points","");
-  if(!t || !t.route || !t.start) return;
+  const map=initLeafletMap();
+  if(!map) return;
+
+  clearLeafletLayers();
+
+  if(!t || !t.route || !t.start){
+    map.setView([-34.6037,-58.3816],6);
+    return;
+  }
+
   const origin={lat:Number(t.route.origen_lat||t.start.lat),lng:Number(t.route.origen_lng||t.start.lng)};
   const dest={lat:Number(t.route.destino_lat),lng:Number(t.route.destino_lng)};
   const current=t.updates&&t.updates.length?t.updates[t.updates.length-1].gps:t.start;
   const cur={lat:Number(current.lat),lng:Number(current.lng)};
-  const alerts=(t.alerts||[]).map(a=>a.gps).filter(Boolean).map(g=>({lat:Number(g.lat),lng:Number(g.lng)}));
-  const pts=[origin,cur,dest,...alerts].filter(p=>p&&isFinite(p.lat)&&isFinite(p.lng));
-  if(pts.length<2) return;
-  const lats=pts.map(p=>p.lat), lngs=pts.map(p=>p.lng);
-  let minLat=Math.min(...lats),maxLat=Math.max(...lats),minLng=Math.min(...lngs),maxLng=Math.max(...lngs);
-  if(Math.abs(maxLat-minLat)<0.01){maxLat+=0.01;minLat-=0.01;}
-  if(Math.abs(maxLng-minLng)<0.01){maxLng+=0.01;minLng-=0.01;}
-  const pad=10;
-  const project=p=>({x:pad+((p.lng-minLng)/(maxLng-minLng))*(100-pad*2),y:pad+((maxLat-p.lat)/(maxLat-minLat))*(100-pad*2)});
-  const po=project(origin), pc=project(cur); let pd=null;
-  if(isFinite(dest.lat)&&isFinite(dest.lng)) pd=project(dest);
-  if(pd) routeLine.setAttribute("points",`${po.x},${po.y} ${pd.x},${pd.y}`);
-  progressLine.setAttribute("points",`${po.x},${po.y} ${pc.x},${pc.y}`);
-  addMapMarker("origin",po.x,po.y,"Origen"); if(pd) addMapMarker("dest",pd.x,pd.y,"Destino"); addMapMarker("current",pc.x,pc.y,"Última ubicación");
-  alerts.forEach((a,i)=>{const pa=project(a); addMapMarker("alert",pa.x,pa.y,"Alerta "+(i+1));});
+  const alerts=(t.alerts||[]).map(a=>a.gps).filter(Boolean).map(g=>({lat:Number(g.lat),lng:Number(g.lng)})).filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+
+  const bounds=[];
+
+  if(isFinite(origin.lat)&&isFinite(origin.lng)){
+    bounds.push([origin.lat,origin.lng]);
+    addLeafletLayer(L.circleMarker([origin.lat,origin.lng],{radius:9,color:"#fff",weight:2,fillColor:"#22c55e",fillOpacity:1}).bindPopup("Origen"));
+  }
+
+  if(isFinite(cur.lat)&&isFinite(cur.lng)){
+    bounds.push([cur.lat,cur.lng]);
+    addLeafletLayer(L.circleMarker([cur.lat,cur.lng],{radius:11,color:"#fff",weight:2,fillColor:"#2f8cff",fillOpacity:1}).bindPopup("Última ubicación GPS"));
+  }
+
+  if(isFinite(dest.lat)&&isFinite(dest.lng)){
+    bounds.push([dest.lat,dest.lng]);
+    addLeafletLayer(L.circleMarker([dest.lat,dest.lng],{radius:9,color:"#fff",weight:2,fillColor:"#ef4444",fillOpacity:1}).bindPopup("Destino"));
+  }
+
+  alerts.forEach((a,i)=>{
+    bounds.push([a.lat,a.lng]);
+    addLeafletLayer(L.circleMarker([a.lat,a.lng],{radius:8,color:"#fff",weight:2,fillColor:"#f59e0b",fillOpacity:1}).bindPopup("Alerta "+(i+1)));
+  });
+
+  const line=[];
+  if(isFinite(origin.lat)&&isFinite(origin.lng)) line.push([origin.lat,origin.lng]);
+  if(isFinite(cur.lat)&&isFinite(cur.lng)) line.push([cur.lat,cur.lng]);
+  if(isFinite(dest.lat)&&isFinite(dest.lng)) line.push([dest.lat,dest.lng]);
+
+  if(line.length>=2){
+    addLeafletLayer(L.polyline(line,{color:"#2563eb",weight:5,opacity:.9}));
+  }
+
+  if(bounds.length>=2) map.fitBounds(bounds,{padding:[28,28]});
+  else if(bounds.length===1) map.setView(bounds[0],12);
 }
-function addMapMarker(type,x,y,title){
-  const box=document.getElementById("mapMarkers"); if(!box) return;
-  const marker=document.createElement("div"); marker.className="mapMarker "+type; marker.style.left=x+"%"; marker.style.top=y+"%"; marker.title=title||""; box.appendChild(marker);
-}
+
 async function actualizarGps(){
   const t=transit();
-  if(!t){ alert("No hay tránsito iniciado."); const box=document.getElementById("trackingBox"); if(box) box.innerText="No hay tránsito iniciado."; renderTrackingMap(null); return; }
-  try{ const gps=await getGps(); if(!t.updates)t.updates=[]; t.updates.push({gps,time:now()}); save(LS.transit,t); renderTracking(); }
-  catch(e){ alert("No se pudo actualizar GPS: "+(e.message||e)); }
+  if(!t){
+    alert("No hay tránsito iniciado.");
+    const box=document.getElementById("trackingBox");
+    if(box) box.innerText="No hay tránsito iniciado.";
+    renderTrackingMap(null);
+    return;
+  }
+
+  try{
+    const gps=await getGps();
+    if(!t.updates) t.updates=[];
+    t.updates.push({gps,time:now()});
+    save(LS.transit,t);
+    renderTracking();
+  }catch(e){
+    alert("No se pudo actualizar GPS: "+(e.message||e));
+  }
 }
+
 async function enviarActualizacion(){
-  const t=transit(); if(!t){alert("No hay tránsito iniciado."); return;}
-  await actualizarGps(); const updated=transit(); if(!updated)return;
-  const msg=buildUpdateMsg(updated); save(LS.last,{msg,date:now()}); sendToPhones(msg);
+  const t=transit();
+  if(!t){alert("No hay tránsito iniciado.");return;}
+  await actualizarGps();
+  const updated=transit();
+  if(!updated) return;
+  const msg=buildUpdateMsg(updated);
+  save(LS.last,{msg,date:now()});
+  sendToPhones(msg);
 }
 
 async function registrarAlerta(){const t=transit();if(!t){alert("No hay tránsito iniciado.");return;}try{const gps=await getGps();const alert={type:$("alertType").value,detail:$("alertDetail").value.trim(),gps,time:now()};t.alerts.push(alert);save(LS.transit,t);$("alertDetail").value="";renderAlertas();alert("Alerta registrada.");}catch(e){alert("No se pudo registrar alerta: "+(e.message||e));}}
