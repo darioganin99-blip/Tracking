@@ -11,7 +11,7 @@ android {
         minSdk 23
         targetSdk 35
         versionCode 1438
-        versionName "1.4.38-icon-safe"
+        versionName "1.4.38"
     }
 }
 
