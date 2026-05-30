@@ -415,3 +415,31 @@ main{
     max-height:285px !important;
   }
 }
+
+
+/* v1.4.19 compact stats and alerts */
+.compactStats .statItem{
+  min-height:40px !important;
+  padding:5px 4px !important;
+}
+
+.compactStats .statItem b{
+  font-size:11px !important;
+  line-height:1 !important;
+}
+
+.compactStats .statItem span{
+  font-size:8px !important;
+  margin-top:2px !important;
+}
+
+.alertItem{
+  font-size:13px !important;
+  line-height:1.25 !important;
+  padding:8px 10px !important;
+}
+
+#rutaInfo{
+  font-size:12px !important;
+  line-height:1.2 !important;
+}

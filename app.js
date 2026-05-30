@@ -67,12 +67,14 @@ function selectedRoute(){
 function onOrigenDestinoChange(){
   const r=selectedRoute();
   const km=distanciaRuta(r);
+  const pais=r.destino_pais || "";
+  const localidad=r.destino || "";
+  const destinoTexto=(pais && localidad) ? `${pais} - ${localidad}` : (pais || localidad || "");
   const box=$("rutaInfo");
   if(box){
     box.innerHTML=
       `<b>Distancia estimada:</b> ${km.toFixed(1)} km<br>`+
-      `<b>País destino:</b> ${escapeHtml(r.destino_pais||"")}<br>`+
-      `<b>Localidad destino:</b> ${escapeHtml(r.destino||"")}`;
+      `<b>País destino:</b> ${escapeHtml(destinoTexto)}`;
   }
 }
 
@@ -96,6 +98,13 @@ function getGps(){
 }
 
 async function iniciarTransito(){
+  const abierto=transit();
+  if(abierto && !abierto.closed){
+    alert("Ya hay un tránsito iniciado sin cerrar. Primero debe cerrar el tránsito actual.");
+    show("tracking");
+    return;
+  }
+
   const u=user();
   if(!u.fleet){alert("Cargá la flota en Usuario.");show("usuario");return;}
 
@@ -188,10 +197,10 @@ function renderTracking(){
   const box=$("trackingBox");
   if(box){
     box.innerHTML=
-`<div class="statItem"><b>${total.toFixed(1)} km</b><span>Total</span></div>
- <div class="statItem"><b>${pct}%</b><span>Avance</span></div>
- <div class="statItem"><b>${faltan.toFixed(1)} km</b><span>Restan</span></div>
- <div class="statItem"><b>${calcEta(faltan)}</b><span>ETA</span></div>`;
+`<div class="statItem"><b>${shortKm(total)}</b><span>Total</span></div>
+ <div class="statItem"><b>${pct}%</b><span>Av.</span></div>
+ <div class="statItem"><b>${shortKm(faltan)}</b><span>Restan</span></div>
+ <div class="statItem"><b>${shortEta(faltan)}</b><span>ETA</span></div>`;
   }
 
   renderTrackingMap(t);
@@ -326,7 +335,7 @@ function renderAlertas(){
   const box=$("alertList");
   if(!box) return;
   if(!t||!t.alerts.length){box.innerText="Sin alertas registradas.";return;}
-  box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}<br>GPS: ${a.gps.lat.toFixed(6)}, ${a.gps.lng.toFixed(6)}</div>`).join("");
+  box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("");
 }
 
 /* ===== USUARIO / ÚLTIMO ===== */
@@ -424,6 +433,21 @@ function distKm(a,b,c,d){
 
 function distanciaRuta(r){
   return distKm(r.origen_lat,r.origen_lng,r.destino_lat,r.destino_lng);
+}
+
+function shortKm(km){
+  if(km == null || !isFinite(km)) return "0";
+  if(km >= 1000) return (km/1000).toFixed(1)+"k";
+  return Math.round(km)+"";
+}
+
+function shortEta(km){
+  const speed=70;
+  const mins=Math.round((km/speed)*60);
+  const h=Math.floor(mins/60);
+  const m=mins%60;
+  if(h<=0) return `${m}m`;
+  return `${h}h${m>0 ? " "+m+"m" : ""}`;
 }
 
 function calcEta(km){
