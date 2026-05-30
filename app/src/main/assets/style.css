@@ -819,3 +819,26 @@ input:disabled{
   background:rgba(34,197,94,.12) !important;
   border:1px solid rgba(34,197,94,.25) !important;
 }
+
+
+/* v1.4.31 Paso sin texto detallado */
+.passTextNew{
+  display:none !important;
+}
+
+.passCardNew{
+  padding-bottom:10px !important;
+}
+
+.passAlertCardNew{
+  margin-top:8px !important;
+}
+
+.passAlertsNew{
+  font-size:12px !important;
+  line-height:1.35 !important;
+}
+
+.passStateNew{
+  margin-bottom:0 !important;
+}

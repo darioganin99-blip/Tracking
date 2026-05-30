@@ -765,7 +765,7 @@ async function consultarPasoCristoRedentor(){
   }
 
   if(!texto){
-    box.innerHTML='<div class="passStateNew passWarn"><b>🟡 VERIFICAR ESTADO OFICIAL</b><span>No se pudo consultar automáticamente.</span></div><div class="passTextNew">No hubo respuesta de las fuentes oficiales. Verificar antes de salir por condiciones de alta montaña.</div>';
+    box.innerHTML='<div class="passStateNew passClosedOrange"><b>🟠 PASO VERIFICAR</b><span>No se pudo consultar automáticamente.</span></div>';
     if(alertsBox)alertsBox.innerHTML='<div class="passAlertItem">• No se pudo consultar alertas automáticamente.</div>';
     return;
   }
@@ -779,8 +779,7 @@ async function consultarPasoCristoRedentor(){
   box.innerHTML=`<div class="passStateNew ${estado.cls}">
       <b>${estado.icon} PASO ${estado.label}</b>
       <span>${fuenteUsada} · Actualizado ${actualizado}</span>
-    </div>
-    <div class="passTextNew">${escapeHtml(ext)}</div>`;
+    </div>`;
 
   if(alertsBox){
     alertsBox.dataset.loaded="1";
