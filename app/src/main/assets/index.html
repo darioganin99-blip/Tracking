@@ -8,12 +8,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.24</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.25</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
     <button id="btn-tracking" onclick="show('tracking')">📍 Tracking</button>
     <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
+    <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
     <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
     <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
   </nav>
@@ -52,6 +53,22 @@
       <button class="btn warning" onclick="registrarAlerta()">Registrar alerta con GPS</button>
       <div id="alertList" class="summary"></div>
     </div></section>
+    <section id="clima" class="view hidden"><div class="card climaCard">
+      <div class="weatherHeader">
+        <div><div class="weatherTitle">Clima actual</div><div id="weatherLocation" class="weatherSub">Según posición GPS</div></div>
+        <button class="btn secondary weatherBtn" onclick="actualizarClima()">Actualizar</button>
+      </div>
+      <div id="weatherNow" class="weatherNowBox">Presioná Actualizar para consultar el clima.</div>
+      <div class="weatherSectionTitle">Pronóstico próximas 72 hs</div>
+      <div id="weatherForecast" class="forecastGrid"></div>
+      <div class="weatherSectionTitle">Paso Internacional Los Libertadores / Sistema Cristo Redentor</div>
+      <div id="passStatus" class="passStatusBox">Presioná Actualizar para consultar la situación del paso.</div>
+      <div class="passActions">
+        <button class="btn compactBtn" onclick="abrirPasoArgentina()">Estado oficial Argentina</button>
+        <button class="btn secondary compactBtn" onclick="abrirPasoChile()">Estado oficial Chile</button>
+      </div>
+    </div></section>
+
     <section id="usuario" class="view hidden"><div class="card">
       
       <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
