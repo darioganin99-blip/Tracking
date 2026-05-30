@@ -11,12 +11,18 @@ function transit(){return load(LS.transit,null)}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
 function show(id){
-  ["inicio","tracking","alertas","usuario","ultimo"].forEach(v=>{
+  const views=["inicio","tracking","alertas","usuario","ultimo"];
+  const buttons=["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"];
+
+  views.forEach(v=>{
     const e=$(v);
-    if(e) e.classList.toggle("hidden",v!==id);
+    if(e){
+      if(v===id) e.classList.remove("hidden");
+      else e.classList.add("hidden");
+    }
   });
 
-  ["btn-inicio","btn-tracking","btn-alertas","btn-usuario","btn-ultimo"].forEach(b=>{
+  buttons.forEach(b=>{
     const e=$(b);
     if(e) e.classList.remove("active");
   });
@@ -32,25 +38,34 @@ function show(id){
 }
 
 function initSelectors(){
-  $("clienteSelect").innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("");
-  $("origenSelect").innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("");
-  $("destinoSelect").innerHTML=DESTINOS_DATA.map((d,i)=>`<option value="${i}">${escapeHtml(d.nombre)}</option>`).join("");
+  const cliente=$("clienteSelect");
+  const origen=$("origenSelect");
+  const destino=$("destinoSelect");
+
+  if(cliente) cliente.innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("");
+  if(origen) origen.innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("");
+  if(destino) destino.innerHTML=DESTINOS_DATA.map((d,i)=>`<option value="${i}">${escapeHtml(d.nombre)}</option>`).join("");
+
   onClienteChange();
 }
 
 function onClienteChange(){
-  const c=CLIENTES_DATA[$("clienteSelect").value];
+  const cliente=$("clienteSelect");
+  const destino=$("destinoSelect");
+  if(!cliente || !destino){return;}
+
+  const c=CLIENTES_DATA[cliente.value];
   if(c && c.destino_sugerido){
     const idx=DESTINOS_DATA.findIndex(d=>d.nombre.trim().toLowerCase()===c.destino_sugerido.trim().toLowerCase());
-    if(idx>=0)$("destinoSelect").value=String(idx);
+    if(idx>=0) destino.value=String(idx);
   }
   onOrigenDestinoChange();
 }
 
 function selectedRoute(){
-  const c=CLIENTES_DATA[$("clienteSelect").value]||{};
-  const o=ORIGENES_DATA[$("origenSelect").value]||{};
-  const d=DESTINOS_DATA[$("destinoSelect").value]||{};
+  const c=CLIENTES_DATA[$("clienteSelect")?.value]||{};
+  const o=ORIGENES_DATA[$("origenSelect")?.value]||{};
+  const d=DESTINOS_DATA[$("destinoSelect")?.value]||{};
   return {
     cliente:c.cliente||"",
     origen:o.nombre||"",
@@ -81,15 +96,11 @@ function onOrigenDestinoChange(){
 function bloquearFormularioTransito(){
   const t=transit();
   const bloqueado=!!(t && !t.closed);
-
   ["clienteSelect","origenSelect","destinoSelect","lote"].forEach(id=>{
     const e=$(id);
-    if(e){
-      e.disabled=bloqueado;
-    }
+    if(e) e.disabled=bloqueado;
   });
 }
-
 
 function limpiarCamposInicio(){
   const lote=$("lote");
@@ -110,8 +121,10 @@ function renderInicio(){
   const u=user();
   const inp=$("inicioUser");
   if(inp) inp.value=(u.fleet||"Sin flota")+" - "+(u.driver||"Sin chofer");
+
   const t=transit();
   if(t && $("lote")) $("lote").value=t.lote||"";
+
   bloquearFormularioTransito();
 }
 
@@ -142,10 +155,8 @@ async function iniciarTransito(){
     return;
   }
 
-  const route=selectedRoute();
   const loteEl=$("lote");
   const lote=loteEl ? loteEl.value.trim() : "";
-
   if(!lote){
     window.alert("Ingresá número de lote/carga.");
     return;
@@ -156,7 +167,7 @@ async function iniciarTransito(){
     const t={
       id:regId(),
       user:u,
-      route:route,
+      route:selectedRoute(),
       lote:lote,
       start:gps,
       updates:[],
@@ -176,12 +187,15 @@ async function iniciarTransito(){
 
 async function cerrarTransito(){
   const t=transit();
-  if(!t){window.alert("No hay tránsito iniciado.");return;}
+  if(!t){
+    window.alert("No hay tránsito iniciado.");
+    return;
+  }
 
   try{
     const gps=await getGps();
 
-    if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?"))return;
+    if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?")) return;
 
     t.closed=gps;
     const msg=buildCierreMsg(t);
@@ -344,7 +358,11 @@ function renderTrackingMap(t){
 
 async function actualizarGps(){
   const t=transit();
-  if(!t){window.alert("No hay tránsito iniciado.");renderTracking();return;}
+  if(!t){
+    window.alert("No hay tránsito iniciado.");
+    renderTracking();
+    return;
+  }
 
   try{
     const gps=await getGps();
@@ -353,13 +371,16 @@ async function actualizarGps(){
     save(LS.transit,t);
     renderTracking();
   }catch(e){
-    alert("No se pudo actualizar GPS: "+(e.message||e));
+    window.alert("No se pudo actualizar GPS: "+(e.message||e));
   }
 }
 
 async function enviarActualizacion(){
   const t=transit();
-  if(!t){window.alert("No hay tránsito iniciado.");return;}
+  if(!t){
+    window.alert("No hay tránsito iniciado.");
+    return;
+  }
   await actualizarGps();
   const updated=transit();
   if(!updated) return;
@@ -371,7 +392,10 @@ async function enviarActualizacion(){
 /* ===== ALERTAS ===== */
 async function registrarAlerta(){
   const t=transit();
-  if(!t){window.window.alert("No hay tránsito iniciado.");return;}
+  if(!t){
+    window.alert("No hay tránsito iniciado.");
+    return;
+  }
 
   try{
     const gps=await getGps();
@@ -389,16 +413,19 @@ function renderAlertas(){
   const t=transit();
   const box=$("alertList");
   if(!box) return;
-  if(!t||!t.alerts.length){box.innerText="Sin alertas registradas.";return;}
+  if(!t||!t.alerts.length){
+    box.innerText="Sin alertas registradas.";
+    return;
+  }
   box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("");
 }
 
 /* ===== USUARIO / ÚLTIMO ===== */
 function loadUserForm(){
   const u=user();
-  $("userFleet").value=u.fleet||"";
-  $("userDriver").value=u.driver||"";
-  $("userPhones").value=u.phones||"";
+  if($("userFleet")) $("userFleet").value=u.fleet||"";
+  if($("userDriver")) $("userDriver").value=u.driver||"";
+  if($("userPhones")) $("userPhones").value=u.phones||"";
 }
 
 function saveUser(){
@@ -424,8 +451,7 @@ function renderUltimo(){
 
 function limpiarResumenUltimo(msg){
   const texto=String(msg||"");
-  const lineas=texto.split("
-").map(x=>x.trim()).filter(Boolean);
+  const lineas=texto.split("\n").map(x=>x.trim()).filter(Boolean);
 
   const claves=[
     "Registro:",
@@ -447,13 +473,15 @@ function limpiarResumenUltimo(msg){
     if(l) salida.push(l);
   });
 
-  return salida.length ? salida.join("
-") : texto;
+  return salida.length ? salida.join("\n") : texto;
 }
 
 function reenviarUltimo(){
   const last=load(LS.last,null);
-  if(!last){alert("No hay último envío.");return;}
+  if(!last){
+    window.alert("No hay último envío.");
+    return;
+  }
   sendToPhones(last.msg);
 }
 
@@ -478,7 +506,6 @@ Alertas ocurridas: ${formatAlerts(t)}`;
 
 function buildCierreMsg(t){
   const total=distanciaRuta(t.route);
-  const real=distKm(t.start.lat,t.start.lng,t.closed.lat,t.closed.lng);
   return `Carga entregada, Cierre de tránsito
 Registro: ${t.id}
 Flota: ${t.user.fleet}
@@ -502,7 +529,11 @@ function formatAlerts(t){
 function sendToPhones(msg){
   const u=user();
   const phones=String(u.phones||"").split(/[,;\n]+/).map(cleanPhone).filter(Boolean);
-  if(!phones.length){alert("No hay teléfonos registrados en Usuario.");show("usuario");return;}
+  if(!phones.length){
+    window.alert("No hay teléfonos registrados en Usuario.");
+    show("usuario");
+    return;
+  }
   save(LS.last,{msg,date:now()});
   window.location.href=`https://wa.me/${phones[0]}?text=${encodeURIComponent(msg)}`;
 }
@@ -551,5 +582,7 @@ function duration(a,b){
   return `${d} días, ${h} horas, ${m} minutos`;
 }
 
-initSelectors();
-show("inicio");
+document.addEventListener("DOMContentLoaded",()=>{
+  initSelectors();
+  show("inicio");
+});
