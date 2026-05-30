@@ -81,11 +81,15 @@ function onOrigenDestinoChange(){
 function bloquearFormularioTransito(){
   const t=transit();
   const bloqueado=!!(t && !t.closed);
+
   ["clienteSelect","origenSelect","destinoSelect","lote"].forEach(id=>{
     const e=$(id);
-    if(e) e.disabled=bloqueado;
+    if(e){
+      e.disabled=bloqueado;
+    }
   });
 }
+
 
 function renderInicio(){
   const u=user();
@@ -109,6 +113,7 @@ function getGps(){
 
 async function iniciarTransito(){
   const abierto=transit();
+
   if(abierto && !abierto.closed){
     window.alert("Ya hay un tránsito iniciado sin cerrar. Primero debe cerrar el tránsito actual.");
     show("tracking");
@@ -116,21 +121,41 @@ async function iniciarTransito(){
   }
 
   const u=user();
-  if(!u.fleet){window.alert("Cargá la flota en Usuario.");show("usuario");return;}
+  if(!u.fleet){
+    window.alert("Cargá la flota en Usuario.");
+    show("usuario");
+    return;
+  }
 
   const route=selectedRoute();
-  const lote=$("lote").value.trim();
-  if(!lote){window.alert("Ingresá número de lote/carga.");return;}
+  const loteEl=$("lote");
+  const lote=loteEl ? loteEl.value.trim() : "";
+
+  if(!lote){
+    window.alert("Ingresá número de lote/carga.");
+    return;
+  }
 
   try{
     const gps=await getGps();
-    const t={id:regId(),user:u,route,lote,start:gps,updates:[],alerts:[],closed:null};
+    const t={
+      id:regId(),
+      user:u,
+      route:route,
+      lote:lote,
+      start:gps,
+      updates:[],
+      alerts:[],
+      closed:null
+    };
+
     save(LS.transit,t);
     bloquearFormularioTransito();
     window.alert("Tránsito iniciado correctamente.");
     show("tracking");
+
   }catch(e){
-    alert("No se pudo tomar GPS de inicio: "+(e.message||e));
+    window.alert("No se pudo tomar GPS de inicio: "+(e.message||e));
   }
 }
 
