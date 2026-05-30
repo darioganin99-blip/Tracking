@@ -126,7 +126,7 @@ function onOrigenDestinoChange(){
   const box=$("rutaInfo");
   if(box){
     box.innerHTML=
-      `<b>Distancia estimada:</b> ${km.toFixed(1)} km<br>`+
+      `<b>Distancia:</b> ${km.toFixed(1)} km<br>`+
       `<b>Destino:</b> ${escapeHtml(destinoCompacto(r))}`;
   }
   aplicarColorResumenInicio();
@@ -550,12 +550,12 @@ async function buildUpdateMsgAsync(t){
 
 📦 Número de carga: ${t.lote}
 
-📍 Ubicación: ${ubicacion}
+📍 Ub.: ${ubicacion}
 
 🎯 Destino: ${t.route.destino}
 
-🛣️ Kilómetros faltantes: ${faltan.toFixed(1)} km
-⏱️ ETA estimada: ${calcEta(faltan)}
+🛣️ Km. Faltantes: ${faltan.toFixed(1)} km
+⏱️ ETA: ${calcEta(faltan)}
 
 ⚠️ Alertas ocurridas:
 ${formatAlertsMultiline(t)}`;
@@ -576,12 +576,12 @@ function buildUpdateMsg(t){
 
 📦 Número de carga: ${t.lote}
 
-📍 Ubicación: consultando localidad GPS
+📍 Ub.: consultando localidad GPS
 
 🎯 Destino: ${t.route.destino}
 
-🛣️ Kilómetros faltantes: ${faltan.toFixed(1)} km
-⏱️ ETA estimada: ${calcEta(faltan)}
+🛣️ Km. Faltantes: ${faltan.toFixed(1)} km
+⏱️ ETA: ${calcEta(faltan)}
 
 ⚠️ Alertas ocurridas:
 ${formatAlertsMultiline(t)}`;
@@ -608,8 +608,8 @@ async function buildCierreMsgAsync(t){
 🕒 Salida: ${fmtDateShort(t.start.time)}
 🏁 Llegada hora: ${fmtDateShort(t.closed.time)}
 
-🛣️ Distancia estimada: ${total.toFixed(1)} km
-⏱️ Duración total: ${duration(t.start.time,t.closed.time)}
+🛣️ Distancia: ${total.toFixed(1)} km
+⏱️ T.Time: ${duration(t.start.time,t.closed.time)}
 
 ⚠️ Alertas ocurridas:
 ${formatAlertsMultiline(t)}`;
@@ -633,8 +633,8 @@ function buildCierreMsg(t){
 🕒 Salida: ${fmtDateShort(t.start.time)}
 🏁 Llegada hora: ${fmtDateShort(t.closed.time)}
 
-🛣️ Distancia estimada: ${total.toFixed(1)} km
-⏱️ Duración total: ${duration(t.start.time,t.closed.time)}
+🛣️ Distancia: ${total.toFixed(1)} km
+⏱️ T.Time: ${duration(t.start.time,t.closed.time)}
 
 ⚠️ Alertas ocurridas:
 ${formatAlertsMultiline(t)}`;
