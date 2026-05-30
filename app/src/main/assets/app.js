@@ -79,17 +79,34 @@ function selectedRoute(){
   };
 }
 
+function destinoCompacto(route){
+  const pais=route.destino_pais || "";
+  const localidad=route.destino || "";
+  return (pais && localidad) ? `${pais} - ${localidad}` : (pais || localidad || "");
+}
+
 function onOrigenDestinoChange(){
   const r=selectedRoute();
   const km=distanciaRuta(r);
-  const pais=r.destino_pais || "";
-  const localidad=r.destino || "";
-  const destinoTexto=(pais && localidad) ? `${pais} - ${localidad}` : (pais || localidad || "");
   const box=$("rutaInfo");
   if(box){
     box.innerHTML=
       `<b>Distancia estimada:</b> ${km.toFixed(1)} km<br>`+
-      `<b>País destino:</b> ${escapeHtml(destinoTexto)}`;
+      `<b>Destino:</b> ${escapeHtml(destinoCompacto(r))}`;
+  }
+}
+
+function renderTransitStatus(){
+  const box=$("transitStatus");
+  if(!box) return;
+
+  const t=transit();
+  if(t && !t.closed){
+    box.className="statusBox activeTransit";
+    box.innerHTML=`🟢 <b>TRÁNSITO ACTIVO</b><br><span>Registro: ${escapeHtml(t.id||"")}</span>`;
+  }else{
+    box.className="statusBox inactiveTransit";
+    box.innerHTML=`⚪ <b>SIN TRÁNSITO ACTIVO</b>`;
   }
 }
 
@@ -125,6 +142,7 @@ function renderInicio(){
   const t=transit();
   if(t && $("lote")) $("lote").value=t.lote||"";
 
+  renderTransitStatus();
   bloquearFormularioTransito();
 }
 
@@ -177,6 +195,7 @@ async function iniciarTransito(){
 
     save(LS.transit,t);
     bloquearFormularioTransito();
+    renderTransitStatus();
     window.alert("Tránsito iniciado correctamente.");
     show("tracking");
 
@@ -204,6 +223,7 @@ async function cerrarTransito(){
     localStorage.removeItem(LS.transit);
     limpiarCamposInicio();
     bloquearFormularioTransito();
+    renderTransitStatus();
 
     sendToPhones(msg);
     window.alert("Tránsito cerrado.");
@@ -417,7 +437,7 @@ function renderAlertas(){
     box.innerText="Sin alertas registradas.";
     return;
   }
-  box.innerHTML=t.alerts.map(a=>`<div class="alertItem"><b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("");
+  box.innerHTML=t.alerts.map(a=>`<div class="alertItem">⚠ <b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("");
 }
 
 /* ===== USUARIO / ÚLTIMO ===== */
@@ -453,27 +473,32 @@ function limpiarResumenUltimo(msg){
   const texto=String(msg||"");
   const lineas=texto.split("\n").map(x=>x.trim()).filter(Boolean);
 
-  const claves=[
-    "Registro:",
-    "Flota:",
-    "Chofer:",
-    "Cliente:",
-    "Número de carga:",
-    "Destino:",
-    "Fecha y hora de salida:",
-    "Fecha y hora de llegada:",
-    "Tiempo de tránsito:",
-    "KM origen/destino:",
-    "Alertas ocurridas:"
-  ];
+  const get = key => {
+    const line=lineas.find(x=>x.startsWith(key));
+    return line ? line.replace(key,"").trim() : "";
+  };
 
-  const salida=[];
-  claves.forEach(k=>{
-    const l=lineas.find(x=>x.startsWith(k));
-    if(l) salida.push(l);
-  });
+  const alertas=get("Alertas ocurridas:") || "Sin alertas";
 
-  return salida.length ? salida.join("\n") : texto;
+  return `Registro: ${get("Registro:")}
+
+Flota: ${get("Flota:")}
+Chofer: ${get("Chofer:")}
+
+Cliente: ${get("Cliente:")}
+Destino: ${get("Destino:")}
+
+Salida:
+${get("Fecha y hora de salida:")}
+
+Llegada:
+${get("Fecha y hora de llegada:")}
+
+Tiempo tránsito:
+${get("Tiempo de tránsito:")}
+
+Alertas:
+${alertas}`;
 }
 
 function reenviarUltimo(){
@@ -513,7 +538,7 @@ Chofer: ${t.user.driver}
 Cliente: ${t.route.cliente}
 Número de carga: ${t.lote}
 Origen: ${t.route.origen}
-Destino: ${t.route.destino}
+Destino: ${destinoCompacto(t.route)}
 Fecha y hora de salida: ${fmtDate(t.start.time)}
 Fecha y hora de llegada: ${fmtDate(t.closed.time)}
 Tiempo de tránsito: ${duration(t.start.time,t.closed.time)}
