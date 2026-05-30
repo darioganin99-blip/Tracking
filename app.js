@@ -68,9 +68,9 @@ function initSelectors(){
   const origen=$("origenSelect");
   const destino=$("destinoSelect");
 
-  if(cliente) cliente.innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("");
-  if(origen) origen.innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("");
-  if(destino) destino.innerHTML=DESTINOS_DATA.map((d,i)=>`<option value="${i}">${escapeHtml(d.nombre)}</option>`).join("");
+  if(cliente) cliente.innerHTML=CLIENTES_DATA.map((c,i)=>`<option value="${i}">${escapeHtml(c.cliente)}</option>`).join("\n");
+  if(origen) origen.innerHTML=ORIGENES_DATA.map((o,i)=>`<option value="${i}">${escapeHtml(o.nombre)}</option>`).join("\n");
+  if(destino) destino.innerHTML=DESTINOS_DATA.map((d,i)=>`<option value="${i}">${escapeHtml(d.nombre)}</option>`).join("\n");
 
   onClienteChange();
 }
@@ -467,7 +467,7 @@ function renderAlertas(){
     box.innerText="Sin alertas registradas.";
     return;
   }
-  box.innerHTML=t.alerts.map(a=>`<div class="alertItem">⚠ <b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("");
+  box.innerHTML=t.alerts.map(a=>`<div class="alertItem">⚠ <b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("\n");
 }
 
 /* ===== USUARIO / ÚLTIMO ===== */
@@ -647,8 +647,7 @@ function formatAlerts(t){
 
 function formatAlertsMultiline(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`• ${a.type} ${fmtDateShort(a.time)}`).join("
-");
+  return t.alerts.map(a=>`• ${a.type} ${fmtDateShort(a.time)}`).join("\n");
 }
 
 function sendToPhones(msg){
@@ -766,7 +765,7 @@ async function cargarClimaGps(lat,lng){
       const day=dt.toLocaleString("es-AR",{weekday:"short",day:"2-digit"});
       rows.push(`<div class="forecastRowNew oneLineForecast"><span class="forecastDayNew">${day}</span><span class="forecastIconNew">${weatherIcon(code)}</span><span class="forecastCondNew">${weatherCodeText(code)}</span><span class="forecastTempNew">${max}°/${min}°</span><span class="forecastRainNew">💨${wind}</span></div>`);
     }
-    f.innerHTML=rows.join("");
+    f.innerHTML=rows.join("\n");
   }
 }
 
