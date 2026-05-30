@@ -91,6 +91,21 @@ function bloquearFormularioTransito(){
 }
 
 
+function limpiarCamposInicio(){
+  const lote=$("lote");
+  if(lote) lote.value="";
+
+  const cliente=$("clienteSelect");
+  const origen=$("origenSelect");
+  const destino=$("destinoSelect");
+
+  if(cliente) cliente.selectedIndex=0;
+  if(origen) origen.selectedIndex=0;
+  if(destino) destino.selectedIndex=0;
+
+  onClienteChange();
+}
+
 function renderInicio(){
   const u=user();
   const inp=$("inicioUser");
@@ -165,20 +180,23 @@ async function cerrarTransito(){
 
   try{
     const gps=await getGps();
-    const moved=distKm(t.start.lat,t.start.lng,gps.lat,gps.lng);
-    if(moved<0.05){alert("La posición GPS de cierre debe ser distinta a la de inicio.");return;}
+
     if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?"))return;
 
     t.closed=gps;
     const msg=buildCierreMsg(t);
     save(LS.last,{msg,date:now()});
+
     localStorage.removeItem(LS.transit);
+    limpiarCamposInicio();
     bloquearFormularioTransito();
+
     sendToPhones(msg);
     window.alert("Tránsito cerrado.");
     show("inicio");
+
   }catch(e){
-    alert("No se pudo cerrar tránsito: "+(e.message||e));
+    window.alert("No se pudo cerrar tránsito: "+(e.message||e));
   }
 }
 
@@ -393,7 +411,44 @@ function saveUser(){
 
 function renderUltimo(){
   const last=load(LS.last,null);
-  $("lastBox").innerText=last?last.msg:"No hay envíos registrados.";
+  const box=$("lastBox");
+  if(!box) return;
+
+  if(!last){
+    box.innerText="No hay envíos registrados.";
+    return;
+  }
+
+  box.innerText=limpiarResumenUltimo(last.msg);
+}
+
+function limpiarResumenUltimo(msg){
+  const texto=String(msg||"");
+  const lineas=texto.split("
+").map(x=>x.trim()).filter(Boolean);
+
+  const claves=[
+    "Registro:",
+    "Flota:",
+    "Chofer:",
+    "Cliente:",
+    "Número de carga:",
+    "Destino:",
+    "Fecha y hora de salida:",
+    "Fecha y hora de llegada:",
+    "Tiempo de tránsito:",
+    "KM origen/destino:",
+    "Alertas ocurridas:"
+  ];
+
+  const salida=[];
+  claves.forEach(k=>{
+    const l=lineas.find(x=>x.startsWith(k));
+    if(l) salida.push(l);
+  });
+
+  return salida.length ? salida.join("
+") : texto;
 }
 
 function reenviarUltimo(){
@@ -436,8 +491,6 @@ Fecha y hora de salida: ${fmtDate(t.start.time)}
 Fecha y hora de llegada: ${fmtDate(t.closed.time)}
 Tiempo de tránsito: ${duration(t.start.time,t.closed.time)}
 KM origen/destino: ${total.toFixed(1)} km
-KM recorridos GPS: ${real.toFixed(1)} km
-GPS llegada: ${t.closed.lat.toFixed(6)}, ${t.closed.lng.toFixed(6)}
 Alertas ocurridas: ${formatAlerts(t)}`;
 }
 
