@@ -857,3 +857,35 @@ input:disabled{
 .passAlertsNew{
   margin-top:0 !important;
 }
+
+
+/* v1.4.33 Alertas scroll interno */
+#alertas .card{
+  display:flex !important;
+  flex-direction:column !important;
+  max-height:calc(100vh - 190px) !important;
+  overflow:hidden !important;
+}
+
+#alertList{
+  flex:1 1 auto !important;
+  max-height:48vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-right:4px !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+#alertList .alertItem{
+  margin-bottom:7px !important;
+}
+
+#alertList::-webkit-scrollbar{
+  width:6px;
+}
+
+#alertList::-webkit-scrollbar-thumb{
+  background:rgba(100,116,139,.45);
+  border-radius:999px;
+}
