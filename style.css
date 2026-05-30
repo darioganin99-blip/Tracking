@@ -569,3 +569,91 @@ input:disabled{
 
 /* Clima card redesign v1.4.27 */
 .climaCardNew{padding:12px!important;background:linear-gradient(180deg,#eef5ff,#f8fafc)!important}.weatherCardNew{display:flex;align-items:center;gap:14px;min-height:138px;padding:18px;border-radius:28px;background:linear-gradient(135deg,#244a97,#315ca7);color:white;box-shadow:0 16px 34px rgba(37,99,235,.25);overflow:hidden}.weatherIconBig{font-size:64px;line-height:1;min-width:78px;text-align:center;filter:drop-shadow(0 6px 10px rgba(0,0,0,.20))}.weatherMainNew{flex:1;min-width:0}.weatherTempNew{font-size:42px;line-height:1;font-weight:950}.weatherDescNew{font-size:15px;line-height:1.15;font-weight:850;margin-top:5px}.weatherLocNew{font-size:12px;opacity:.88;margin-top:7px;font-weight:750}.weatherMetaNew{font-size:10px;opacity:.82;margin-top:5px}.forecastCardNew,.passCardNew,.passAlertCardNew{margin-top:10px;border-radius:22px;padding:12px;background:#fff;border:1px solid rgba(148,163,184,.25);box-shadow:0 10px 22px rgba(15,23,42,.08)}.forecastTitleNew,.passTitleNew{font-size:13px;font-weight:950;color:#0f172a;margin-bottom:8px}.forecastListNew{display:flex;flex-direction:column;gap:3px}.forecastRowNew{display:grid;grid-template-columns:36px 34px 1fr 58px;align-items:center;gap:4px;padding:7px 4px;border-bottom:1px solid rgba(148,163,184,.18)}.forecastRowNew:last-child{border-bottom:0}.forecastDayNew{font-size:13px;font-weight:900;color:#475569;text-transform:lowercase}.forecastIconNew{font-size:22px;text-align:center}.forecastCondNew{font-size:11px;font-weight:800;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.forecastTempNew{font-size:14px;font-weight:950;color:#1e3a8a;text-align:right}.forecastRowNew small{grid-column:3/5;font-size:9px;color:#64748b;margin-top:-3px}.forecastEmpty{font-size:12px;color:#64748b;font-weight:800}.passStateNew{border-radius:16px;padding:10px;margin-bottom:8px}.passStateNew b{display:block;font-size:14px;font-weight:950}.passStateNew span{display:block;font-size:11px;font-weight:800;margin-top:3px}.passOpen{background:rgba(34,197,94,.14);color:#166534;border:1px solid rgba(34,197,94,.35)}.passWarn{background:rgba(245,158,11,.16);color:#92400e;border:1px solid rgba(245,158,11,.35)}.passClosed{background:rgba(239,68,68,.14);color:#991b1b;border:1px solid rgba(239,68,68,.35)}.passTextNew{font-size:11px;line-height:1.35;color:#334155;max-height:92px;overflow:auto}.passMiniLink{margin-top:8px;width:100%;border:0;border-radius:12px;padding:9px;background:#e0ecff;color:#1d4ed8;font-size:12px;font-weight:950}.passAlertsNew{font-size:12px;color:#334155;font-weight:800;line-height:1.45}.passAlertItem{padding:6px 0;border-bottom:1px solid rgba(148,163,184,.18)}.passAlertItem:last-child{border-bottom:0}.passOkItem{color:#166534;background:rgba(34,197,94,.10);border-radius:12px;padding:9px}.weatherFullBtn{margin-top:12px!important;width:100%!important;padding:13px 10px!important;border-radius:18px!important;font-size:14px!important}@media(max-height:720px){.weatherCardNew{min-height:118px;padding:14px;border-radius:22px}.weatherIconBig{font-size:50px;min-width:60px}.weatherTempNew{font-size:34px}.passTextNew{max-height:70px}}
+
+
+/* Clima compact card v1.4.28 */
+.weatherCardNew{
+  min-height:92px !important;
+  padding:12px 14px !important;
+  border-radius:20px !important;
+  gap:10px !important;
+}
+
+.weatherIconBig{
+  font-size:42px !important;
+  min-width:48px !important;
+}
+
+.weatherTempNew{
+  font-size:30px !important;
+}
+
+.weatherDescNew{
+  font-size:13px !important;
+  margin-top:2px !important;
+}
+
+.weatherLocNew{
+  font-size:11px !important;
+  margin-top:4px !important;
+}
+
+.weatherMetaNew{
+  font-size:9px !important;
+  margin-top:3px !important;
+}
+
+.forecastCardNew,
+.passCardNew,
+.passAlertCardNew{
+  padding:10px !important;
+  border-radius:18px !important;
+}
+
+.oneLineForecast{
+  grid-template-columns:48px 28px 1fr 58px 38px !important;
+  gap:3px !important;
+  padding:6px 2px !important;
+}
+
+.oneLineForecast small{
+  display:none !important;
+}
+
+.forecastDayNew{
+  font-size:11px !important;
+}
+
+.forecastIconNew{
+  font-size:18px !important;
+}
+
+.forecastCondNew{
+  font-size:10px !important;
+}
+
+.forecastTempNew{
+  font-size:12px !important;
+}
+
+.forecastRainNew{
+  font-size:10px !important;
+  color:#2563eb;
+  font-weight:900;
+  text-align:right;
+}
+
+.passMiniLink{
+  display:none !important;
+}
+
+.passTextNew{
+  max-height:120px !important;
+  font-size:10px !important;
+}
+
+.weatherFullBtn{
+  margin-top:10px !important;
+  padding:11px 8px !important;
+  font-size:13px !important;
+}
