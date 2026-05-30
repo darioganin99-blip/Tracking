@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.12</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.13</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
@@ -31,15 +31,20 @@
     </div></section>
     <section id="tracking" class="view hidden"><div class="card trackingCard">
       <div id="realMap" class="realMap"></div>
+
       <div class="mapLegend">
         <span><b class="dot origin"></b>Origen</span>
         <span><b class="dot current"></b>Última ubicación</span>
         <span><b class="dot dest"></b>Destino</span>
         <span><b class="dot alert"></b>Alertas</span>
       </div>
-      <div id="trackingBox" class="summary"></div>
-      <button class="btn secondary" onclick="actualizarGps()">Actualizar GPS</button>
-      <button class="btn" onclick="enviarActualizacion()">Enviar actualización de tránsito</button>
+
+      <div id="trackingBox" class="trackingStats"></div>
+
+      <div class="trackingActions">
+        <button class="btn secondary compactBtn" onclick="actualizarGps()">Actualizar GPS</button>
+        <button class="btn compactBtn" onclick="enviarActualizacion()">Enviar actualización</button>
+      </div>
     </div></section>
     <section id="alertas" class="view hidden"><div class="card">
       

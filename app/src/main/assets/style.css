@@ -51,3 +51,79 @@
 .mapLegend{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px;color:#334155;font-size:12px;font-weight:800}
 .mapLegend span{display:flex;align-items:center;gap:7px}.dot{width:11px;height:11px;border-radius:50%;display:inline-block}.dot.origin{background:#22c55e}.dot.current{background:#2f8cff}.dot.dest{background:#ef4444}.dot.alert{background:#f59e0b}
 .mapBox,.mapGrid,.mapSvg,.mapMarker{display:none!important}
+
+
+/* Tracking layout v1.4.13 */
+.realMap{
+  height:520px !important;
+  min-height:520px !important;
+  width:100%;
+  margin:0 0 8px !important;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(148,163,184,.25);
+  box-shadow:0 16px 30px rgba(0,0,0,.22);
+  background:#dbeafe;
+}
+
+.trackingStats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:8px 0 10px;
+}
+
+.statItem{
+  background:rgba(15,23,42,.06);
+  border:1px solid rgba(148,163,184,.24);
+  border-radius:14px;
+  padding:8px 10px;
+  line-height:1.15;
+}
+
+.statItem b{
+  display:block;
+  font-size:15px;
+  color:#0f172a;
+  font-weight:950;
+}
+
+.statItem span{
+  display:block;
+  font-size:10px;
+  color:#64748b;
+  font-weight:800;
+  margin-top:3px;
+}
+
+.trackingActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:6px;
+}
+
+.compactBtn{
+  margin-top:0 !important;
+  padding:12px 10px !important;
+  font-size:13px !important;
+  border-radius:15px !important;
+}
+
+.mapLegend{
+  margin:6px 0 8px !important;
+  font-size:11px !important;
+}
+
+@media (max-height:740px){
+  .realMap{
+    height:430px !important;
+    min-height:430px !important;
+  }
+  .statItem{
+    padding:7px 8px;
+  }
+  .compactBtn{
+    padding:11px 8px !important;
+  }
+}

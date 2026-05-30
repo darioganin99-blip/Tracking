@@ -69,12 +69,44 @@ function initLeafletMap(){
   return leafletMap;
 }
 
+let leafletMap=null;
+let leafletLayers=[];
+
+function clearLeafletLayers(){
+  if(!leafletMap) return;
+  leafletLayers.forEach(layer=>{try{leafletMap.removeLayer(layer);}catch(e){}});
+  leafletLayers=[];
+}
+
+function addLeafletLayer(layer){
+  if(!leafletMap) return layer;
+  layer.addTo(leafletMap);
+  leafletLayers.push(layer);
+  return layer;
+}
+
+function initLeafletMap(){
+  const mapDiv=document.getElementById("realMap");
+  if(!mapDiv || typeof L==="undefined") return null;
+
+  if(!leafletMap){
+    leafletMap=L.map("realMap",{zoomControl:true,attributionControl:true}).setView([-34.6037,-58.3816],6);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,
+      attribution:"© OpenStreetMap"
+    }).addTo(leafletMap);
+  }
+
+  setTimeout(()=>{try{leafletMap.invalidateSize();}catch(e){}},250);
+  return leafletMap;
+}
+
 function renderTracking(){
   const t=transit();
 
   if(!t){
     const box=document.getElementById("trackingBox");
-    if(box) box.innerText="No hay tránsito iniciado.";
+    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado.</span></div>';
     renderTrackingMap(null);
     return;
   }
@@ -87,13 +119,43 @@ function renderTracking(){
 
   const box=document.getElementById("trackingBox");
   if(box){
-    box.innerText=`Distancia total: ${total.toFixed(1)} km
-Avance: ${pct}%
-KM por recorrer: ${faltan.toFixed(1)} km
-ETA: ${calcEta(faltan)}`;
+    box.innerHTML=
+`<div class="statItem"><b>${total.toFixed(1)} km</b><span>Distancia total</span></div>
+ <div class="statItem"><b>${pct}%</b><span>Avance</span></div>
+ <div class="statItem"><b>${faltan.toFixed(1)} km</b><span>KM por recorrer</span></div>
+ <div class="statItem"><b>${calcEta(faltan)}</b><span>ETA</span></div>`;
   }
 
   renderTrackingMap(t);
+}
+
+async function getRoadRoute(origin,dest){
+  try{
+    if(!origin || !dest) return null;
+    if(!isFinite(origin.lat)||!isFinite(origin.lng)||!isFinite(dest.lat)||!isFinite(dest.lng)) return null;
+
+    const url=`https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${dest.lng},${dest.lat}?overview=full&geometries=geojson`;
+    const res=await fetch(url);
+    const data=await res.json();
+
+    if(data && data.routes && data.routes[0] && data.routes[0].geometry && data.routes[0].geometry.coordinates){
+      return data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
+    }
+  }catch(e){
+    console.log("OSRM route error",e);
+  }
+  return null;
+}
+
+function drawFallbackLine(origin,cur,dest){
+  const line=[];
+  if(origin&&isFinite(origin.lat)&&isFinite(origin.lng)) line.push([origin.lat,origin.lng]);
+  if(cur&&isFinite(cur.lat)&&isFinite(cur.lng)) line.push([cur.lat,cur.lng]);
+  if(dest&&isFinite(dest.lat)&&isFinite(dest.lng)) line.push([dest.lat,dest.lng]);
+
+  if(line.length>=2){
+    addLeafletLayer(L.polyline(line,{color:"#2563eb",weight:5,opacity:.9,dashArray:"8,8"}));
+  }
 }
 
 function renderTrackingMap(t){
@@ -135,17 +197,18 @@ function renderTrackingMap(t){
     addLeafletLayer(L.circleMarker([a.lat,a.lng],{radius:8,color:"#fff",weight:2,fillColor:"#f59e0b",fillOpacity:1}).bindPopup("Alerta "+(i+1)));
   });
 
-  const line=[];
-  if(isFinite(origin.lat)&&isFinite(origin.lng)) line.push([origin.lat,origin.lng]);
-  if(isFinite(cur.lat)&&isFinite(cur.lng)) line.push([cur.lat,cur.lng]);
-  if(isFinite(dest.lat)&&isFinite(dest.lng)) line.push([dest.lat,dest.lng]);
-
-  if(line.length>=2){
-    addLeafletLayer(L.polyline(line,{color:"#2563eb",weight:5,opacity:.9}));
-  }
-
   if(bounds.length>=2) map.fitBounds(bounds,{padding:[28,28]});
   else if(bounds.length===1) map.setView(bounds[0],12);
+
+  // Ruta real por calles/rutas desde origen hasta destino.
+  getRoadRoute(origin,dest).then(routePoints=>{
+    if(routePoints && routePoints.length>=2){
+      addLeafletLayer(L.polyline(routePoints,{color:"#1d4ed8",weight:5,opacity:.92}));
+      try{ map.fitBounds(routePoints,{padding:[28,28]}); }catch(e){}
+    }else{
+      drawFallbackLine(origin,cur,dest);
+    }
+  });
 }
 
 async function actualizarGps(){
@@ -153,7 +216,7 @@ async function actualizarGps(){
   if(!t){
     alert("No hay tránsito iniciado.");
     const box=document.getElementById("trackingBox");
-    if(box) box.innerText="No hay tránsito iniciado.";
+    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado.</span></div>';
     renderTrackingMap(null);
     return;
   }
