@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.26</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.27</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
@@ -52,20 +52,28 @@
       <button class="btn warning" onclick="registrarAlerta()">Registrar alerta con GPS</button>
       <div id="alertList" class="summary"></div>
     </div></section>
-    <section id="clima" class="view hidden"><div class="card climaCard">
-      <div class="weatherHeader">
-        <div><div class="weatherTitle">Clima actual</div><div id="weatherLocation" class="weatherSub">Según posición GPS</div></div>
-        <button class="btn secondary weatherBtn" onclick="actualizarClima()">Actualizar</button>
+    <section id="clima" class="view hidden"><div class="card climaCard climaCardNew">
+      <div id="weatherNow" class="weatherCardNew">
+        <div class="weatherIconBig">🌤️</div>
+        <div class="weatherMainNew">
+          <div class="weatherTempNew">--°</div>
+          <div class="weatherDescNew">Presioná actualizar</div>
+          <div id="weatherLocation" class="weatherLocNew">Según posición GPS</div>
+        </div>
       </div>
-      <div id="weatherNow" class="weatherNowBox">Presioná Actualizar para consultar el clima.</div>
-      <div class="weatherSectionTitle">Pronóstico próximas 72 hs</div>
-      <div id="weatherForecast" class="forecastGrid"></div>
-      <div class="weatherSectionTitle">Paso Internacional Los Libertadores / Sistema Cristo Redentor</div>
-      <div id="passStatus" class="passStatusBox">Presioná Actualizar para consultar la situación del paso.</div>
-      <div class="passActions">
-        <button class="btn compactBtn" onclick="abrirPasoArgentina()">Estado oficial Argentina</button>
-        <button class="btn secondary compactBtn" onclick="abrirPasoChile()">Estado oficial Chile</button>
+      <div class="forecastCardNew">
+        <div class="forecastTitleNew">Pronóstico próximas 72 hs</div>
+        <div id="weatherForecast" class="forecastListNew"></div>
       </div>
+      <div class="passCardNew">
+        <div class="passTitleNew">🚛 Paso Cristo Redentor</div>
+        <div id="passStatus" class="passStatusNew">Estado pendiente de actualizar.</div>
+      </div>
+      <div class="passAlertCardNew">
+        <div class="passTitleNew">⚠ Alertas del paso</div>
+        <div id="passAlerts" class="passAlertsNew">Sin datos actualizados.</div>
+      </div>
+      <button class="btn weatherFullBtn" onclick="actualizarClima()">🔄 Actualizar clima y paso</button>
     </div></section>
 
     <section id="usuario" class="view hidden"><div class="card">
