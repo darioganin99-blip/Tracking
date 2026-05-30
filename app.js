@@ -564,10 +564,10 @@ function formatAlerts(t){
   return t.alerts.map(a=>`${a.type} (${fmtDate(a.time)})`).join(" | ");
 }
 
+
 function formatAlertsMultiline(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`• ${a.type} (${fmtDate(a.time)})`).join("
-");
+  return t.alerts.map(a=>`• ${a.type} (${fmtDate(a.time)})`).join("\n");
 }
 
 function sendToPhones(msg){
