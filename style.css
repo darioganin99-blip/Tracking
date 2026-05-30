@@ -938,3 +938,10 @@ input:disabled{
   min-height:44px !important;
   font-size:13px !important;
 }
+
+
+/* v1.4.42 Envio rapido Tracking */
+button:disabled{
+  opacity:.65 !important;
+  cursor:wait !important;
+}

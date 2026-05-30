@@ -14,6 +14,18 @@ function fmtDateShort(v){
   return `${dd}/${mm} ${hh}:${mi}`;
 }
 
+function timeoutPromise(ms){
+  return new Promise((_,reject)=>setTimeout(()=>reject(new Error("timeout")),ms));
+}
+
+async function localidadDesdeGpsRapida(gps){
+  try{
+    return await Promise.race([localidadDesdeGps(gps), timeoutPromise(1800)]);
+  }catch(e){
+    return "Localidad no disponible";
+  }
+}
+
 async function localidadDesdeGps(gps){
   if(!gps || gps.lat==null || gps.lng==null) return "Ubicación no disponible";
   try{
@@ -515,22 +527,36 @@ async function enviarActualizacion(){
     return;
   }
 
-  try{
-    const gps=await getGps();
-    guardarGpsAutomatico(gps);
-  }catch(e){
-    console.log("Se envía con última posición disponible",e);
+  const btn=document.querySelector('button[onclick="enviarActualizacion()"]');
+  if(btn){
+    btn.disabled=true;
+    btn.innerText="Enviando...";
   }
 
-  const updated=transit();
-  if(!updated)return;
+  try{
+    // No bloquear el envío esperando GPS nuevo.
+    // El Tracking automático ya mantiene la última posición actualizada.
+    const updated=transit();
+    if(!updated){
+      window.alert("No hay tránsito iniciado.");
+      return;
+    }
 
-  const msg=typeof buildUpdateMsgAsync==="function"
-    ? await buildUpdateMsgAsync(updated)
-    : buildUpdateMsg(updated);
+    const msg=typeof buildUpdateMsgAsync==="function"
+      ? await buildUpdateMsgAsync(updated)
+      : buildUpdateMsg(updated);
 
-  save(LS.last,{msg,date:now()});
-  sendToPhones(msg);
+    save(LS.last,{msg,date:now()});
+    sendToPhones(msg);
+
+  }catch(e){
+    window.alert("No se pudo enviar la actualización: "+(e.message||e));
+  }finally{
+    if(btn){
+      btn.disabled=false;
+      btn.innerText="📤 Enviar actualización";
+    }
+  }
 }
 
 /* ===== ALERTAS ===== */
@@ -633,7 +659,7 @@ async function buildUpdateMsgAsync(t){
   const current=t.updates.length?t.updates[t.updates.length-1].gps:t.start;
   const done=distKm(t.start.lat,t.start.lng,current.lat,current.lng);
   const faltan=Math.max(0,total-done);
-  const ubicacion=await localidadDesdeGps(current);
+  const ubicacion=await localidadDesdeGpsRapida(current);
 
   return `🚚 Actualización de tránsito
 
@@ -683,7 +709,7 @@ ${formatAlertsMultiline(t)}`;
 
 async function buildCierreMsgAsync(t){
   const total=distanciaRuta(t.route);
-  const llegada=await localidadDesdeGps(t.closed);
+  const llegada=await localidadDesdeGpsRapida(t.closed);
 
   return `🏁 Cierre de tránsito
 
