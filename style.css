@@ -842,3 +842,18 @@ input:disabled{
 .passStateNew{
   margin-bottom:0 !important;
 }
+
+
+/* v1.4.32 Pasos Fronterizos */
+.passAlertCardNew{
+  margin-top:6px !important;
+  padding-top:8px !important;
+}
+
+.passAlertCardNew .passTitleNew{
+  display:none !important;
+}
+
+.passAlertsNew{
+  margin-top:0 !important;
+}
