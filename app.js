@@ -227,6 +227,7 @@ async function iniciarTransito(){
     aplicarColorResumenInicio();
     window.alert("Tránsito iniciado correctamente.");
     show("tracking");
+    startAutoGps();
 
   }catch(e){
     window.alert("No se pudo tomar GPS de inicio: "+(e.message||e));
@@ -250,6 +251,7 @@ async function cerrarTransito(){
     save(LS.last,{msg,date:now()});
 
     localStorage.removeItem(LS.transit);
+    stopAutoGps();
     limpiarCamposInicio();
     bloquearFormularioTransito();
     renderTransitStatus();
@@ -265,8 +267,91 @@ async function cerrarTransito(){
 }
 
 /* ===== MAPA REAL ===== */
+let gpsWatchId=null;
+let gpsAutoTimer=null;
+let lastAutoGpsAt=0;
+
 let leafletMap=null;
 let leafletLayers=[];
+
+
+function gpsDistanceMeters(a,b){
+  if(!a||!b||a.lat==null||b.lat==null)return Infinity;
+  return distKm(a.lat,a.lng,b.lat,b.lng)*1000;
+}
+
+function stopAutoGps(){
+  if(gpsWatchId!==null){
+    try{navigator.geolocation.clearWatch(gpsWatchId);}catch(e){}
+    gpsWatchId=null;
+  }
+  if(gpsAutoTimer){
+    clearInterval(gpsAutoTimer);
+    gpsAutoTimer=null;
+  }
+}
+
+function guardarGpsAutomatico(gps){
+  const t=transit();
+  if(!t)return;
+
+  if(!t.updates)t.updates=[];
+  const last=t.updates.length?t.updates[t.updates.length-1].gps:t.start;
+  const moved=gpsDistanceMeters(last,gps);
+  const nowMs=Date.now();
+
+  if(moved>=50 || (nowMs-lastAutoGpsAt)>=15000 || !t.updates.length){
+    t.updates.push({gps,time:now()});
+    lastAutoGpsAt=nowMs;
+    save(LS.transit,t);
+    renderTracking();
+  }
+}
+
+function startAutoGps(){
+  const t=transit();
+  if(!t){
+    stopAutoGps();
+    return;
+  }
+
+  if(!navigator.geolocation){
+    window.alert("GPS no disponible.");
+    return;
+  }
+
+  if(gpsWatchId!==null)return;
+
+  gpsWatchId=navigator.geolocation.watchPosition(
+    p=>{
+      const gps={
+        lat:p.coords.latitude,
+        lng:p.coords.longitude,
+        acc:p.coords.accuracy||0,
+        time:now()
+      };
+      guardarGpsAutomatico(gps);
+    },
+    e=>{
+      console.log("GPS watch error",e);
+    },
+    {enableHighAccuracy:true,timeout:20000,maximumAge:5000}
+  );
+
+  gpsAutoTimer=setInterval(async ()=>{
+    const t=transit();
+    if(!t){
+      stopAutoGps();
+      return;
+    }
+    try{
+      const gps=await getGps();
+      guardarGpsAutomatico(gps);
+    }catch(e){
+      console.log("GPS timer error",e);
+    }
+  },15000);
+}
 
 function clearLeafletLayers(){
   if(!leafletMap) return;
@@ -301,6 +386,7 @@ function renderTracking(){
   const t=transit();
 
   if(!t){
+    stopAutoGps();
     const box=$("trackingBox");
     if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado</span></div>';
     renderTrackingMap(null);
@@ -323,6 +409,7 @@ function renderTracking(){
   }
 
   renderTrackingMap(t);
+  startAutoGps();
 }
 
 async function getRoadRoute(origin,dest){
@@ -413,13 +500,9 @@ async function actualizarGps(){
     renderTracking();
     return;
   }
-
   try{
     const gps=await getGps();
-    if(!t.updates)t.updates=[];
-    t.updates.push({gps,time:now()});
-    save(LS.transit,t);
-    renderTracking();
+    guardarGpsAutomatico(gps);
   }catch(e){
     window.alert("No se pudo actualizar GPS: "+(e.message||e));
   }
@@ -431,10 +514,21 @@ async function enviarActualizacion(){
     window.alert("No hay tránsito iniciado.");
     return;
   }
-  await actualizarGps();
+
+  try{
+    const gps=await getGps();
+    guardarGpsAutomatico(gps);
+  }catch(e){
+    console.log("Se envía con última posición disponible",e);
+  }
+
   const updated=transit();
-  if(!updated) return;
-  const msg=await buildUpdateMsgAsync(updated);
+  if(!updated)return;
+
+  const msg=typeof buildUpdateMsgAsync==="function"
+    ? await buildUpdateMsgAsync(updated)
+    : buildUpdateMsg(updated);
+
   save(LS.last,{msg,date:now()});
   sendToPhones(msg);
 }
