@@ -1,0 +1,18 @@
+IMPORTANTE - BORRAR ARCHIVOS VIEJOS EN GITHUB
+
+Si el build sigue dando error de duplicate resources, NO es por este ZIP.
+Es porque GitHub conserva archivos anteriores cuando se usa Add files via upload.
+
+Borrar manualmente estos archivos del repositorio:
+
+app/src/main/res/mipmap-anydpi-v26/ic_launcher.png
+app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.png
+
+Opcionalmente, borrar toda la carpeta:
+app/src/main/res/mipmap-anydpi-v26/
+
+Esta version usa:
+@mipmap/ic_elta_launcher
+@mipmap/ic_elta_launcher_round
+
+No usa ic_launcher.
