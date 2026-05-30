@@ -69,44 +69,12 @@ function initLeafletMap(){
   return leafletMap;
 }
 
-let leafletMap=null;
-let leafletLayers=[];
-
-function clearLeafletLayers(){
-  if(!leafletMap) return;
-  leafletLayers.forEach(layer=>{try{leafletMap.removeLayer(layer);}catch(e){}});
-  leafletLayers=[];
-}
-
-function addLeafletLayer(layer){
-  if(!leafletMap) return layer;
-  layer.addTo(leafletMap);
-  leafletLayers.push(layer);
-  return layer;
-}
-
-function initLeafletMap(){
-  const mapDiv=document.getElementById("realMap");
-  if(!mapDiv || typeof L==="undefined") return null;
-
-  if(!leafletMap){
-    leafletMap=L.map("realMap",{zoomControl:true,attributionControl:true}).setView([-34.6037,-58.3816],6);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
-      maxZoom:19,
-      attribution:"© OpenStreetMap"
-    }).addTo(leafletMap);
-  }
-
-  setTimeout(()=>{try{leafletMap.invalidateSize();}catch(e){}},250);
-  return leafletMap;
-}
-
 function renderTracking(){
   const t=transit();
 
   if(!t){
     const box=document.getElementById("trackingBox");
-    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado.</span></div>';
+    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado</span></div>';
     renderTrackingMap(null);
     return;
   }
@@ -200,7 +168,6 @@ function renderTrackingMap(t){
   if(bounds.length>=2) map.fitBounds(bounds,{padding:[28,28]});
   else if(bounds.length===1) map.setView(bounds[0],12);
 
-  // Ruta real por calles/rutas desde origen hasta destino.
   getRoadRoute(origin,dest).then(routePoints=>{
     if(routePoints && routePoints.length>=2){
       addLeafletLayer(L.polyline(routePoints,{color:"#1d4ed8",weight:5,opacity:.92}));
@@ -216,7 +183,7 @@ async function actualizarGps(){
   if(!t){
     alert("No hay tránsito iniciado.");
     const box=document.getElementById("trackingBox");
-    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado.</span></div>';
+    if(box) box.innerHTML='<div class="statItem"><b>Sin tránsito</b><span>No hay tránsito iniciado</span></div>';
     renderTrackingMap(null);
     return;
   }
