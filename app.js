@@ -14,6 +14,21 @@ function fmtDateShort(v){
   return `${dd}/${mm} ${hh}:${mi}`;
 }
 
+async function localidadDesdeGps(gps){
+  if(!gps || gps.lat==null || gps.lng==null) return "Ubicación no disponible";
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${gps.lat}&lon=${gps.lng}&zoom=10&addressdetails=1`;
+    const res=await fetch(url,{headers:{"Accept":"application/json"}});
+    const data=await res.json();
+    const a=data.address||{};
+    const ciudad=a.city||a.town||a.village||a.municipality||a.county||a.state||"Localidad no identificada";
+    const pais=a.country||"";
+    return pais ? `${ciudad}, ${pais}` : ciudad;
+  }catch(e){
+    return "Localidad no disponible";
+  }
+}
+
 function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
 function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
@@ -231,7 +246,7 @@ async function cerrarTransito(){
     if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?")) return;
 
     t.closed=gps;
-    const msg=buildCierreMsg(t);
+    const msg=await buildCierreMsgAsync(t);
     save(LS.last,{msg,date:now()});
 
     localStorage.removeItem(LS.transit);
@@ -419,7 +434,7 @@ async function enviarActualizacion(){
   await actualizarGps();
   const updated=transit();
   if(!updated) return;
-  const msg=buildUpdateMsg(updated);
+  const msg=await buildUpdateMsgAsync(updated);
   save(LS.last,{msg,date:now()});
   sendToPhones(msg);
 }
@@ -475,13 +490,7 @@ function renderUltimo(){
   const last=load(LS.last,null);
   const box=$("lastBox");
   if(!box) return;
-
-  if(!last){
-    box.innerText="No hay envíos registrados.";
-    return;
-  }
-
-  box.innerText=last.msg || "No hay envíos registrados.";
+  box.innerText=last ? (last.msg||"No hay envíos registrados.") : "No hay envíos registrados.";
 }
 function limpiarResumenUltimo(msg){
   const texto=String(msg||"");
@@ -525,9 +534,36 @@ function reenviarUltimo(){
 }
 
 /* ===== MENSAJES ===== */
-function buildUpdateMsg(t){
+async function buildUpdateMsgAsync(t){
   const total=distanciaRuta(t.route);
   const current=t.updates.length?t.updates[t.updates.length-1].gps:t.start;
+  const done=distKm(t.start.lat,t.start.lng,current.lat,current.lng);
+  const faltan=Math.max(0,total-done);
+  const ubicacion=await localidadDesdeGps(current);
+
+  return `🚚 Actualización de tránsito
+
+🚛 Flota: ${t.user.fleet}
+👤 Chofer: ${t.user.driver}
+
+🏢 Cliente: ${t.route.cliente}
+
+📦 Número de carga: ${t.lote}
+
+📍 Ubicación: ${ubicacion}
+
+🎯 Destino: ${t.route.destino}
+
+🛣️ Kilómetros faltantes: ${faltan.toFixed(1)} km
+⏱️ ETA estimada: ${calcEta(faltan)}
+
+⚠️ Alertas ocurridas:
+${formatAlertsMultiline(t)}`;
+}
+
+function buildUpdateMsg(t){
+  const current=t.updates.length?t.updates[t.updates.length-1].gps:t.start;
+  const total=distanciaRuta(t.route);
   const done=distKm(t.start.lat,t.start.lng,current.lat,current.lng);
   const faltan=Math.max(0,total-done);
 
@@ -540,12 +576,40 @@ function buildUpdateMsg(t){
 
 📦 Número de carga: ${t.lote}
 
-📍 Ubicación: ${current.lat.toFixed(6)}, ${current.lng.toFixed(6)}
+📍 Ubicación: consultando localidad GPS
 
 🎯 Destino: ${t.route.destino}
 
 🛣️ Kilómetros faltantes: ${faltan.toFixed(1)} km
 ⏱️ ETA estimada: ${calcEta(faltan)}
+
+⚠️ Alertas ocurridas:
+${formatAlertsMultiline(t)}`;
+}
+
+async function buildCierreMsgAsync(t){
+  const total=distanciaRuta(t.route);
+  const llegada=await localidadDesdeGps(t.closed);
+
+  return `🏁 Cierre de tránsito
+
+🚛 Flota: ${t.user.fleet}
+👤 Chofer: ${t.user.driver}
+
+🏢 Cliente: ${t.route.cliente}
+
+📦 Número de carga: ${t.lote}
+
+📍 Origen: ${t.route.origen}
+🎯 Destino: ${t.route.destino}
+
+🏁 Llegada: ${llegada}
+
+🕒 Salida: ${fmtDateShort(t.start.time)}
+🏁 Llegada hora: ${fmtDateShort(t.closed.time)}
+
+🛣️ Distancia estimada: ${total.toFixed(1)} km
+⏱️ Duración total: ${duration(t.start.time,t.closed.time)}
 
 ⚠️ Alertas ocurridas:
 ${formatAlertsMultiline(t)}`;
@@ -567,7 +631,7 @@ function buildCierreMsg(t){
 🎯 Destino: ${t.route.destino}
 
 🕒 Salida: ${fmtDateShort(t.start.time)}
-🏁 Llegada: ${fmtDateShort(t.closed.time)}
+🏁 Llegada hora: ${fmtDateShort(t.closed.time)}
 
 🛣️ Distancia estimada: ${total.toFixed(1)} km
 ⏱️ Duración total: ${duration(t.start.time,t.closed.time)}
