@@ -284,3 +284,134 @@ main{
 #alertas .summary{
   margin-top:10px !important;
 }
+
+
+/* v1.4.18 navigation + layout fix */
+.inicioActions{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:10px !important;
+  margin-top:12px !important;
+}
+
+.inicioActions .btn{
+  margin-top:0 !important;
+  padding:12px 8px !important;
+  font-size:13px !important;
+}
+
+.realMap{
+  height:390px !important;
+  min-height:390px !important;
+  max-height:390px !important;
+  width:100% !important;
+  margin:0 !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+  position:relative !important;
+  z-index:1 !important;
+  contain:layout paint !important;
+}
+
+.leaflet-container{
+  width:100% !important;
+  height:100% !important;
+  z-index:1 !important;
+}
+
+.tabs{
+  z-index:1000 !important;
+}
+
+.compactLegend{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:4px !important;
+  margin:4px 0 2px !important;
+  font-size:10px !important;
+}
+
+.compactLegend span{
+  justify-content:center !important;
+  gap:4px !important;
+}
+
+.compactLegend .dot{
+  width:8px !important;
+  height:8px !important;
+}
+
+.compactStats{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:6px !important;
+  margin:4px 0 6px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+}
+
+.compactStats .statItem{
+  padding:7px 5px !important;
+  border-radius:12px !important;
+  text-align:center !important;
+  min-height:48px !important;
+  background:rgba(15,23,42,.06);
+  border:1px solid rgba(148,163,184,.24);
+}
+
+.compactStats .statItem b{
+  display:block;
+  font-size:13px !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+}
+
+.compactStats .statItem span{
+  display:block;
+  font-size:9px !important;
+  line-height:1 !important;
+  margin-top:3px !important;
+  white-space:nowrap !important;
+}
+
+.bottomActions{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-top:4px !important;
+  position:relative !important;
+  z-index:3 !important;
+}
+
+.bottomActions .compactBtn{
+  margin:0 !important;
+  padding:10px 6px !important;
+  font-size:12px !important;
+  line-height:1.1 !important;
+  border-radius:13px !important;
+  min-height:42px !important;
+}
+
+#rutaInfo{
+  font-size:13px !important;
+  line-height:1.25 !important;
+  padding:10px !important;
+  margin-top:10px !important;
+}
+
+@media (max-height:740px){
+  .realMap{
+    height:330px !important;
+    min-height:330px !important;
+    max-height:330px !important;
+  }
+}
+
+@media (max-height:650px){
+  .realMap{
+    height:285px !important;
+    min-height:285px !important;
+    max-height:285px !important;
+  }
+}
