@@ -4,6 +4,16 @@ const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_las
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function fmtDate(v){return new Date(v).toLocaleString("es-AR")}
+
+function fmtDateShort(v){
+  const d=new Date(v);
+  const dd=String(d.getDate()).padStart(2,"0");
+  const mm=String(d.getMonth()+1).padStart(2,"0");
+  const hh=String(d.getHours()).padStart(2,"0");
+  const mi=String(d.getMinutes()).padStart(2,"0");
+  return `${dd}/${mm} ${hh}:${mi}`;
+}
+
 function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
 function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
@@ -471,9 +481,8 @@ function renderUltimo(){
     return;
   }
 
-  box.innerText=limpiarResumenUltimo(last.msg);
+  box.innerText=last.msg || "No hay envíos registrados.";
 }
-
 function limpiarResumenUltimo(msg){
   const texto=String(msg||"");
   const lineas=texto.split("\n").map(x=>x.trim()).filter(Boolean);
@@ -544,30 +553,38 @@ ${formatAlertsMultiline(t)}`;
 
 function buildCierreMsg(t){
   const total=distanciaRuta(t.route);
-  return `Carga entregada, Cierre de tránsito
-Registro: ${t.id}
-Flota: ${t.user.fleet}
-Chofer: ${t.user.driver}
-Cliente: ${t.route.cliente}
-Número de carga: ${t.lote}
-Origen: ${t.route.origen}
-Destino: ${destinoCompacto(t.route)}
-Fecha y hora de salida: ${fmtDate(t.start.time)}
-Fecha y hora de llegada: ${fmtDate(t.closed.time)}
-Tiempo de tránsito: ${duration(t.start.time,t.closed.time)}
-KM origen/destino: ${total.toFixed(1)} km
-Alertas ocurridas: ${formatAlerts(t)}`;
+
+  return `🏁 Cierre de tránsito
+
+🚛 Flota: ${t.user.fleet}
+👤 Chofer: ${t.user.driver}
+
+🏢 Cliente: ${t.route.cliente}
+
+📦 Número de carga: ${t.lote}
+
+📍 Origen: ${t.route.origen}
+🎯 Destino: ${t.route.destino}
+
+🕒 Salida: ${fmtDateShort(t.start.time)}
+🏁 Llegada: ${fmtDateShort(t.closed.time)}
+
+🛣️ Distancia estimada: ${total.toFixed(1)} km
+⏱️ Duración total: ${duration(t.start.time,t.closed.time)}
+
+⚠️ Alertas ocurridas:
+${formatAlertsMultiline(t)}`;
 }
 
 function formatAlerts(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`${a.type} (${fmtDate(a.time)})`).join(" | ");
+  return t.alerts.map(a=>`${a.type} ${fmtDateShort(a.time)}`).join(" | ");
 }
-
 
 function formatAlertsMultiline(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`• ${a.type} (${fmtDate(a.time)})`).join("\n");
+  return t.alerts.map(a=>`• ${a.type} ${fmtDateShort(a.time)}`).join("
+");
 }
 
 function sendToPhones(msg){

@@ -918,3 +918,11 @@ input:disabled{
   background:rgba(100,116,139,.45);
   border-radius:999px;
 }
+
+
+/* v1.4.36 Textos unificados */
+#lastBox{
+  white-space:pre-wrap !important;
+  font-size:13px !important;
+  line-height:1.35 !important;
+}
