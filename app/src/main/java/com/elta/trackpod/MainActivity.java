@@ -8,17 +8,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.JavascriptInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
+    private WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,37 +32,20 @@ public class MainActivity extends Activity {
             }
         }
 
-        WebView webView = new WebView(this);
+        webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
-settings.setDomStorageEnabled(true);
+        settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setGeolocationEnabled(true);
 
+        webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    return handleExternalUrl(request.getUrl().toString());
-                }
-                return false;
-            }
-            @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return handleExternalUrl(url);
-            }
-            private boolean handleExternalUrl(String url) {
-                if (url != null && (url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("whatsapp://"))) {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                        return true;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                }
-                return false;
+                return handleUrl(url);
             }
         });
 
@@ -72,10 +54,16 @@ settings.setDomStorageEnabled(true);
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
                 callback.invoke(origin, true, false);
             }
+
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    runOnUiThread(() -> request.grant(request.getResources()));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            request.grant(request.getResources());
+                        }
+                    });
                 }
             }
         });
@@ -84,7 +72,23 @@ settings.setDomStorageEnabled(true);
         setContentView(webView);
     }
 
+    private boolean handleUrl(String url) {
+        if (url == null) return false;
 
+        if (url.startsWith("https://wa.me/") ||
+            url.startsWith("https://api.whatsapp.com/") ||
+            url.startsWith("whatsapp://")) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
 
     public class AndroidShareBridge {
         @JavascriptInterface
@@ -94,24 +98,22 @@ settings.setDomStorageEnabled(true);
 
         @JavascriptInterface
         public void shareWhatsApp(final String text) {
-            MainActivity.this.runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Intent sendIntent = new Intent(Intent.ACTION_SEND);
                         sendIntent.setType("text/plain");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                        sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
-                        MainActivity.this.startActivity(chooser);
+                        startActivity(chooser);
                     } catch (Exception e) {
                         try {
                             Intent sendIntent = new Intent(Intent.ACTION_SEND);
                             sendIntent.setType("text/plain");
                             sendIntent.putExtra(Intent.EXTRA_TEXT, text);
                             sendIntent.setPackage("com.whatsapp");
-                            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            MainActivity.this.startActivity(sendIntent);
+                            startActivity(sendIntent);
                         } catch (Exception ignored) {}
                     }
                 }
@@ -120,61 +122,15 @@ settings.setDomStorageEnabled(true);
 
         @JavascriptInterface
         public void openUrl(final String url) {
-            MainActivity.this.runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        MainActivity.this.startActivity(intent);
+                        startActivity(intent);
                     } catch (Exception ignored) {}
                 }
             });
         }
     }
-
-
-    private void openExternalUrlFromWebView(String url) {
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
-        } catch (Exception e) {
-            try {
-                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                sendIntent.setType("text/plain");
-                String text = "";
-                Uri uri = Uri.parse(url);
-                String queryText = uri.getQueryParameter("text");
-                if (queryText != null) text = queryText;
-                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                sendIntent.setPackage("com.whatsapp");
-                startActivity(Intent.createChooser(sendIntent, "Enviar por WhatsApp"));
-            } catch (Exception ignored) {}
-        }
-    }
-
-    private class TrackPodWebViewClient extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (url == null) return false;
-            if (url.startsWith("whatsapp://") || url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("intent://")) {
-                openExternalUrlFromWebView(url);
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && request != null && request.getUrl() != null) {
-                String url = request.getUrl().toString();
-                if (url.startsWith("whatsapp://") || url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("intent://")) {
-                    openExternalUrlFromWebView(url);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
 }

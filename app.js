@@ -556,13 +556,21 @@ async function enviarActualizacion(){
     }
 
     save(LS.last,{msg,date:now()});
-    sendToPhones(msg);
+
+    const u=user();
+    const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
+
+    if(phones.length>0){
+      sendToPhones(msg);
+    }else{
+      openWhatsappSelector(msg);
+    }
 
   }catch(e){
     console.log("Error enviando actualización",e);
     const fallbackMsg=buildBasicUpdateMsg(transit());
     save(LS.last,{msg:fallbackMsg,date:now()});
-    sendToPhones(fallbackMsg);
+    openWhatsappSelector(fallbackMsg);
   }finally{
     if(btn){
       btn.disabled=false;
