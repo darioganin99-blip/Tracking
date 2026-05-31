@@ -556,14 +556,26 @@ async function enviarActualizacion(){
     }
 
     save(LS.last,{msg,date:now()});
-    sendToPhones(msg);
+
+    const u=user();
+    const phones=String(u.phones||"").split(/[,;\\n\\r]+/).map(cleanPhone).filter(Boolean);
+
+    if(phones.length>0){
+      sendToPhones(msg);
+    }else{
+      if(!nativeShareMessage(msg)){
+        openWhatsappSelector(msg);
+      }
+    }
 
   }catch(e){
     console.log("Error enviando actualización",e);
     try{
       const fallbackMsg=buildBasicUpdateMsg(transit());
       save(LS.last,{msg:fallbackMsg,date:now()});
-      sendToPhones(fallbackMsg);
+      if(!nativeShareMessage(fallbackMsg)){
+        openWhatsappSelector(fallbackMsg);
+      }
     }catch(e2){
       window.alert("No se pudo abrir WhatsApp.");
     }

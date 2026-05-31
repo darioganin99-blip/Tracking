@@ -87,27 +87,28 @@ settings.setDomStorageEnabled(true);
 
     public class AndroidShareBridge {
         @JavascriptInterface
-        public void shareText(String text) {
+        public void shareText(final String text) {
             shareWhatsApp(text);
         }
 
         @JavascriptInterface
         public void shareWhatsApp(final String text) {
-            runOnUiThread(new Runnable() {
+            MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_TEXT, text);
-                        intent.setPackage("com.whatsapp");
-                        startActivity(intent);
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                        sendIntent.setType("text/plain");
+                        MainActivity.this.startActivity(Intent.createChooser(sendIntent, "Enviar actualización"));
                     } catch (Exception e) {
                         try {
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("text/plain");
-                            intent.putExtra(Intent.EXTRA_TEXT, text);
-                            startActivity(Intent.createChooser(intent, "Enviar actualización"));
+                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                            sendIntent.setType("text/plain");
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                            sendIntent.setPackage("com.whatsapp");
+                            MainActivity.this.startActivity(sendIntent);
                         } catch (Exception ignored) {}
                     }
                 }
@@ -116,12 +117,12 @@ settings.setDomStorageEnabled(true);
 
         @JavascriptInterface
         public void openUrl(final String url) {
-            runOnUiThread(new Runnable() {
+            MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
+                        MainActivity.this.startActivity(intent);
                     } catch (Exception ignored) {}
                 }
             });
