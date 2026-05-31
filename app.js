@@ -540,29 +540,33 @@ async function enviarActualizacion(){
 
   try{
     const updated=transit();
-    if(!updated){
-      window.alert("No hay tránsito iniciado.");
-      return;
+    let msg="";
+
+    try{
+      msg=typeof buildUpdateMsgAsync==="function"
+        ? await buildUpdateMsgAsync(updated)
+        : buildUpdateMsg(updated);
+    }catch(eMsg){
+      console.log("Fallo mensaje completo, usando fallback",eMsg);
+      msg=buildBasicUpdateMsg(updated);
     }
 
-    const msg=typeof buildUpdateMsgAsync==="function"
-      ? await buildUpdateMsgAsync(updated)
-      : buildUpdateMsg(updated);
+    if(!msg || !String(msg).trim()){
+      msg=buildBasicUpdateMsg(updated);
+    }
 
     save(LS.last,{msg,date:now()});
-
-    const u=user();
-    const phones=String(u.phones||"").split(/[,;\\n\\r]+/).map(cleanPhone).filter(Boolean);
-
-    if(phones.length>0){
-      sendToPhones(msg);
-    }else{
-      openWhatsappSelector(msg);
-    }
+    sendToPhones(msg);
 
   }catch(e){
     console.log("Error enviando actualización",e);
-    window.alert("No se pudo preparar el mensaje de actualización.");
+    try{
+      const fallbackMsg=buildBasicUpdateMsg(transit());
+      save(LS.last,{msg:fallbackMsg,date:now()});
+      sendToPhones(fallbackMsg);
+    }catch(e2){
+      window.alert("No se pudo abrir WhatsApp.");
+    }
   }finally{
     if(btn){
       btn.disabled=false;
