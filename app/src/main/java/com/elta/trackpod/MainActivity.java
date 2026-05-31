@@ -87,29 +87,44 @@ settings.setDomStorageEnabled(true);
 
     public class AndroidShareBridge {
         @JavascriptInterface
-        public void shareWhatsApp(String text) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, text);
-                intent.setPackage("com.whatsapp");
-                startActivity(Intent.createChooser(intent, "Enviar por WhatsApp"));
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_TEXT, text);
-                    startActivity(Intent.createChooser(intent, "Enviar"));
-                } catch (Exception ignored) {}
-            }
+        public void shareText(String text) {
+            shareWhatsApp(text);
         }
 
         @JavascriptInterface
-        public void openUrl(String url) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
-            } catch (Exception ignored) {}
+        public void shareWhatsApp(final String text) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, text);
+                        intent.setPackage("com.whatsapp");
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_TEXT, text);
+                            startActivity(Intent.createChooser(intent, "Enviar actualización"));
+                        } catch (Exception ignored) {}
+                    }
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void openUrl(final String url) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    } catch (Exception ignored) {}
+                }
+            });
         }
     }
 
