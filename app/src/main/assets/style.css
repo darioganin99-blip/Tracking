@@ -951,3 +951,46 @@ button:disabled{
 .weatherFullBtn{
   display:none !important;
 }
+
+
+/* v1.4.58 Alertas juntas y ruta */
+#alertList{
+  margin-top:4px !important;
+}
+
+#alertList .alertItem,
+.alertItem{
+  padding:3px 6px !important;
+  margin:0 0 2px 0 !important;
+  border-radius:8px !important;
+  line-height:1 !important;
+  min-height:0 !important;
+}
+
+#alertList .alertItem *,
+.alertItem *{
+  margin:0 !important;
+  padding:0 !important;
+  line-height:1 !important;
+}
+
+#alertList .alertItem br,
+.alertItem br{
+  display:none !important;
+}
+
+#alertList .alertItem b,
+.alertItem b{
+  display:inline !important;
+  font-size:11px !important;
+  margin-right:4px !important;
+}
+
+#alertList .alertItem span,
+#alertList .alertItem small,
+.alertItem span,
+.alertItem small{
+  display:inline !important;
+  font-size:9px !important;
+  opacity:.78 !important;
+}

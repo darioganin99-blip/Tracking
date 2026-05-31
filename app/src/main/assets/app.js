@@ -212,7 +212,7 @@ async function iniciarTransito(){
   const u=user();
   if(!u.fleet){
     window.alert("Cargá la flota en Usuario.");
-    show("usuario");
+    /* sin telefono: no redirigir a usuario */
     return;
   }
 
@@ -456,11 +456,75 @@ function drawFallbackLine(origin,cur,dest){
   }
 }
 
+
+function routePointFromData(obj, latKeys, lngKeys){
+  if(!obj)return null;
+  let lat=null, lng=null;
+
+  for(const k of latKeys){
+    if(obj[k]!==undefined && obj[k]!==null && obj[k]!==""){
+      lat=Number(obj[k]);
+      break;
+    }
+  }
+
+  for(const k of lngKeys){
+    if(obj[k]!==undefined && obj[k]!==null && obj[k]!==""){
+      lng=Number(obj[k]);
+      break;
+    }
+  }
+
+  if(isFinite(lat) && isFinite(lng)) return {lat,lng};
+  return null;
+}
+
+function getRouteOriginPoint(t){
+  if(!t)return null;
+  const r=t.route||{};
+  return routePointFromData(r,["origen_lat","origin_lat","lat_origen","latOrigen"],["origen_lng","origin_lng","lng_origen","lon_origen","lngOrigen"]) || t.start || null;
+}
+
+function getRouteDestPoint(t){
+  if(!t)return null;
+  const r=t.route||{};
+  return routePointFromData(r,["destino_lat","dest_lat","lat_destino","latDestino"],["destino_lng","dest_lng","lng_destino","lon_destino","lngDestino"]);
+}
+
+function drawRouteLine(t){
+  if(!leafletMap || !t)return;
+
+  const o=getRouteOriginPoint(t);
+  const d=getRouteDestPoint(t);
+
+  if(!o || !d || !isFinite(o.lat) || !isFinite(o.lng) || !isFinite(d.lat) || !isFinite(d.lng))return;
+
+  try{
+    if(window.mainRouteLine){
+      leafletMap.removeLayer(window.mainRouteLine);
+      window.mainRouteLine=null;
+    }
+
+    window.mainRouteLine=L.polyline([[o.lat,o.lng],[d.lat,d.lng]],{
+      color:"#2563eb",
+      weight:5,
+      opacity:.9
+    }).addTo(leafletMap);
+
+    if(typeof leafletLayers!=="undefined"){
+      leafletLayers.push(window.mainRouteLine);
+    }
+  }catch(e){
+    console.log("No se pudo dibujar línea de ruta",e);
+  }
+}
+
 function renderTrackingMap(t){
   const map=initLeafletMap();
   if(!map) return;
 
   clearLeafletLayers();
+  drawRouteLine(t);
 
   if(!t || !t.route || !t.start){
     map.setView([-34.6037,-58.3816],6);
@@ -777,8 +841,8 @@ function sendToPhones(msg){
   const u=user();
   const phones=String(u.phones||"").split(/[,;\n]+/).map(cleanPhone).filter(Boolean);
   if(!phones.length){
-    window.alert("No hay teléfonos registrados en Usuario.");
-    show("usuario");
+    console.log("Sin teléfono guardado: abrir selector WhatsApp.");
+    /* sin telefono: no redirigir a usuario */
     return;
   }
   save(LS.last,{msg,date:now()});
