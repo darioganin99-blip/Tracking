@@ -953,37 +953,39 @@ button:disabled{
 }
 
 
-/* v1.4.58 Alertas juntas y ruta */
+
+
+
+/* v1.4.59 Alertas normales con espacio simple */
 #alertList{
-  margin-top:4px !important;
+  margin-top:8px !important;
 }
 
 #alertList .alertItem,
 .alertItem{
-  padding:3px 6px !important;
-  margin:0 0 2px 0 !important;
-  border-radius:8px !important;
-  line-height:1 !important;
-  min-height:0 !important;
+  padding:8px 10px !important;
+  margin:0 0 6px 0 !important;
+  border-radius:12px !important;
+  line-height:1.25 !important;
+  min-height:auto !important;
+  font-size:13px !important;
 }
 
 #alertList .alertItem *,
 .alertItem *{
-  margin:0 !important;
-  padding:0 !important;
-  line-height:1 !important;
+  line-height:1.25 !important;
 }
 
 #alertList .alertItem br,
 .alertItem br{
-  display:none !important;
+  display:block !important;
 }
 
 #alertList .alertItem b,
 .alertItem b{
   display:inline !important;
-  font-size:11px !important;
-  margin-right:4px !important;
+  font-size:13px !important;
+  margin-right:0 !important;
 }
 
 #alertList .alertItem span,
@@ -991,6 +993,6 @@ button:disabled{
 .alertItem span,
 .alertItem small{
   display:inline !important;
-  font-size:9px !important;
-  opacity:.78 !important;
+  font-size:12px !important;
+  opacity:.85 !important;
 }
