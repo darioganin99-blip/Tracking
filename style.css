@@ -951,3 +951,84 @@ button:disabled{
 .weatherFullBtn{
   display:none !important;
 }
+
+
+/* v1.4.44 Multi WhatsApp */
+#userPhones{
+  min-height:92px !important;
+}
+
+
+/* v1.4.45 Usuario WhatsApp compacto */
+.userCompactCard{
+  padding:12px !important;
+}
+
+.userGrid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+#usuario label{
+  font-size:11px !important;
+  margin:6px 0 3px !important;
+  font-weight:900 !important;
+}
+
+#usuario input,
+#usuario textarea{
+  padding:8px 10px !important;
+  font-size:13px !important;
+  border-radius:11px !important;
+}
+
+.waModeRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:4px 0 4px;
+}
+
+.waMode{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  background:rgba(15,23,42,.06);
+  border:1px solid rgba(148,163,184,.35);
+  border-radius:12px;
+  padding:8px !important;
+  margin:0 !important;
+  font-size:12px !important;
+}
+
+.waMode input{
+  width:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+#userPhones{
+  min-height:54px !important;
+  max-height:76px !important;
+}
+
+.userActionsRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+
+.userActionsRow .btn{
+  margin-top:0 !important;
+  padding:10px 6px !important;
+  font-size:12px !important;
+  border-radius:13px !important;
+}
+
+#userMsg{
+  min-height:18px;
+  font-size:12px !important;
+}

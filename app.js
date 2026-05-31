@@ -2,7 +2,7 @@ const $ = id => document.getElementById(id);
 let climaAutoLoading=false;
 let climaLastUpdate=0;
 
-const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
+const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last", pending:"trackpod_pending_whatsapp"};
 
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -46,7 +46,7 @@ async function localidadDesdeGps(gps){
 
 function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
-function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
+function user(){const u=load(LS.user,{fleet:"",driver:"",phones:"",waMode:"contacts"}); if(!u.waMode)u.waMode="contacts"; return u;}
 function transit(){return load(LS.transit,null)}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
@@ -594,15 +594,108 @@ function renderAlertas(){
 }
 
 /* ===== USUARIO / ÚLTIMO ===== */
+
+function selectedWaMode(){
+  const checked=document.querySelector('input[name="waMode"]:checked');
+  return checked ? checked.value : "contacts";
+}
+
+function onWaModeChange(){
+  const mode=selectedWaMode();
+  const label=$("waTargetLabel");
+  const field=$("userPhones");
+
+  if(label) label.innerText=mode==="group" ? "Link Grupo WhatsApp" : "Destinatarios WhatsApp";
+  if(field){
+    field.placeholder=mode==="group"
+      ? "https://chat.whatsapp.com/..."
+      : "Uno por línea o separados por coma";
+    field.rows=mode==="group" ? 2 : 3;
+  }
+}
+
+function normalizeGroupLink(value){
+  return String(value||"").trim();
+}
+
+function openWhatsappGroup(link,msg){
+  save(LS.last,{msg,date:now()});
+  const clean=normalizeGroupLink(link);
+
+  if(!clean || !clean.includes("chat.whatsapp.com/")){
+    window.alert("Configurá un enlace válido de grupo WhatsApp.");
+    show("usuario");
+    return;
+  }
+
+  // WhatsApp no permite prellenar texto en grupos mediante enlace.
+  // Se copia el mensaje para pegarlo dentro del grupo.
+  try{
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(msg);
+      window.alert("Mensaje copiado. Se abrirá el grupo; pegá el texto en WhatsApp.");
+    }else{
+      window.alert("Se abrirá el grupo. Copiá el mensaje desde Último envío si hace falta.");
+    }
+  }catch(e){
+    window.alert("Se abrirá el grupo. Copiá el mensaje desde Último envío si hace falta.");
+  }
+
+  window.location.href=clean;
+}
+
+function testWhatsappTarget(){
+  const u=user();
+  const mode=selectedWaMode();
+  const value=$("userPhones") ? $("userPhones").value.trim() : "";
+
+  if(mode==="group"){
+    if(!value || !value.includes("chat.whatsapp.com/")){
+      window.alert("Ingresá un enlace válido de grupo WhatsApp.");
+      return;
+    }
+    save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:value,waMode:"group"});
+    window.alert("Destino grupo configurado. Se abrirá el grupo para probar.");
+    window.location.href=value;
+    return;
+  }
+
+  const phones=splitPhones(value);
+  if(!phones.length){
+    window.alert("Ingresá al menos un teléfono válido.");
+    return;
+  }
+
+  save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:value,waMode:"contacts"});
+  window.alert(`${phones.length} contacto(s) configurado(s). Se abrirá el primero para probar.`);
+  sendWhatsappToPhone(phones[0],"Prueba destino WhatsApp - Track POD",1,1);
+}
+
 function loadUserForm(){
   const u=user();
   if($("userFleet")) $("userFleet").value=u.fleet||"";
   if($("userDriver")) $("userDriver").value=u.driver||"";
   if($("userPhones")) $("userPhones").value=u.phones||"";
+
+  const mode=u.waMode||"contacts";
+  const radio=document.querySelector(`input[name="waMode"][value="${mode}"]`);
+  if(radio) radio.checked=true;
+  else{
+    const contacts=document.querySelector('input[name="waMode"][value="contacts"]');
+    if(contacts) contacts.checked=true;
+  }
+  onWaModeChange();
 }
 
 function saveUser(){
-  save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:$("userPhones").value.trim()});
+  const mode=selectedWaMode();
+  save(LS.user,{
+    fleet:$("userFleet").value.trim(),
+    driver:$("userDriver").value.trim(),
+    phones:$("userPhones").value.trim(),
+    waMode:mode
+  });
+
   const msg=$("userMsg");
   if(msg) msg.innerHTML='<p class="ok">Usuario guardado correctamente.</p>';
   renderInicio();
@@ -1075,4 +1168,11 @@ function duration(a,b){
 document.addEventListener("DOMContentLoaded",()=>{
   initSelectors();
   show("inicio");
+  setTimeout(()=>continuarEnviosPendientes(),700);
+});
+
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){
+    setTimeout(()=>continuarEnviosPendientes(),500);
+  }
 });
