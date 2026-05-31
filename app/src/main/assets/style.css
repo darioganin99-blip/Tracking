@@ -1056,3 +1056,45 @@ button:disabled{
   font-size:11px !important;
   line-height:1.15 !important;
 }
+
+
+/* v1.4.56 Alertas sin espacios internos y ruta visible */
+#alertList .alertItem,
+.alertItem{
+  display:block !important;
+  padding:4px 7px !important;
+  margin-bottom:2px !important;
+  line-height:1.05 !important;
+}
+
+#alertList .alertItem *,
+.alertItem *{
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  line-height:1.05 !important;
+}
+
+#alertList .alertItem br,
+.alertItem br{
+  display:none !important;
+}
+
+#alertList .alertItem b,
+.alertItem b{
+  display:inline !important;
+  font-size:11px !important;
+  margin-right:4px !important;
+}
+
+#alertList .alertItem small,
+.alertItem small{
+  display:inline !important;
+  font-size:9px !important;
+  opacity:.8 !important;
+}
+
+.leaflet-overlay-pane svg path{
+  stroke:#2563eb !important;
+  stroke-width:5 !important;
+  stroke-opacity:.85 !important;
+}

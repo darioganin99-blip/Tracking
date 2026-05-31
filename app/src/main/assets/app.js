@@ -212,7 +212,7 @@ async function iniciarTransito(){
   const u=user();
   if(!u.fleet){
     window.alert("Cargá la flota en Usuario.");
-    /* no redirigir a usuario */
+    show("usuario");
     return;
   }
 
@@ -456,11 +456,34 @@ function drawFallbackLine(origin,cur,dest){
   }
 }
 
+
+function ensureRouteLine(t){
+  if(!leafletMap || !t || !t.route)return;
+
+  const o=getPoint(t.route.origen);
+  const d=getPoint(t.route.destino);
+  if(!o || !d)return;
+
+  try{
+    if(window.routeLineLayer){
+      leafletMap.removeLayer(window.routeLineLayer);
+    }
+    window.routeLineLayer=L.polyline([[o.lat,o.lng],[d.lat,d.lng]],{
+      color:"#2563eb",
+      weight:5,
+      opacity:.85
+    }).addTo(leafletMap);
+  }catch(e){
+    console.log("No se pudo dibujar ruta",e);
+  }
+}
+
 function renderTrackingMap(t){
   const map=initLeafletMap();
   if(!map) return;
 
   clearLeafletLayers();
+  ensureRouteLine(t);
 
   if(!t || !t.route || !t.start){
     map.setView([-34.6037,-58.3816],6);
@@ -500,7 +523,7 @@ function renderTrackingMap(t){
 
   getRoadRoute(origin,dest).then(routePoints=>{
     if(routePoints && routePoints.length>=2){
-      addLeafletLayer(L.polyline(routePoints,{color:"#1d4ed8",weight:5,opacity:.92}));
+      addLeafletLayer(L.polyline(routePoints,{color:"#2563eb",weight:5,opacity:.92}));
       try{ map.fitBounds(routePoints,{padding:[28,28]}); }catch(e){}
     }else{
       drawFallbackLine(origin,cur,dest);
