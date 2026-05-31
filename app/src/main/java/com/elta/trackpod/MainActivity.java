@@ -13,6 +13,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.JavascriptInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
@@ -33,7 +36,9 @@ public class MainActivity extends Activity {
         WebView webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
+        
+        webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
+settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setGeolocationEnabled(true);
@@ -79,4 +84,33 @@ public class MainActivity extends Activity {
         webView.loadUrl("file:///android_asset/index.html");
         setContentView(webView);
     }
+
+    public class AndroidShareBridge {
+        @JavascriptInterface
+        public void shareWhatsApp(String text) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, text);
+                intent.setPackage("com.whatsapp");
+                startActivity(Intent.createChooser(intent, "Enviar por WhatsApp"));
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, text);
+                    startActivity(Intent.createChooser(intent, "Enviar"));
+                } catch (Exception ignored) {}
+            }
+        }
+
+        @JavascriptInterface
+        public void openUrl(String url) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            } catch (Exception ignored) {}
+        }
+    }
+
 }
