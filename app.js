@@ -1,3 +1,14 @@
+function nativeShareMessage(msg){
+  const text=encodeURIComponent(String(msg||""));
+  try{
+    window.location.href=`trackpodshare://send?text=${text}`;
+    return true;
+  }catch(e){
+    console.log("No se pudo invocar trackpodshare",e);
+  }
+  return false;
+}
+
 const $ = id => document.getElementById(id);
 let climaAutoLoading=false;
 let climaLastUpdate=0;
@@ -548,29 +559,21 @@ async function enviarActualizacion(){
         : buildUpdateMsg(updated);
     }catch(eMsg){
       console.log("Fallo mensaje completo, usando fallback",eMsg);
-      msg=buildBasicUpdateMsg(updated);
+      msg=typeof buildBasicUpdateMsg==="function" ? buildBasicUpdateMsg(updated) : "🚚 Actualización de tránsito";
     }
 
     if(!msg || !String(msg).trim()){
-      msg=buildBasicUpdateMsg(updated);
+      msg=typeof buildBasicUpdateMsg==="function" ? buildBasicUpdateMsg(updated) : "🚚 Actualización de tránsito";
     }
 
     save(LS.last,{msg,date:now()});
-
-    const u=user();
-    const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
-
-    if(phones.length>0){
-      sendToPhones(msg);
-    }else{
-      openWhatsappSelector(msg);
-    }
+    sendToPhones(msg);
 
   }catch(e){
     console.log("Error enviando actualización",e);
-    const fallbackMsg=buildBasicUpdateMsg(transit());
+    const fallbackMsg="🚚 Actualización de tránsito";
     save(LS.last,{msg:fallbackMsg,date:now()});
-    openWhatsappSelector(fallbackMsg);
+    sendToPhones(fallbackMsg);
   }finally{
     if(btn){
       btn.disabled=false;
@@ -790,16 +793,35 @@ function formatAlertsMultiline(t){
   return t.alerts.map(a=>`• ${a.type} ${fmtDateShort(a.time)}`).join("\n");
 }
 
+function openWhatsappSelector(msg){
+  // Sin teléfono guardado: abrir selector nativo Android.
+  if(nativeShareMessage(msg)) return;
+
+  const text=encodeURIComponent(String(msg||""));
+  try{
+    window.location.href=`https://api.whatsapp.com/send?text=${text}`;
+  }catch(e){
+    console.log("No se pudo abrir WhatsApp",e);
+  }
+}
+
 function sendToPhones(msg){
   const u=user();
-  const phones=String(u.phones||"").split(/[,;\n]+/).map(cleanPhone).filter(Boolean);
-  if(!phones.length){
-    console.log("Sin teléfono guardado: abrir selector WhatsApp.");
-    /* sin telefono: no redirigir a usuario */
+  const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
+
+  save(LS.last,{msg,date:now()});
+
+  const text=encodeURIComponent(String(msg||""));
+
+  if(phones.length>0){
+    const phone=phones[0];
+    window.location.href=`https://wa.me/${phone}?text=${text}`;
     return;
   }
-  save(LS.last,{msg,date:now()});
-  window.location.href=`https://wa.me/${phones[0]}?text=${encodeURIComponent(msg)}`;
+
+  // Si NO hay teléfono guardado, NO cancelar:
+  // abrir selector de Android para elegir contacto o grupo.
+  openWhatsappSelector(msg);
 }
 
 
