@@ -775,32 +775,258 @@ function formatAlertsMultiline(t){
 
 function sendToPhones(msg){
   const u=user();
-  const mode=u.waMode||"contacts";
-
-  save(LS.last,{msg,date:now()});
-
-  if(mode==="group"){
-    openWhatsappGroup(u.groupLink||"",msg);
-    return;
-  }
-
-  const phones=splitPhones(u.phones);
-
+  const phones=String(u.phones||"").split(/[,;\n]+/).map(cleanPhone).filter(Boolean);
   if(!phones.length){
     window.alert("No hay teléfonos registrados en Usuario.");
     show("usuario");
     return;
   }
+  save(LS.last,{msg,date:now()});
+  window.location.href=`https://wa.me/${phones[0]}?text=${encodeURIComponent(msg)}`;
+}
 
-  if(phones.length===1){
-    sendWhatsappToPhone(phones[0],msg,1,1);
+
+
+
+
+/* ===== CLIMA ===== */
+function renderClima(){
+  const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
+  if(n && !n.dataset.loaded){
+    n.innerHTML='<div class="weatherIconBig">🌤️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Según posición GPS</div></div>';
+  }
+  if(f && !f.innerHTML.trim()) f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
+  if(p && !p.dataset.loaded) p.innerHTML='Consultando situación del paso...';
+  if(a && !a.dataset.loaded) a.innerHTML='Consultando alertas...';
+
+  const ahora=Date.now();
+  const debeActualizar=!climaLastUpdate || (ahora-climaLastUpdate)>300000;
+
+  if(debeActualizar && !climaAutoLoading){
+    actualizarClima();
+  }
+}
+
+function weatherCodeText(code){
+  code=Number(code);
+  if(code===0)return"Despejado";
+  if([1,2,3].includes(code))return"Parcialmente nublado";
+  if([45,48].includes(code))return"Niebla";
+  if([51,53,55,56,57].includes(code))return"Llovizna";
+  if([61,63,65,66,67].includes(code))return"Lluvia";
+  if([71,73,75,77].includes(code))return"Nieve";
+  if([80,81,82].includes(code))return"Chaparrones";
+  if([85,86].includes(code))return"Nevadas";
+  if([95,96,99].includes(code))return"Tormenta";
+  return"Condición "+code;
+}
+
+function weatherIcon(code){
+  code=Number(code);
+  if(code===0)return"☀️";
+  if([1,2].includes(code))return"🌤️";
+  if(code===3)return"☁️";
+  if([45,48].includes(code))return"🌫️";
+  if([51,53,55,56,57].includes(code))return"🌦️";
+  if([61,63,65,66,67,80,81,82].includes(code))return"🌧️";
+  if([71,73,75,77,85,86].includes(code))return"❄️";
+  if([95,96,99].includes(code))return"⛈️";
+  return"🌤️";
+}
+
+async function obtenerLocalidadGps(lat,lng){
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`;
+    const r=await fetch(url,{headers:{"Accept":"application/json"}});
+    const data=await r.json();
+    const a=data.address||{};
+    const ciudad=a.city||a.town||a.village||a.municipality||a.county||a.state||"Ubicación actual";
+    const pais=a.country||"";
+    return pais ? `${ciudad}, ${pais}` : ciudad;
+  }catch(e){
+    return "Ubicación actual";
+  }
+}
+
+async function actualizarClima(){
+  if(climaAutoLoading) return;
+  climaAutoLoading=true;
+
+  const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
+  if(n)n.innerHTML='<div class="weatherIconBig">⏳</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Tomando GPS</div></div>';
+  if(f)f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
+  if(p)p.innerHTML='Consultando situación del paso...';
+  if(a)a.innerHTML='Consultando alertas...';
+
+  try{
+    const gps=await getGps();
+    await cargarClimaGps(gps.lat,gps.lng);
+  }catch(e){
+    if(n)n.innerHTML='<div class="weatherIconBig">⚠️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">No se pudo obtener GPS</div><div class="weatherLocNew">'+escapeHtml(e.message||e)+'</div></div>';
+  }
+
+  try{
+    await consultarPasoCristoRedentor();
+  }catch(e){
+    console.log("Error consultando paso",e);
+  }
+
+  climaLastUpdate=Date.now();
+  climaAutoLoading=false;
+}
+
+async function cargarClimaGps(lat,lng){
+  const n=$("weatherNow"), f=$("weatherForecast");
+  const localidad=await obtenerLocalidadGps(lat,lng);
+
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m&forecast_hours=72&timezone=auto`;
+  const r=await fetch(url);
+  const data=await r.json();
+
+  if(data.current&&n){
+    const c=data.current;
+    n.dataset.loaded="1";
+    n.innerHTML=`<div class="weatherIconBig">${weatherIcon(c.weather_code)}</div><div class="weatherMainNew"><div class="weatherTopLine"><div><div class="weatherDescNew">${weatherCodeText(c.weather_code)}</div><div class="weatherLocNew">📍 ${escapeHtml(localidad)}</div></div><div class="weatherTempNew">${Math.round(c.temperature_2m)}°</div></div><div class="weatherMetaNew">Sens. ${Math.round(c.apparent_temperature)}° · Viento ${Math.round(c.wind_speed_10m)} km/h</div></div>`;
+  }
+
+  if(data.hourly&&f){
+    const h=data.hourly;
+    const rows=[];
+    for(let i=0;i<Math.min(72,h.time.length);i+=24){
+      const end=Math.min(i+24,h.time.length);
+      const temps=h.temperature_2m.slice(i,end).map(Number);
+      const codes=h.weather_code.slice(i,end).map(Number);
+      const winds=h.wind_speed_10m.slice(i,end).map(Number);
+      const max=Math.round(Math.max(...temps));
+      const min=Math.round(Math.min(...temps));
+      const wind=Math.round(Math.max(...winds.filter(x=>isFinite(x)),0));
+      const code=codes[Math.floor(codes.length/2)]||codes[0];
+      const dt=new Date(h.time[i]);
+      const day=dt.toLocaleString("es-AR",{weekday:"short",day:"2-digit"});
+      rows.push(`<div class="forecastRowNew oneLineForecast"><span class="forecastDayNew">${day}</span><span class="forecastIconNew">${weatherIcon(code)}</span><span class="forecastCondNew">${weatherCodeText(code)}</span><span class="forecastTempNew">${max}°/${min}°</span><span class="forecastRainNew">💨${wind}</span></div>`);
+    }
+    f.innerHTML=rows.join("\n");
+  }
+}
+
+function detectarEstadoPaso(texto){
+  const t=String(texto||"").toLowerCase();
+
+  if(
+    t.includes("cerrado") ||
+    t.includes("cierre preventivo") ||
+    t.includes("no habilitado") ||
+    t.includes("suspendido") ||
+    t.includes("interrumpido")
+  ){
+    return {label:"CERRADO",cls:"passClosedOrange",icon:"🟠"};
+  }
+
+  if(
+    t.includes("habilitado") ||
+    t.includes("abierto") ||
+    t.includes("transitable") ||
+    t.includes("restablece el tránsito")
+  ){
+    return {label:"ABIERTO",cls:"passOpenGreen",icon:"🟢"};
+  }
+
+  return {label:"VERIFICAR",cls:"passClosedOrange",icon:"🟠"};
+}
+
+function extraerAlertasPaso(texto){
+  const t=String(texto||"").toLowerCase();
+  const checks=[
+    ["nieve","Posible nieve o acumulación en alta montaña"],
+    ["nevadas","Posibles nevadas"],
+    ["viento","Viento fuerte en alta montaña"],
+    ["cadenas","Uso obligatorio o recomendado de cadenas"],
+    ["hielo","Presencia de hielo en calzada"],
+    ["precauc","Transitar con precaución"],
+    ["restric","Restricciones de circulación"],
+    ["demora","Posibles demoras"],
+    ["cerrado","Paso cerrado o con cierre informado"],
+    ["camiones","Restricción o control para camiones"]
+  ];
+  const out=[];
+  checks.forEach(([k,m])=>{if(t.includes(k)&&!out.includes(m))out.push(m)});
+  return out;
+}
+
+function limpiarTextoPaso(txt){
+  return String(txt||"")
+    .replace(/<script[\s\S]*?<\/script>/gi," ")
+    .replace(/<style[\s\S]*?<\/style>/gi," ")
+    .replace(/<[^>]+>/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function recortarPaso(texto){
+  const low=texto.toLowerCase();
+  let idx=low.indexOf("comunicamos");
+  if(idx<0)idx=low.indexOf("sistema integrado cristo redentor");
+  if(idx<0)idx=low.indexOf("sistema cristo redentor");
+  if(idx<0)idx=low.indexOf("los libertadores");
+  if(idx<0)idx=low.indexOf("estado");
+  return (idx>=0?texto.substring(idx,idx+520):texto.substring(0,520));
+}
+
+async function consultarPasoCristoRedentor(){
+  const box=$("passStatus"), alertsBox=$("passAlerts");
+  if(!box)return;
+
+  const fuentes=[
+    {url:"https://www.gobernacionlosandes.gov.cl/libertadoreshtml/", nombre:"Gobernación Los Andes"},
+    {url:"https://ncfloslibertadores.cl/", nombre:"Complejo Los Libertadores"},
+    {url:"https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor", nombre:"Argentina.gob.ar"}
+  ];
+
+  let texto="";
+  let fuenteUsada="Fuente oficial";
+  for(const fuente of fuentes){
+    try{
+      const proxy="https://api.allorigins.win/raw?url="+encodeURIComponent(fuente.url);
+      const res=await fetch(proxy);
+      const raw=await res.text();
+      const plain=limpiarTextoPaso(raw);
+      if(plain && plain.length>100){
+        texto=plain;
+        fuenteUsada=fuente.nombre;
+        break;
+      }
+    }catch(e){}
+  }
+
+  if(!texto){
+    box.innerHTML='<div class="passStateNew passClosedOrange"><b>🟠 PASO VERIFICAR</b><span>No se pudo consultar automáticamente.</span></div>';
+    if(alertsBox)alertsBox.innerHTML='<div class="passAlertItem">• No se pudo consultar alertas automáticamente.</div>';
     return;
   }
 
-  save(LS.pending,{phones:phones,msg:msg,index:0});
-  window.alert(`Se enviará el mensaje a ${phones.length} contactos. Al volver a la APP, continuará con el siguiente contacto.`);
-  sendNextPendingWhatsapp();
+  const ext=recortarPaso(texto);
+  const estado=detectarEstadoPaso(ext);
+  const alertas=extraerAlertasPaso(ext);
+  const actualizado=new Date().toLocaleString("es-AR");
+
+  box.dataset.loaded="1";
+  box.innerHTML=`<div class="passStateNew ${estado.cls}">
+      <b>${estado.icon} PASO ${estado.label}</b>
+      <span>${fuenteUsada} · Actualizado ${actualizado}</span>
+    </div>`;
+
+  if(alertsBox){
+    alertsBox.dataset.loaded="1";
+    alertsBox.innerHTML=alertas.length
+      ? alertas.map(x=>`<div class="passAlertItem">• ${escapeHtml(x)}</div>`).join("")
+      : `<div class="passOkItem">✓ Sin alertas informadas por la consulta automática.</div>`;
+  }
 }
+
+function abrirPasoArgentina(){window.location.href="https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor";}
+function abrirPasoChile(){window.location.href="https://www.gobernacionlosandes.gov.cl/libertadoreshtml/";}
 
 /* ===== CÁLCULOS ===== */
 function regId(){
