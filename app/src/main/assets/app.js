@@ -777,9 +777,8 @@ function sendToPhones(msg){
   const u=user();
   const phones=String(u.phones||"").split(/[,;\n]+/).map(cleanPhone).filter(Boolean);
   if(!phones.length){
-    window.alert("No hay teléfonos registrados en Usuario.");
-    show("usuario");
-    return;
+    // Sin teléfono: abrir selector WhatsApp.
+    return sendToPhones(msg);
   }
   save(LS.last,{msg,date:now()});
   window.location.href=`https://wa.me/${phones[0]}?text=${encodeURIComponent(msg)}`;
