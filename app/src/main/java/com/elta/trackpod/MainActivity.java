@@ -8,9 +8,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.GeolocationPermissions;
-import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -40,12 +40,18 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true);
         settings.setGeolocationEnabled(true);
 
-        webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
-
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return handleUrl(url);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && request != null && request.getUrl() != null) {
+                    return handleUrl(request.getUrl().toString());
+                }
+                return false;
             }
         });
 
@@ -75,6 +81,18 @@ public class MainActivity extends Activity {
     private boolean handleUrl(String url) {
         if (url == null) return false;
 
+        if (url.startsWith("trackpodshare://")) {
+            try {
+                Uri uri = Uri.parse(url);
+                String text = uri.getQueryParameter("text");
+                if (text == null) text = "";
+                shareText(text);
+                return true;
+            } catch (Exception e) {
+                return true;
+            }
+        }
+
         if (url.startsWith("https://wa.me/") ||
             url.startsWith("https://api.whatsapp.com/") ||
             url.startsWith("whatsapp://")) {
@@ -90,47 +108,21 @@ public class MainActivity extends Activity {
         return false;
     }
 
-    public class AndroidShareBridge {
-        @JavascriptInterface
-        public void shareText(final String text) {
-            shareWhatsApp(text);
-        }
-
-        @JavascriptInterface
-        public void shareWhatsApp(final String text) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                        sendIntent.setType("text/plain");
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                        Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
-                        startActivity(chooser);
-                    } catch (Exception e) {
-                        try {
-                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                            sendIntent.setType("text/plain");
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                            sendIntent.setPackage("com.whatsapp");
-                            startActivity(sendIntent);
-                        } catch (Exception ignored) {}
-                    }
-                }
-            });
-        }
-
-        @JavascriptInterface
-        public void openUrl(final String url) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
-                    } catch (Exception ignored) {}
-                }
-            });
+    private void shareText(String text) {
+        try {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+            Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
+            startActivity(chooser);
+        } catch (Exception e) {
+            try {
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.setPackage("com.whatsapp");
+                startActivity(sendIntent);
+            } catch (Exception ignored) {}
         }
     }
 }
