@@ -212,7 +212,7 @@ async function iniciarTransito(){
   const u=user();
   if(!u.fleet){
     window.alert("Cargá la flota en Usuario.");
-    show("usuario");
+    /* no redirigir a usuario */
     return;
   }
 
