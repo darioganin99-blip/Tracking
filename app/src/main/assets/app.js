@@ -539,8 +539,7 @@ async function enviarActualizacion(){
   }
 
   try{
-    // No bloquear el envío esperando GPS nuevo.
-    // El Tracking automático ya mantiene la última posición actualizada.
+    // Usar última posición disponible del tracking automático.
     const updated=transit();
     if(!updated){
       window.alert("No hay tránsito iniciado.");
@@ -555,7 +554,16 @@ async function enviarActualizacion(){
     sendToPhones(msg);
 
   }catch(e){
-    window.alert("No se pudo enviar la actualización: "+(e.message||e));
+    console.log("Error enviando actualización",e);
+
+    // Fallback: intentar enviar igualmente con mensaje básico.
+    try{
+      const fallbackMsg="Actualización de tránsito";
+      save(LS.last,{msg:fallbackMsg,date:now()});
+      sendToPhones(fallbackMsg);
+    }catch(e2){
+      window.alert("No se pudo abrir WhatsApp.");
+    }
   }finally{
     if(btn){
       btn.disabled=false;
