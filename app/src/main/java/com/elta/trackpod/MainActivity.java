@@ -85,6 +85,7 @@ settings.setDomStorageEnabled(true);
     }
 
 
+
     public class AndroidShareBridge {
         @JavascriptInterface
         public void shareText(final String text) {
@@ -100,6 +101,7 @@ settings.setDomStorageEnabled(true);
                         Intent sendIntent = new Intent(Intent.ACTION_SEND);
                         sendIntent.setType("text/plain");
                         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                        sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
                         MainActivity.this.startActivity(chooser);
                     } catch (Exception e) {
@@ -108,6 +110,7 @@ settings.setDomStorageEnabled(true);
                             sendIntent.setType("text/plain");
                             sendIntent.putExtra(Intent.EXTRA_TEXT, text);
                             sendIntent.setPackage("com.whatsapp");
+                            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             MainActivity.this.startActivity(sendIntent);
                         } catch (Exception ignored) {}
                     }
@@ -122,6 +125,7 @@ settings.setDomStorageEnabled(true);
                 public void run() {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         MainActivity.this.startActivity(intent);
                     } catch (Exception ignored) {}
                 }
