@@ -625,26 +625,19 @@ function normalizeGroupLink(value){
 
 function openWhatsappGroup(link,msg){
   save(LS.last,{msg,date:now()});
-  const clean=normalizeGroupLink(link);
 
-  if(!clean || !clean.includes("chat.whatsapp.com/")){
-    window.alert("Configurá un enlace válido de grupo WhatsApp.");
-    show("usuario");
-    return;
-  }
+  const text=encodeURIComponent(msg);
+
+  // Grupo: WhatsApp no permite envío directo por link.
+  // Se abre WhatsApp con el texto preparado para seleccionar el grupo manualmente.
+  const waShare=`intent://send?text=${text}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
 
   try{
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(msg);
-      window.alert("Mensaje copiado. Se abrirá el grupo; pegá el texto en WhatsApp.");
-    }else{
-      window.alert("Se abrirá el grupo. Copiá el mensaje desde Último envío si hace falta.");
-    }
+    window.location.href=waShare;
+    setTimeout(()=>{ window.location.href=`https://wa.me/?text=${text}`; },900);
   }catch(e){
-    window.alert("Se abrirá el grupo. Copiá el mensaje desde Último envío si hace falta.");
+    window.location.href=`https://wa.me/?text=${text}`;
   }
-
-  window.location.href=clean;
 }
 
 function testWhatsappTarget(){
@@ -655,13 +648,9 @@ function testWhatsappTarget(){
   const phonesValue=$("userPhones") ? $("userPhones").value.trim() : "";
 
   if(mode==="group"){
-    if(!groupLink || !groupLink.includes("chat.whatsapp.com/")){
-      window.alert("Ingresá un enlace válido de grupo WhatsApp.");
-      return;
-    }
     save(LS.user,{fleet,driver,phones:phonesValue,groupLink,waMode:"group"});
-    window.alert("Destino grupo configurado. Se abrirá el grupo para probar.");
-    window.location.href=groupLink;
+    window.alert("Modo Grupo configurado. Se abrirá WhatsApp para seleccionar el grupo.");
+    openWhatsappGroup(groupLink || "", "Prueba destino WhatsApp - Track POD");
     return;
   }
 

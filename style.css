@@ -1048,3 +1048,9 @@ button:disabled{
   min-height:60px !important;
   max-height:70px !important;
 }
+
+
+/* v1.4.48 WhatsApp contacto/grupo */
+#waGroupLink::placeholder{
+  font-size:12px !important;
+}
