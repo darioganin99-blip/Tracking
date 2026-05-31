@@ -10,8 +10,8 @@ android {
         applicationId 'com.elta.trackpod'
         minSdk 23
         targetSdk 35
-        versionCode 1452
-        versionName "1.4.52"
+        versionCode 1454
+        versionName "1.4.54"
     }
 }
 

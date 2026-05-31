@@ -951,3 +951,56 @@ button:disabled{
 .weatherFullBtn{
   display:none !important;
 }
+
+
+/* v1.4.54 Alertas compactas */
+#alertas .card{
+  padding:10px !important;
+}
+
+#alertList{
+  max-height:52vh !important;
+  gap:4px !important;
+}
+
+#alertList .alertItem,
+.alertItem{
+  padding:6px 8px !important;
+  margin-bottom:4px !important;
+  border-radius:10px !important;
+  font-size:11px !important;
+  line-height:1.15 !important;
+}
+
+#alertList .alertItem b,
+.alertItem b{
+  font-size:12px !important;
+  line-height:1.1 !important;
+}
+
+#alertList .alertItem small,
+.alertItem small{
+  font-size:9px !important;
+  line-height:1.1 !important;
+  opacity:.75 !important;
+}
+
+#alertas label{
+  font-size:11px !important;
+  margin:5px 0 3px !important;
+}
+
+#alertas select,
+#alertas input,
+#alertas textarea{
+  padding:8px 10px !important;
+  font-size:13px !important;
+  border-radius:11px !important;
+}
+
+#alertas .btn{
+  padding:10px 8px !important;
+  font-size:12px !important;
+  border-radius:13px !important;
+  margin-top:8px !important;
+}
