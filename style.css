@@ -1032,3 +1032,19 @@ button:disabled{
   min-height:18px;
   font-size:12px !important;
 }
+
+
+/* v1.4.46 WhatsApp grupo/contactos separados */
+#waGroupBox,
+#waContactsBox{
+  margin-top:2px !important;
+}
+
+#waGroupLink{
+  height:36px !important;
+}
+
+#userPhones{
+  min-height:60px !important;
+  max-height:70px !important;
+}

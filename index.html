@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.45</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.46</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
@@ -92,8 +92,15 @@
         <label class="waMode"><input type="radio" name="waMode" value="contacts" onchange="onWaModeChange()"> Contactos</label>
       </div>
 
-      <label id="waTargetLabel">Grupo / Contactos</label>
-      <textarea id="userPhones" placeholder="Link del grupo o teléfonos" rows="3"></textarea>
+      <div id="waGroupBox">
+        <label>Link Grupo WhatsApp</label>
+        <input id="waGroupLink" placeholder="https://chat.whatsapp.com/...">
+      </div>
+
+      <div id="waContactsBox">
+        <label>Teléfonos WhatsApp</label>
+        <textarea id="userPhones" placeholder="Uno por línea o separados por coma" rows="3"></textarea>
+      </div>
 
       <div class="userActionsRow">
         <button class="btn secondary compactBtn" onclick="testWhatsappTarget()">Probar destino</button>
