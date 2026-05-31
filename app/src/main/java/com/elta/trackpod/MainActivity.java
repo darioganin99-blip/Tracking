@@ -36,7 +36,6 @@ public class MainActivity extends Activity {
         WebView webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        
         webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
 settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(true);
@@ -56,7 +55,7 @@ settings.setDomStorageEnabled(true);
                 return handleExternalUrl(url);
             }
             private boolean handleExternalUrl(String url) {
-                if (url != null && (url.startsWith("https://wa.me/") || url.startsWith("whatsapp://"))) {
+                if (url != null && (url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("whatsapp://"))) {
                     try {
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                         return true;
@@ -85,6 +84,7 @@ settings.setDomStorageEnabled(true);
         setContentView(webView);
     }
 
+
     public class AndroidShareBridge {
         @JavascriptInterface
         public void shareText(final String text) {
@@ -97,11 +97,11 @@ settings.setDomStorageEnabled(true);
                 @Override
                 public void run() {
                     try {
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                        Intent sendIntent = new Intent(Intent.ACTION_SEND);
                         sendIntent.setType("text/plain");
-                        MainActivity.this.startActivity(Intent.createChooser(sendIntent, "Enviar actualización"));
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                        Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
+                        MainActivity.this.startActivity(chooser);
                     } catch (Exception e) {
                         try {
                             Intent sendIntent = new Intent(Intent.ACTION_SEND);
