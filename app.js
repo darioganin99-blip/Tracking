@@ -539,7 +539,6 @@ async function enviarActualizacion(){
   }
 
   try{
-    // Usar última posición disponible del tracking automático.
     const updated=transit();
     if(!updated){
       window.alert("No hay tránsito iniciado.");
@@ -551,19 +550,19 @@ async function enviarActualizacion(){
       : buildUpdateMsg(updated);
 
     save(LS.last,{msg,date:now()});
-    sendToPhones(msg);
+
+    const u=user();
+    const phones=String(u.phones||"").split(/[,;\\n\\r]+/).map(cleanPhone).filter(Boolean);
+
+    if(phones.length>0){
+      sendToPhones(msg);
+    }else{
+      openWhatsappSelector(msg);
+    }
 
   }catch(e){
     console.log("Error enviando actualización",e);
-
-    // Fallback: intentar enviar igualmente con mensaje básico.
-    try{
-      const fallbackMsg="Actualización de tránsito";
-      save(LS.last,{msg:fallbackMsg,date:now()});
-      sendToPhones(fallbackMsg);
-    }catch(e2){
-      window.alert("No se pudo abrir WhatsApp.");
-    }
+    window.alert("No se pudo preparar el mensaje de actualización.");
   }finally{
     if(btn){
       btn.disabled=false;
