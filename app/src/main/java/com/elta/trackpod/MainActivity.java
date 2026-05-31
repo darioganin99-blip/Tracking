@@ -113,4 +113,48 @@ settings.setDomStorageEnabled(true);
         }
     }
 
+
+    private void openExternalUrlFromWebView(String url) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            try {
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                String text = "";
+                Uri uri = Uri.parse(url);
+                String queryText = uri.getQueryParameter("text");
+                if (queryText != null) text = queryText;
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.setPackage("com.whatsapp");
+                startActivity(Intent.createChooser(sendIntent, "Enviar por WhatsApp"));
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private class TrackPodWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url == null) return false;
+            if (url.startsWith("whatsapp://") || url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("intent://")) {
+                openExternalUrlFromWebView(url);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && request != null && request.getUrl() != null) {
+                String url = request.getUrl().toString();
+                if (url.startsWith("whatsapp://") || url.startsWith("https://wa.me/") || url.startsWith("https://api.whatsapp.com/") || url.startsWith("intent://")) {
+                    openExternalUrlFromWebView(url);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
 }
