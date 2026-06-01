@@ -1,8 +1,19 @@
+function nativeShareMessage(msg){
+  const text=encodeURIComponent(String(msg||""));
+  try{
+    window.location.href=`trackpodshare://send?text=${text}`;
+    return true;
+  }catch(e){
+    console.log("No se pudo invocar trackpodshare",e);
+  }
+  return false;
+}
+
 const $ = id => document.getElementById(id);
 let climaAutoLoading=false;
 let climaLastUpdate=0;
 
-const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last", pending:"trackpod_pending_whatsapp"};
+const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
 
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -46,16 +57,7 @@ async function localidadDesdeGps(gps){
 
 function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
-function user(){
-  const u=load(LS.user,{fleet:"",driver:"",phones:"",groupLink:"",waMode:"contacts"});
-  if(!u.waMode)u.waMode="contacts";
-  if(!u.groupLink && String(u.phones||"").includes("chat.whatsapp.com/")){
-    u.groupLink=u.phones;
-    u.phones="";
-    u.waMode="group";
-  }
-  return u;
-}
+function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
 function transit(){return load(LS.transit,null)}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
@@ -221,7 +223,7 @@ async function iniciarTransito(){
   const u=user();
   if(!u.fleet){
     window.alert("Cargá la flota en Usuario.");
-    show("usuario");
+    /* sin telefono: no redirigir a usuario */
     return;
   }
 
@@ -297,6 +299,10 @@ let lastAutoGpsAt=0;
 
 let leafletMap=null;
 let leafletLayers=[];
+let routeLayer=null;
+let routeCacheKey="";
+let routeLoadingKey="";
+
 
 
 function gpsDistanceMeters(a,b){
@@ -383,6 +389,7 @@ function clearLeafletLayers(){
   leafletLayers=[];
 }
 
+
 function addLeafletLayer(layer){
   if(!leafletMap) return layer;
   layer.addTo(leafletMap);
@@ -461,8 +468,57 @@ function drawFallbackLine(origin,cur,dest){
   if(dest&&isFinite(dest.lat)&&isFinite(dest.lng)) line.push([dest.lat,dest.lng]);
 
   if(line.length>=2){
-    addLeafletLayer(L.polyline(line,{color:"#2563eb",weight:5,opacity:.9,dashArray:"8,8"}));
+    addLeafletLayer(L.polyline(line,{color:"#64748b",weight:4,opacity:.55,dashArray:"8,8"}));
   }
+}
+
+
+
+function routeKey(origin,dest){
+  if(!origin||!dest) return "";
+  return `${Number(origin.lat).toFixed(6)},${Number(origin.lng).toFixed(6)}-${Number(dest.lat).toFixed(6)},${Number(dest.lng).toFixed(6)}`;
+}
+
+function removeRouteLayer(){
+  if(routeLayer && leafletMap){
+    try{leafletMap.removeLayer(routeLayer);}catch(e){}
+  }
+  routeLayer=null;
+  routeCacheKey="";
+  routeLoadingKey="";
+}
+
+function setRouteLayer(layer,key){
+  if(!leafletMap || !layer) return;
+  if(routeLayer){try{leafletMap.removeLayer(routeLayer);}catch(e){}}
+  routeLayer=layer;
+  routeCacheKey=key;
+  routeLoadingKey="";
+  routeLayer.addTo(leafletMap);
+}
+
+function ensureRoadRouteLayer(origin,dest){
+  if(!leafletMap || !origin || !dest || !isFinite(origin.lat) || !isFinite(origin.lng) || !isFinite(dest.lat) || !isFinite(dest.lng)) return;
+  const key=routeKey(origin,dest);
+  if(!key) return;
+  if(routeLayer && routeCacheKey===key) return;
+  if(routeLoadingKey===key) return;
+
+  if(routeLayer && routeCacheKey!==key) removeRouteLayer();
+  routeLoadingKey=key;
+
+  getRoadRoute(origin,dest).then(routePoints=>{
+    if(routeKey(origin,dest)!==key) return;
+    if(routePoints && routePoints.length>=2){
+      setRouteLayer(L.polyline(routePoints,{color:"#1d4ed8",weight:5,opacity:.9,interactive:false}),key);
+    }else{
+      const line=[[origin.lat,origin.lng],[dest.lat,dest.lng]];
+      setRouteLayer(L.polyline(line,{color:"#94a3b8",weight:4,opacity:.45,dashArray:"8,8",interactive:false}),key);
+    }
+  }).catch(e=>{
+    console.log("Route layer error",e);
+    routeLoadingKey="";
+  });
 }
 
 function renderTrackingMap(t){
@@ -472,7 +528,8 @@ function renderTrackingMap(t){
   clearLeafletLayers();
 
   if(!t || !t.route || !t.start){
-    map.setView([-34.6037,-58.3816],6);
+    removeRouteLayer();
+    map.setView([-34.6037,-58.3816],6,{animate:false});
     return;
   }
 
@@ -481,6 +538,8 @@ function renderTrackingMap(t){
   const current=t.updates&&t.updates.length?t.updates[t.updates.length-1].gps:t.start;
   const cur={lat:Number(current.lat),lng:Number(current.lng)};
   const alerts=(t.alerts||[]).map(a=>a.gps).filter(Boolean).map(g=>({lat:Number(g.lat),lng:Number(g.lng)})).filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+
+  ensureRoadRouteLayer(origin,dest);
 
   const bounds=[];
 
@@ -504,18 +563,18 @@ function renderTrackingMap(t){
     addLeafletLayer(L.circleMarker([a.lat,a.lng],{radius:8,color:"#fff",weight:2,fillColor:"#f59e0b",fillOpacity:1}).bindPopup("Alerta "+(i+1)));
   });
 
-  if(bounds.length>=2) map.fitBounds(bounds,{padding:[28,28]});
-  else if(bounds.length===1) map.setView(bounds[0],12);
-
-  getRoadRoute(origin,dest).then(routePoints=>{
-    if(routePoints && routePoints.length>=2){
-      addLeafletLayer(L.polyline(routePoints,{color:"#1d4ed8",weight:5,opacity:.92}));
-      try{ map.fitBounds(routePoints,{padding:[28,28]}); }catch(e){}
-    }else{
-      drawFallbackLine(origin,cur,dest);
-    }
-  });
+  // Evitar el efecto visual de borrar/redibujar y reencuadrar toda la ruta en cada actualización GPS.
+  // El mapa se mantiene cerca del camión con zoom de acercamiento.
+  if(isFinite(cur.lat)&&isFinite(cur.lng)){
+    const z=map.getZoom && map.getZoom()>0 ? Math.max(map.getZoom(),10) : 10;
+    map.setView([cur.lat,cur.lng],Math.min(z,13),{animate:false});
+  }else if(bounds.length>=2){
+    map.fitBounds(bounds,{padding:[24,24],maxZoom:10,animate:false});
+  }else if(bounds.length===1){
+    map.setView(bounds[0],12,{animate:false});
+  }
 }
+
 
 async function actualizarGps(){
   const t=transit();
@@ -546,23 +605,30 @@ async function enviarActualizacion(){
   }
 
   try{
-    // No bloquear el envío esperando GPS nuevo.
-    // El Tracking automático ya mantiene la última posición actualizada.
     const updated=transit();
-    if(!updated){
-      window.alert("No hay tránsito iniciado.");
-      return;
+    let msg="";
+
+    try{
+      msg=typeof buildUpdateMsgAsync==="function"
+        ? await buildUpdateMsgAsync(updated)
+        : buildUpdateMsg(updated);
+    }catch(eMsg){
+      console.log("Fallo mensaje completo, usando fallback",eMsg);
+      msg=typeof buildBasicUpdateMsg==="function" ? buildBasicUpdateMsg(updated) : "🚚 Actualización de tránsito";
     }
 
-    const msg=typeof buildUpdateMsgAsync==="function"
-      ? await buildUpdateMsgAsync(updated)
-      : buildUpdateMsg(updated);
+    if(!msg || !String(msg).trim()){
+      msg=typeof buildBasicUpdateMsg==="function" ? buildBasicUpdateMsg(updated) : "🚚 Actualización de tránsito";
+    }
 
     save(LS.last,{msg,date:now()});
     sendToPhones(msg);
 
   }catch(e){
-    window.alert("No se pudo enviar la actualización: "+(e.message||e));
+    console.log("Error enviando actualización",e);
+    const fallbackMsg="🚚 Actualización de tránsito";
+    save(LS.last,{msg:fallbackMsg,date:now()});
+    sendToPhones(fallbackMsg);
   }finally{
     if(btn){
       btn.disabled=false;
@@ -572,6 +638,19 @@ async function enviarActualizacion(){
 }
 
 /* ===== ALERTAS ===== */
+function alertKm(t,a){
+  try{
+    if(!t || !t.start || !a || !a.gps) return null;
+    const km=distKm(Number(t.start.lat),Number(t.start.lng),Number(a.gps.lat),Number(a.gps.lng));
+    return isFinite(km) ? Math.max(0,km) : null;
+  }catch(e){return null;}
+}
+
+function alertKmText(t,a){
+  const km=alertKm(t,a);
+  return km===null ? "" : `Km ${Math.round(km)}`;
+}
+
 async function registrarAlerta(){
   const t=transit();
   if(!t){
@@ -599,100 +678,24 @@ function renderAlertas(){
     box.innerText="Sin alertas registradas.";
     return;
   }
-  box.innerHTML=t.alerts.map(a=>`<div class="alertItem">⚠ <b>${escapeHtml(a.type)}</b><br>${fmtDate(a.time)}</div>`).join("\n");
+  box.innerHTML=t.alerts.map(a=>{
+    const km=alertKmText(t,a);
+    const kmHtml=km ? ` <span>${escapeHtml(km)}</span>` : "";
+    return `<div class="alertItem">⚠ <b>${escapeHtml(a.type)}</b>${kmHtml}<br>${fmtDate(a.time)}</div>`;
+  }).join("\n");
 }
+
 
 /* ===== USUARIO / ÚLTIMO ===== */
-
-
-function selectedWaMode(){
-  const checked=document.querySelector('input[name="waMode"]:checked');
-  return checked ? checked.value : "contacts";
-}
-
-function onWaModeChange(){
-  const mode=selectedWaMode();
-  const groupBox=$("waGroupBox");
-  const contactsBox=$("waContactsBox");
-
-  if(groupBox) groupBox.style.display=mode==="group" ? "block" : "none";
-  if(contactsBox) contactsBox.style.display=mode==="contacts" ? "block" : "none";
-}
-
-function normalizeGroupLink(value){
-  return String(value||"").trim();
-}
-
-function openWhatsappGroup(link,msg){
-  save(LS.last,{msg,date:now()});
-
-  const text=encodeURIComponent(msg);
-
-  // Grupo: WhatsApp no permite envío directo por link.
-  // Se abre WhatsApp con el texto preparado para seleccionar el grupo manualmente.
-  const waShare=`intent://send?text=${text}#Intent;scheme=whatsapp;package=com.whatsapp;end`;
-
-  try{
-    window.location.href=waShare;
-    setTimeout(()=>{ window.location.href=`https://wa.me/?text=${text}`; },900);
-  }catch(e){
-    window.location.href=`https://wa.me/?text=${text}`;
-  }
-}
-
-function testWhatsappTarget(){
-  const mode=selectedWaMode();
-  const fleet=$("userFleet") ? $("userFleet").value.trim() : "";
-  const driver=$("userDriver") ? $("userDriver").value.trim() : "";
-  const groupLink=$("waGroupLink") ? $("waGroupLink").value.trim() : "";
-  const phonesValue=$("userPhones") ? $("userPhones").value.trim() : "";
-
-  if(mode==="group"){
-    save(LS.user,{fleet,driver,phones:phonesValue,groupLink,waMode:"group"});
-    window.alert("Modo Grupo configurado. Se abrirá WhatsApp para seleccionar el grupo.");
-    openWhatsappGroup(groupLink || "", "Prueba destino WhatsApp - Track POD");
-    return;
-  }
-
-  const phones=splitPhones(phonesValue);
-  if(!phones.length){
-    window.alert("Ingresá al menos un teléfono válido.");
-    return;
-  }
-
-  save(LS.user,{fleet,driver,phones:phonesValue,groupLink,waMode:"contacts"});
-  window.alert(`${phones.length} contacto(s) configurado(s). Se abrirá el primero para probar.`);
-  sendWhatsappToPhone(phones[0],"Prueba destino WhatsApp - Track POD",1,1);
-}
-
-
 function loadUserForm(){
   const u=user();
   if($("userFleet")) $("userFleet").value=u.fleet||"";
   if($("userDriver")) $("userDriver").value=u.driver||"";
   if($("userPhones")) $("userPhones").value=u.phones||"";
-  if($("waGroupLink")) $("waGroupLink").value=u.groupLink||"";
-
-  const mode=u.waMode||"contacts";
-  const radio=document.querySelector(`input[name="waMode"][value="${mode}"]`);
-  if(radio) radio.checked=true;
-  else{
-    const contacts=document.querySelector('input[name="waMode"][value="contacts"]');
-    if(contacts) contacts.checked=true;
-  }
-  onWaModeChange();
 }
 
 function saveUser(){
-  const mode=selectedWaMode();
-  save(LS.user,{
-    fleet:$("userFleet").value.trim(),
-    driver:$("userDriver").value.trim(),
-    phones:$("userPhones") ? $("userPhones").value.trim() : "",
-    groupLink:$("waGroupLink") ? $("waGroupLink").value.trim() : "",
-    waMode:mode
-  });
-
+  save(LS.user,{fleet:$("userFleet").value.trim(),driver:$("userDriver").value.trim(),phones:$("userPhones").value.trim()});
   const msg=$("userMsg");
   if(msg) msg.innerHTML='<p class="ok">Usuario guardado correctamente.</p>';
   renderInicio();
@@ -855,42 +858,287 @@ ${formatAlertsMultiline(t)}`;
 
 function formatAlerts(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`${a.type} ${fmtDateShort(a.time)}`).join(" | ");
+  return t.alerts.map(a=>`${a.type} ${alertKmText(t,a)} ${fmtDateShort(a.time)}`.replace(/\s+/g," ").trim()).join(" | ");
 }
 
 function formatAlertsMultiline(t){
   if(!t.alerts||!t.alerts.length)return "Sin alertas";
-  return t.alerts.map(a=>`• ${a.type} ${fmtDateShort(a.time)}`).join("\n");
+  return t.alerts.map(a=>`• ${a.type} ${alertKmText(t,a)} ${fmtDateShort(a.time)}`.replace(/\s+/g," ").trim()).join("\n");
+}
+
+function openWhatsappSelector(msg){
+  // Sin teléfono guardado: abrir selector nativo Android.
+  if(nativeShareMessage(msg)) return;
+
+  const text=encodeURIComponent(String(msg||""));
+  try{
+    window.location.href=`https://api.whatsapp.com/send?text=${text}`;
+  }catch(e){
+    console.log("No se pudo abrir WhatsApp",e);
+  }
 }
 
 function sendToPhones(msg){
   const u=user();
-  const mode=u.waMode||"contacts";
+  const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
 
   save(LS.last,{msg,date:now()});
 
-  if(mode==="group"){
-    openWhatsappGroup(u.groupLink,msg);
+  const text=encodeURIComponent(String(msg||""));
+
+  if(phones.length>0){
+    const phone=phones[0];
+    window.location.href=`https://wa.me/${phone}?text=${text}`;
     return;
   }
 
-  const phones=splitPhones(u.phones);
-
-  if(!phones.length){
-    window.alert("No hay teléfonos registrados en Usuario.");
-    show("usuario");
-    return;
-  }
-
-  if(phones.length===1){
-    sendWhatsappToPhone(phones[0],msg,1,1);
-    return;
-  }
-
-  save(LS.pending,{phones:phones,msg:msg,index:0});
-  window.alert(`Se enviará el mensaje a ${phones.length} contactos. Al volver a la APP, continuará con el siguiente contacto.`);
-  sendNextPendingWhatsapp();
+  // Si NO hay teléfono guardado, NO cancelar:
+  // abrir selector de Android para elegir contacto o grupo.
+  openWhatsappSelector(msg);
 }
+
+
+
+
+
+/* ===== CLIMA ===== */
+function renderClima(){
+  const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
+  if(n && !n.dataset.loaded){
+    n.innerHTML='<div class="weatherIconBig">🌤️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Según posición GPS</div></div>';
+  }
+  if(f && !f.innerHTML.trim()) f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
+  if(p && !p.dataset.loaded) p.innerHTML='Consultando situación del paso...';
+  if(a && !a.dataset.loaded) a.innerHTML='Consultando alertas...';
+
+  const ahora=Date.now();
+  const debeActualizar=!climaLastUpdate || (ahora-climaLastUpdate)>300000;
+
+  if(debeActualizar && !climaAutoLoading){
+    actualizarClima();
+  }
+}
+
+function weatherCodeText(code){
+  code=Number(code);
+  if(code===0)return"Despejado";
+  if([1,2,3].includes(code))return"Parcialmente nublado";
+  if([45,48].includes(code))return"Niebla";
+  if([51,53,55,56,57].includes(code))return"Llovizna";
+  if([61,63,65,66,67].includes(code))return"Lluvia";
+  if([71,73,75,77].includes(code))return"Nieve";
+  if([80,81,82].includes(code))return"Chaparrones";
+  if([85,86].includes(code))return"Nevadas";
+  if([95,96,99].includes(code))return"Tormenta";
+  return"Condición "+code;
+}
+
+function weatherIcon(code){
+  code=Number(code);
+  if(code===0)return"☀️";
+  if([1,2].includes(code))return"🌤️";
+  if(code===3)return"☁️";
+  if([45,48].includes(code))return"🌫️";
+  if([51,53,55,56,57].includes(code))return"🌦️";
+  if([61,63,65,66,67,80,81,82].includes(code))return"🌧️";
+  if([71,73,75,77,85,86].includes(code))return"❄️";
+  if([95,96,99].includes(code))return"⛈️";
+  return"🌤️";
+}
+
+async function obtenerLocalidadGps(lat,lng){
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`;
+    const r=await fetch(url,{headers:{"Accept":"application/json"}});
+    const data=await r.json();
+    const a=data.address||{};
+    const ciudad=a.city||a.town||a.village||a.municipality||a.county||a.state||"Ubicación actual";
+    const pais=a.country||"";
+    return pais ? `${ciudad}, ${pais}` : ciudad;
+  }catch(e){
+    return "Ubicación actual";
+  }
+}
+
+async function actualizarClima(){
+  if(climaAutoLoading) return;
+  climaAutoLoading=true;
+
+  const n=$("weatherNow"), f=$("weatherForecast"), p=$("passStatus"), a=$("passAlerts");
+
+  if(n)n.innerHTML='<div class="weatherIconBig">⏳</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">Consultando clima...</div><div class="weatherLocNew">Tomando GPS</div></div>';
+  if(f)f.innerHTML='<div class="forecastEmpty">Consultando pronóstico...</div>';
+  if(p)p.innerHTML='Consultando situación del paso...';
+  if(a)a.innerHTML='Consultando alertas...';
+
+  try{
+    const gps=await getGps();
+    await cargarClimaGps(gps.lat,gps.lng);
+  }catch(e){
+    if(n)n.innerHTML='<div class="weatherIconBig">⚠️</div><div class="weatherMainNew"><div class="weatherTempNew">--°</div><div class="weatherDescNew">No se pudo obtener GPS</div><div class="weatherLocNew">'+escapeHtml(e.message||e)+'</div></div>';
+  }
+
+  try{
+    await consultarPasoCristoRedentor();
+  }catch(e){
+    console.log("Error consultando paso",e);
+  }
+
+  climaLastUpdate=Date.now();
+  climaAutoLoading=false;
+}
+
+async function cargarClimaGps(lat,lng){
+  const n=$("weatherNow"), f=$("weatherForecast");
+  const localidad=await obtenerLocalidadGps(lat,lng);
+
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m&forecast_hours=72&timezone=auto`;
+  const r=await fetch(url);
+  const data=await r.json();
+
+  if(data.current&&n){
+    const c=data.current;
+    n.dataset.loaded="1";
+    n.innerHTML=`<div class="weatherIconBig">${weatherIcon(c.weather_code)}</div><div class="weatherMainNew"><div class="weatherTopLine"><div><div class="weatherDescNew">${weatherCodeText(c.weather_code)}</div><div class="weatherLocNew">📍 ${escapeHtml(localidad)}</div></div><div class="weatherTempNew">${Math.round(c.temperature_2m)}°</div></div><div class="weatherMetaNew">Sens. ${Math.round(c.apparent_temperature)}° · Viento ${Math.round(c.wind_speed_10m)} km/h</div></div>`;
+  }
+
+  if(data.hourly&&f){
+    const h=data.hourly;
+    const rows=[];
+    for(let i=0;i<Math.min(72,h.time.length);i+=24){
+      const end=Math.min(i+24,h.time.length);
+      const temps=h.temperature_2m.slice(i,end).map(Number);
+      const codes=h.weather_code.slice(i,end).map(Number);
+      const winds=h.wind_speed_10m.slice(i,end).map(Number);
+      const max=Math.round(Math.max(...temps));
+      const min=Math.round(Math.min(...temps));
+      const wind=Math.round(Math.max(...winds.filter(x=>isFinite(x)),0));
+      const code=codes[Math.floor(codes.length/2)]||codes[0];
+      const dt=new Date(h.time[i]);
+      const day=dt.toLocaleString("es-AR",{weekday:"short",day:"2-digit"});
+      rows.push(`<div class="forecastRowNew oneLineForecast"><span class="forecastDayNew">${day}</span><span class="forecastIconNew">${weatherIcon(code)}</span><span class="forecastCondNew">${weatherCodeText(code)}</span><span class="forecastTempNew">${max}°/${min}°</span><span class="forecastRainNew">💨${wind}</span></div>`);
+    }
+    f.innerHTML=rows.join("\n");
+  }
+}
+
+function detectarEstadoPaso(texto){
+  const t=String(texto||"").toLowerCase();
+
+  if(
+    t.includes("cerrado") ||
+    t.includes("cierre preventivo") ||
+    t.includes("no habilitado") ||
+    t.includes("suspendido") ||
+    t.includes("interrumpido")
+  ){
+    return {label:"CERRADO",cls:"passClosedOrange",icon:"🟠"};
+  }
+
+  if(
+    t.includes("habilitado") ||
+    t.includes("abierto") ||
+    t.includes("transitable") ||
+    t.includes("restablece el tránsito")
+  ){
+    return {label:"ABIERTO",cls:"passOpenGreen",icon:"🟢"};
+  }
+
+  return {label:"VERIFICAR",cls:"passClosedOrange",icon:"🟠"};
+}
+
+function extraerAlertasPaso(texto){
+  const t=String(texto||"").toLowerCase();
+  const checks=[
+    ["nieve","Posible nieve o acumulación en alta montaña"],
+    ["nevadas","Posibles nevadas"],
+    ["viento","Viento fuerte en alta montaña"],
+    ["cadenas","Uso obligatorio o recomendado de cadenas"],
+    ["hielo","Presencia de hielo en calzada"],
+    ["precauc","Transitar con precaución"],
+    ["restric","Restricciones de circulación"],
+    ["demora","Posibles demoras"],
+    ["cerrado","Paso cerrado o con cierre informado"],
+    ["camiones","Restricción o control para camiones"]
+  ];
+  const out=[];
+  checks.forEach(([k,m])=>{if(t.includes(k)&&!out.includes(m))out.push(m)});
+  return out;
+}
+
+function limpiarTextoPaso(txt){
+  return String(txt||"")
+    .replace(/<script[\s\S]*?<\/script>/gi," ")
+    .replace(/<style[\s\S]*?<\/style>/gi," ")
+    .replace(/<[^>]+>/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function recortarPaso(texto){
+  const low=texto.toLowerCase();
+  let idx=low.indexOf("comunicamos");
+  if(idx<0)idx=low.indexOf("sistema integrado cristo redentor");
+  if(idx<0)idx=low.indexOf("sistema cristo redentor");
+  if(idx<0)idx=low.indexOf("los libertadores");
+  if(idx<0)idx=low.indexOf("estado");
+  return (idx>=0?texto.substring(idx,idx+520):texto.substring(0,520));
+}
+
+async function consultarPasoCristoRedentor(){
+  const box=$("passStatus"), alertsBox=$("passAlerts");
+  if(!box)return;
+
+  const fuentes=[
+    {url:"https://www.gobernacionlosandes.gov.cl/libertadoreshtml/", nombre:"Gobernación Los Andes"},
+    {url:"https://ncfloslibertadores.cl/", nombre:"Complejo Los Libertadores"},
+    {url:"https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor", nombre:"Argentina.gob.ar"}
+  ];
+
+  let texto="";
+  let fuenteUsada="Fuente oficial";
+  for(const fuente of fuentes){
+    try{
+      const proxy="https://api.allorigins.win/raw?url="+encodeURIComponent(fuente.url);
+      const res=await fetch(proxy);
+      const raw=await res.text();
+      const plain=limpiarTextoPaso(raw);
+      if(plain && plain.length>100){
+        texto=plain;
+        fuenteUsada=fuente.nombre;
+        break;
+      }
+    }catch(e){}
+  }
+
+  if(!texto){
+    box.innerHTML='<div class="passStateNew passClosedOrange"><b>🟠 PASO VERIFICAR</b><span>No se pudo consultar automáticamente.</span></div>';
+    if(alertsBox)alertsBox.innerHTML='<div class="passAlertItem">• No se pudo consultar alertas automáticamente.</div>';
+    return;
+  }
+
+  const ext=recortarPaso(texto);
+  const estado=detectarEstadoPaso(ext);
+  const alertas=extraerAlertasPaso(ext);
+  const actualizado=new Date().toLocaleString("es-AR");
+
+  box.dataset.loaded="1";
+  box.innerHTML=`<div class="passStateNew ${estado.cls}">
+      <b>${estado.icon} PASO ${estado.label}</b>
+      <span>${fuenteUsada} · Actualizado ${actualizado}</span>
+    </div>`;
+
+  if(alertsBox){
+    alertsBox.dataset.loaded="1";
+    alertsBox.innerHTML=alertas.length
+      ? alertas.map(x=>`<div class="passAlertItem">• ${escapeHtml(x)}</div>`).join("")
+      : `<div class="passOkItem">✓ Sin alertas informadas por la consulta automática.</div>`;
+  }
+}
+
+function abrirPasoArgentina(){window.location.href="https://www.argentina.gob.ar/seguridad/pasosinternacionales/detalle/ruta/29/Sistema-Cristo-Redentor";}
+function abrirPasoChile(){window.location.href="https://www.gobernacionlosandes.gov.cl/libertadoreshtml/";}
 
 /* ===== CÁLCULOS ===== */
 function regId(){
@@ -939,11 +1187,4 @@ function duration(a,b){
 document.addEventListener("DOMContentLoaded",()=>{
   initSelectors();
   show("inicio");
-  setTimeout(()=>continuarEnviosPendientes(),700);
-});
-
-document.addEventListener("visibilitychange",()=>{
-  if(!document.hidden){
-    setTimeout(()=>continuarEnviosPendientes(),500);
-  }
 });

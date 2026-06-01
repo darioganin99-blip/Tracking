@@ -953,104 +953,60 @@ button:disabled{
 }
 
 
-/* v1.4.44 Multi WhatsApp */
-#userPhones{
-  min-height:92px !important;
+
+
+
+/* v1.4.59 Alertas normales con espacio simple */
+#alertList{
+  margin-top:8px !important;
 }
 
-
-/* v1.4.45 Usuario WhatsApp compacto */
-.userCompactCard{
-  padding:12px !important;
-}
-
-.userGrid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-#usuario label{
-  font-size:11px !important;
-  margin:6px 0 3px !important;
-  font-weight:900 !important;
-}
-
-#usuario input,
-#usuario textarea{
+#alertList .alertItem,
+.alertItem{
   padding:8px 10px !important;
+  margin:0 0 6px 0 !important;
+  border-radius:12px !important;
+  line-height:1.25 !important;
+  min-height:auto !important;
   font-size:13px !important;
-  border-radius:11px !important;
 }
 
-.waModeRow{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin:4px 0 4px;
+#alertList .alertItem *,
+.alertItem *{
+  line-height:1.25 !important;
 }
 
-.waMode{
-  display:flex !important;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  background:rgba(15,23,42,.06);
-  border:1px solid rgba(148,163,184,.35);
-  border-radius:12px;
-  padding:8px !important;
-  margin:0 !important;
+#alertList .alertItem br,
+.alertItem br{
+  display:block !important;
+}
+
+#alertList .alertItem b,
+.alertItem b{
+  display:inline !important;
+  font-size:13px !important;
+  margin-right:0 !important;
+}
+
+#alertList .alertItem span,
+#alertList .alertItem small,
+.alertItem span,
+.alertItem small{
+  display:inline !important;
   font-size:12px !important;
+  opacity:.85 !important;
 }
 
-.waMode input{
-  width:auto !important;
-  margin:0 !important;
-  padding:0 !important;
-}
 
-#userPhones{
-  min-height:54px !important;
-  max-height:76px !important;
+/* v1.4.73 Tracking estable y alertas con KM */
+#alertList .alertItem,
+.alertItem{
+  margin-bottom:6px !important;
+  padding:8px 10px !important;
+  line-height:1.25 !important;
 }
-
-.userActionsRow{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:8px;
-}
-
-.userActionsRow .btn{
-  margin-top:0 !important;
-  padding:10px 6px !important;
+#alertList .alertItem span,
+.alertItem span{
   font-size:12px !important;
-  border-radius:13px !important;
-}
-
-#userMsg{
-  min-height:18px;
-  font-size:12px !important;
-}
-
-
-/* v1.4.46 WhatsApp grupo/contactos separados */
-#waGroupBox,
-#waContactsBox{
-  margin-top:2px !important;
-}
-
-#waGroupLink{
-  height:36px !important;
-}
-
-#userPhones{
-  min-height:60px !important;
-  max-height:70px !important;
-}
-
-
-/* v1.4.48 WhatsApp contacto/grupo */
-#waGroupLink::placeholder{
-  font-size:12px !important;
+  opacity:.85 !important;
 }
