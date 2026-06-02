@@ -2109,213 +2109,105 @@ try{
 
 
 
-/* ===== v1.4.80 FIX DEFINITIVO EMBARQUE ===== */
-function tpodSetDebug(txt){
-  const d=document.getElementById("embarqueDebug");
-  if(d)d.innerText=txt;
+
+
+
+/* ===== v1.4.81 FIX REAL DOM EMBARQUE ===== */
+function tpodEnsureInicioEmbarqueInput(){
+  try{
+    const lote=document.getElementById("lote");
+    if(!lote)return;
+    let emb=document.getElementById("embarque");
+    if(emb && emb.tagName && emb.tagName.toLowerCase()==="input"){
+      emb.style.display="block"; emb.style.width="100%"; emb.style.boxSizing="border-box";
+      emb.style.height="46px"; emb.style.fontSize="16px"; emb.style.padding="10px 12px";
+      emb.style.borderRadius="14px"; emb.style.border="1px solid #cbd5e1"; emb.style.background="#fff";
+      return;
+    }
+    const wrap=document.createElement("div");
+    wrap.className="embarqueRealBox";
+    wrap.innerHTML='<label>Embarque</label><input id="embarque" placeholder="Ej: 001" autocomplete="off">';
+    const loteParent=lote.parentElement || lote;
+    const row=document.createElement("div");
+    row.className="loteEmbarqueStack";
+    loteParent.parentElement.insertBefore(row,loteParent);
+    row.appendChild(loteParent);
+    row.appendChild(wrap);
+  }catch(e){console.log("tpodEnsureInicioEmbarqueInput",e);}
 }
 
-function tpodSetFiltro(txt){
-  const f=document.getElementById("embarqueFiltro");
-  if(f)f.innerText=txt;
+function tpodBuildEmbarqueScreen(){
+  let sec=document.getElementById("embarque");
+  if(!sec){sec=document.createElement("section"); sec.id="embarque"; sec.className="view hidden"; document.body.appendChild(sec);}
+  sec.innerHTML='<div class="card embarqueCard"><div class="embarqueHeader"><b>📦 Embarques</b><span id="embarqueFiltro">Cargando...</span></div><button id="btnRefreshEmbarque" class="btn compactBtn btnMini" onclick="refreshEmbarquesCloud()">Actualizar embarques</button><div id="embarqueDebug" class="embarqueDebug">Esperando datos de Firebase...</div><div id="embarqueList" class="embarqueList"><div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div></div></div>';
 }
+
+function tpodSetDebug(txt){const d=document.getElementById("embarqueDebug"); if(d)d.innerText=txt;}
+function tpodSetFiltro(txt){const f=document.getElementById("embarqueFiltro"); if(f)f.innerText=txt;}
 
 function tpodInitFirebase(){
   try{
-    if(typeof firebase==="undefined"){
-      tpodSetDebug("Firebase SDK no cargó. Revisar Internet.");
-      return false;
-    }
-    if(typeof FIREBASE_CONFIG!=="undefined" && !firebase.apps.length){
-      firebase.initializeApp(FIREBASE_CONFIG);
-    }
+    if(typeof firebase==="undefined"){tpodSetDebug("Firebase SDK no cargó. Revisar Internet."); return false;}
+    if(typeof FIREBASE_CONFIG!=="undefined" && !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     if(!db) db=firebase.firestore();
-    cloudReady=true;
-    return true;
-  }catch(e){
-    tpodSetDebug("Error Firebase: "+(e.message||e));
-    console.log("tpodInitFirebase",e);
-    return false;
-  }
+    cloudReady=true; return true;
+  }catch(e){tpodSetDebug("Error Firebase: "+(e.message||e)); return false;}
 }
-
-function tpodCurrentUser(){
-  try{return cloudUser || load(LS.cloudUser,null);}catch(e){return null;}
-}
-
+function tpodCurrentUser(){try{return cloudUser || load(LS.cloudUser,null);}catch(e){return null;}}
 function tpodCanSee(t){
-  const u=tpodCurrentUser();
-  if(!u)return false;
-  if(u.role==="manager")return true;
-  const flota=String(u.flota||"");
-  if(!flota)return false;
+  const u=tpodCurrentUser(); if(!u)return false; if(u.role==="manager")return true;
+  const flota=String(u.flota||""); if(!flota)return false;
   const tf=String((t.user&&t.user.fleet)||t.flota||"");
-  if(tf===flota)return true;
-  return (t.participantes||[]).map(String).includes(flota);
+  return tf===flota || (t.participantes||[]).map(String).includes(flota);
 }
-
 function tpodNormTransit(id,x){
-  x=x||{};
-  const route=x.route||{};
-  const user=x.user||{fleet:x.flota||"",driver:x.chofer||""};
-  return {
-    id:x.id||id||"",
-    user:user,
-    route:{
-      ...route,
-      cliente:route.cliente||x.cliente||"",
-      origen:route.origen||x.origen||"",
-      destino:route.destino||x.destino||"",
-      origen_lat:route.origen_lat||x.origen_lat,
-      origen_lng:route.origen_lng||x.origen_lng,
-      destino_lat:route.destino_lat||x.destino_lat,
-      destino_lng:route.destino_lng||x.destino_lng
-    },
-    lote:x.lote||"",
-    embarque:x.embarque||"",
-    start:x.start||null,
-    updates:x.updates||[],
-    alerts:x.alerts||[],
-    closed:x.closed||null,
-    participantes:x.participantes||[],
-    estado:x.estado||(x.closed?"cerrado":"abierto"),
-    ultimaPosicion:x.ultimaPosicion||null,
-    ultimaAlerta:x.ultimaAlerta||null,
-    flota:x.flota||user.fleet||"",
-    chofer:x.chofer||user.driver||""
-  };
+  x=x||{}; const route=x.route||{}; const user=x.user||{fleet:x.flota||"",driver:x.chofer||""};
+  return {id:x.id||id||"",user:user,route:{...route,cliente:route.cliente||x.cliente||"",origen:route.origen||x.origen||"",destino:route.destino||x.destino||"",origen_lat:route.origen_lat||x.origen_lat,origen_lng:route.origen_lng||x.origen_lng,destino_lat:route.destino_lat||x.destino_lat,destino_lng:route.destino_lng||x.destino_lng},lote:x.lote||"",embarque:x.embarque||"",start:x.start||null,updates:x.updates||[],alerts:x.alerts||[],closed:x.closed||null,participantes:x.participantes||[],estado:x.estado||(x.closed?"cerrado":"abierto"),ultimaPosicion:x.ultimaPosicion||null,ultimaAlerta:x.ultimaAlerta||null,flota:x.flota||user.fleet||"",chofer:x.chofer||user.driver||""};
 }
-
 function tpodDate(v){
-  try{
-    if(!v)return "-";
-    let d=null;
-    if(v.toDate)d=v.toDate();
-    else if(v.seconds)d=new Date(v.seconds*1000);
-    else if(v.time)d=new Date(v.time);
-    else d=new Date(v);
-    if(!d || isNaN(d.getTime()))return "-";
-    const dd=String(d.getDate()).padStart(2,"0");
-    const mm=String(d.getMonth()+1).padStart(2,"0");
-    const hh=String(d.getHours()).padStart(2,"0");
-    const mi=String(d.getMinutes()).padStart(2,"0");
-    return `${dd}/${mm} ${hh}:${mi}`;
-  }catch(e){return "-";}
+  try{if(!v)return "-"; let d=null; if(v.toDate)d=v.toDate(); else if(v.seconds)d=new Date(v.seconds*1000); else if(v.time)d=new Date(v.time); else d=new Date(v); if(!d||isNaN(d.getTime()))return "-"; return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;}catch(e){return "-";}
 }
-
-function tpodLastGps(t){
-  const g=t.ultimaPosicion || ((t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t.closed||t.start));
-  if(!g || g.lat==null || g.lng==null)return "-";
-  return `${Number(g.lat).toFixed(5)}, ${Number(g.lng).toFixed(5)}`;
-}
-
-function tpodLastAlert(t){
-  const a=t.ultimaAlerta || ((t.alerts&&t.alerts.length)?t.alerts[t.alerts.length-1]:null);
-  if(!a)return "-";
-  return a.type || "Alerta";
-}
+function tpodLastGps(t){const g=t.ultimaPosicion||((t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t.closed||t.start)); if(!g||g.lat==null||g.lng==null)return "-"; return `${Number(g.lat).toFixed(5)}, ${Number(g.lng).toFixed(5)}`;}
+function tpodLastAlert(t){const a=t.ultimaAlerta||((t.alerts&&t.alerts.length)?t.alerts[t.alerts.length-1]:null); return a?(a.type||"Alerta"):"-";}
 
 async function refreshEmbarquesCloud(){
+  tpodBuildEmbarqueScreen();
   const box=document.getElementById("embarqueList");
   if(box)box.innerHTML='<div class="emptyBox">Leyendo Firebase...</div>';
   tpodSetDebug("Leyendo colección transitos...");
-
   const u=tpodCurrentUser();
-  if(!u){
-    tpodSetFiltro("Sin usuario");
-    tpodSetDebug("Debe ingresar desde Acceso.");
-    if(box)box.innerHTML='<div class="emptyBox">Ingrese en 🔐 Acceso como manager o flota.</div>';
-    return;
-  }
-
-  if(!tpodInitFirebase()){
-    if(box)box.innerHTML='<div class="emptyBox">No se pudo conectar con Firebase.</div>';
-    return;
-  }
-
+  if(!u){tpodSetFiltro("Sin usuario"); tpodSetDebug("Debe ingresar desde Acceso."); if(box)box.innerHTML='<div class="emptyBox">Ingrese en 🔐 Acceso como manager o flota.</div>'; return;}
+  if(!tpodInitFirebase()){if(box)box.innerHTML='<div class="emptyBox">No se pudo conectar con Firebase.</div>'; return;}
   try{
     const snap=await db.collection("transitos").get();
     cloudTransitosCache=snap.docs.map(d=>tpodNormTransit(d.id,d.data()));
     tpodSetDebug(`Firebase conectado. Leídos: ${cloudTransitosCache.length}`);
     renderEmbarque();
-  }catch(e){
-    tpodSetDebug("Error leyendo Firestore: "+(e.message||e));
-    if(box)box.innerHTML='<div class="emptyBox">Error leyendo Firestore. Revisar reglas/permisos.</div>';
-  }
+  }catch(e){tpodSetDebug("Error leyendo Firestore: "+(e.message||e)); if(box)box.innerHTML='<div class="emptyBox">Error leyendo Firestore. Revisar reglas/permisos.</div>';}
 }
 
 function renderEmbarque(){
-  const box=document.getElementById("embarqueList");
-  if(!box)return;
-
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList"); if(!box)return;
   const u=tpodCurrentUser();
-  if(!u){
-    tpodSetFiltro("Sin usuario Cloud");
-    tpodSetDebug("Debe ingresar desde Acceso.");
-    box.innerHTML='<div class="emptyBox">Ingrese en 🔐 Acceso para ver embarques.</div>';
-    return;
-  }
-
-  let items=(cloudTransitosCache||[]).map(t=>t&&t.id?t:tpodNormTransit(t&&t.id,t)).filter(Boolean);
-  items=items.filter(tpodCanSee);
-
-  items.sort((a,b)=>{
-    const ea=String(a.embarque||"");
-    const eb=String(b.embarque||"");
-    if(ea!==eb)return ea.localeCompare(eb);
-    const fa=String((a.user&&a.user.fleet)||a.flota||"");
-    const fb=String((b.user&&b.user.fleet)||b.flota||"");
-    return fa.localeCompare(fb);
-  });
-
+  if(!u){tpodSetFiltro("Sin usuario Cloud"); tpodSetDebug("Debe ingresar desde Acceso."); box.innerHTML='<div class="emptyBox">Ingrese en 🔐 Acceso para ver embarques.</div>'; return;}
+  let items=(cloudTransitosCache||[]).map(t=>t&&t.id?t:tpodNormTransit(t&&t.id,t)).filter(Boolean).filter(tpodCanSee);
+  items.sort((a,b)=>String(a.embarque||"").localeCompare(String(b.embarque||"")) || String((a.user&&a.user.fleet)||a.flota||"").localeCompare(String((b.user&&b.user.fleet)||b.flota||"")));
   tpodSetFiltro(`Visibles: ${items.length}`);
-  if(!items.length){
-    box.innerHTML='<div class="emptyBox">No hay tránsitos visibles. Tocá Actualizar embarques.</div>';
-    return;
-  }
-
+  if(!items.length){box.innerHTML='<div class="emptyBox">No hay tránsitos visibles. Tocá Actualizar embarques.</div>'; return;}
   box.innerHTML=items.map(t=>{
-    const cerrado=!!t.closed || t.estado==="cerrado";
+    const cerrado=!!t.closed||t.estado==="cerrado";
     const flota=escapeHtml((t.user&&t.user.fleet)||t.flota||"-");
     const chofer=escapeHtml((t.user&&t.user.driver)||t.chofer||"-");
-    const emb=escapeHtml(t.embarque||"-");
-    const lote=escapeHtml(t.lote||"-");
-    const cliente=escapeHtml((t.route&&t.route.cliente)||"-");
-    const destino=escapeHtml((t.route&&t.route.destino)||"-");
-    const estado=cerrado?"Cerrado":"Abierto";
-
-    return `<div class="embarqueItem ${cerrado?'closed':'open'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')">
-      <div class="embTop"><b>Emb. ${emb} / Flota ${flota}</b><span>${estado}</span></div>
-      <div>Chofer: ${chofer}</div>
-      <div>Lote/Carga: ${lote}</div>
-      <div>Cliente: ${cliente}</div>
-      <div>Destino: ${destino}</div>
-      <div>Inicio: ${escapeHtml(tpodDate(t.start))}</div>
-      <div>Cierre: ${cerrado ? escapeHtml(tpodDate(t.closed)) : "-"}</div>
-      <div>Últ. posición: ${escapeHtml(tpodLastGps(t))}</div>
-      <div>Últ. alerta: ${escapeHtml(tpodLastAlert(t))}</div>
-    </div>`;
+    const emb=escapeHtml(t.embarque||"-"); const lote=escapeHtml(t.lote||"-");
+    const cliente=escapeHtml((t.route&&t.route.cliente)||"-"); const destino=escapeHtml((t.route&&t.route.destino)||"-");
+    return `<div class="embarqueItem ${cerrado?'closed':'open'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${emb} / Flota ${flota}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div><div>Chofer: ${chofer}</div><div>Lote/Carga: ${lote}</div><div>Cliente: ${cliente}</div><div>Destino: ${destino}</div><div>Inicio: ${escapeHtml(tpodDate(t.start))}</div><div>Cierre: ${cerrado?escapeHtml(tpodDate(t.closed)):"-"}</div><div>Últ. posición: ${escapeHtml(tpodLastGps(t))}</div><div>Últ. alerta: ${escapeHtml(tpodLastAlert(t))}</div></div>`;
   }).join("");
 }
+function abrirTransitoCloud(id){const t=(cloudTransitosCache||[]).find(x=>x.id===id); if(!t)return; save(LS.transit,t); window.alert("Tránsito cargado en Tracking."); show("tracking");}
 
-function abrirTransitoCloud(id){
-  const t=(cloudTransitosCache||[]).find(x=>x.id===id);
-  if(!t)return;
-  save(LS.transit,t);
-  window.alert("Tránsito cargado en Tracking.");
-  show("tracking");
-}
-
-// Reemplazo show para garantizar que Embarque renderice.
-try{
-  const tpodOldShow=show;
-  show=function(id){
-    tpodOldShow(id);
-    if(id==="embarque"){
-      setTimeout(()=>refreshEmbarquesCloud(),250);
-    }
-  };
-}catch(e){
-  console.log("No se pudo envolver show",e);
-}
+function tpodRuntimeRepair(){tpodEnsureInicioEmbarqueInput(); tpodBuildEmbarqueScreen();}
+try{const tpodOldShow=show; show=function(id){tpodRuntimeRepair(); tpodOldShow(id); tpodEnsureInicioEmbarqueInput(); if(id==="embarque")setTimeout(()=>refreshEmbarquesCloud(),250);};}catch(e){}
+document.addEventListener("DOMContentLoaded",function(){setTimeout(tpodRuntimeRepair,300); setTimeout(tpodEnsureInicioEmbarqueInput,800);});
+setTimeout(tpodRuntimeRepair,1200);
 

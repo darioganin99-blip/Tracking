@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.80</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.81</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Cloud: desconectado</div>
   <nav class="tabs">
@@ -105,15 +105,10 @@
       <button class="btn" onclick="saveUser()">Guardar usuario</button><div id="userMsg"></div>
     </div></section>
     <section id="embarque" class="view hidden"><div class="card embarqueCard">
-      <div class="embarqueHeader">
-        <b>📦 Embarques</b>
-        <span id="embarqueFiltro">Cargando...</span>
-      </div>
+      <div class="embarqueHeader"><b>📦 Embarques</b><span id="embarqueFiltro">Cargando...</span></div>
       <button id="btnRefreshEmbarque" class="btn compactBtn btnMini" onclick="refreshEmbarquesCloud()">Actualizar embarques</button>
       <div id="embarqueDebug" class="embarqueDebug">Esperando datos de Firebase...</div>
-      <div id="embarqueList" class="embarqueList">
-        <div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div>
-      </div>
+      <div id="embarqueList" class="embarqueList"><div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div></div>
     </div></section>
 
   <section id="ultimo" class="view hidden"><div class="card">
