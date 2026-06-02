@@ -1010,3 +1010,77 @@ button:disabled{
   font-size:12px !important;
   opacity:.85 !important;
 }
+
+
+/* v1.4.74 Embarque */
+.loteEmbarqueRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  align-items:end;
+}
+
+.embarqueCard{
+  padding:12px !important;
+}
+
+.embarqueHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+  font-size:13px;
+}
+
+.embarqueHeader span{
+  font-size:12px;
+  font-weight:800;
+  color:#2563eb;
+}
+
+.embarqueList{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  max-height:60vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.embarqueItem{
+  border:1px solid rgba(148,163,184,.35);
+  background:#fff;
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:12px;
+  line-height:1.25;
+  box-shadow:0 4px 12px rgba(15,23,42,.06);
+}
+
+.embTop{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:3px;
+}
+
+.embTop span{
+  font-size:11px;
+  font-weight:900;
+  color:#2563eb;
+}
+
+.embarqueItem.closed .embTop span{
+  color:#16a34a;
+}
+
+.emptyBox{
+  padding:10px;
+  border-radius:12px;
+  background:rgba(15,23,42,.05);
+  font-size:12px;
+}
+
+/* v1.4.75 Cloud permisos */
+.cloudStatus{margin:4px 18px 8px;padding:6px 10px;border-radius:12px;font-size:11px;font-weight:900;background:#fee2e2;color:#991b1b;text-align:center}.cloudStatus.ok{background:#dcfce7;color:#166534}.loginCard h3{margin:0 0 8px;font-size:16px}.loginActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.loginHelp{margin-top:10px;font-size:11px;line-height:1.25;color:#475569}.loginMsg{font-size:12px}

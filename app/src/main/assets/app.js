@@ -13,7 +13,7 @@ const $ = id => document.getElementById(id);
 let climaAutoLoading=false;
 let climaLastUpdate=0;
 
-const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last"};
+const LS = {user:"trackpod_user", transit:"trackpod_transit", last:"trackpod_last", history:"trackpod_history", cloudUser:"trackpod_cloud_user"};
 
 function load(k,f){try{return JSON.parse(localStorage.getItem(k)) ?? f}catch(e){return f}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -58,12 +58,96 @@ async function localidadDesdeGps(gps){
 function now(){return new Date().toISOString()}
 function cleanPhone(p){return String(p||"").replace(/[^\d]/g,"")}
 function user(){return load(LS.user,{fleet:"",driver:"",phones:""})}
+
+function historyTransits(){return load(LS.history,[])}
+function saveTransitHistory(t){
+  if(!t || !t.id) return;
+  const arr=historyTransits().filter(x=>x && x.id!==t.id);
+  arr.push(t);
+  // conservar últimos 150 registros locales
+  save(LS.history,arr.slice(-150));
+}
+
+function sameLocalDay(a,b){
+  if(!a||!b)return false;
+  const da=new Date(a), db=new Date(b);
+  return da.getFullYear()===db.getFullYear() && da.getMonth()===db.getMonth() && da.getDate()===db.getDate();
+}
+
+function todayTransitItemsByEmbarque(emb){
+  const target=String(emb||"").trim();
+  if(!target)return [];
+  const today=now();
+  const items=[];
+  const current=transit();
+  if(current && String(current.embarque||"").trim()===target && current.start && sameLocalDay(current.start.time,today)){
+    items.push(current);
+  }
+  historyTransits().forEach(t=>{
+    if(!t || !t.id)return;
+    if(current && current.id===t.id)return;
+    if(String(t.embarque||"").trim()!==target)return;
+    if(t.start && sameLocalDay(t.start.time,today))items.push(t);
+  });
+  return items.sort((a,b)=>new Date(a.start&&a.start.time||0)-new Date(b.start&&b.start.time||0));
+}
+
+function lastGpsText(t){
+  const g=(t && t.updates && t.updates.length) ? t.updates[t.updates.length-1].gps : (t ? (t.closed||t.start) : null);
+  if(!g || g.lat==null || g.lng==null)return "-";
+  return `${Number(g.lat).toFixed(5)}, ${Number(g.lng).toFixed(5)}`;
+}
+
+function lastAlertText(t){
+  if(!t || !t.alerts || !t.alerts.length)return "-";
+  const a=t.alerts[t.alerts.length-1];
+  const km=typeof alertKmText==="function" ? alertKmText(t,a) : "";
+  return `${a.type||"Alerta"}${km ? " - "+km : ""}`;
+}
+
+function currentEmbarqueValue(){
+  const t=transit();
+  if(t && t.embarque)return t.embarque;
+  const el=$("embarque");
+  return el ? el.value.trim() : "";
+}
+
+function renderEmbarque(){
+  const emb=currentEmbarqueValue();
+  const title=$("embarqueFiltro");
+  const box=$("embarqueList");
+  if(title) title.innerText=emb ? emb : "Sin embarque seleccionado";
+  if(!box)return;
+
+  if(!emb){
+    box.innerHTML='<div class="emptyBox">Ingrese o seleccione un embarque en Inicio / Fin.</div>';
+    return;
+  }
+
+  const items=todayTransitItemsByEmbarque(emb);
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay tránsitos de hoy para este embarque.</div>';
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const cerrado=!!t.closed;
+    return `<div class="embarqueItem ${cerrado?'closed':'open'}">
+      <div class="embTop"><b>Flota ${escapeHtml(t.user&&t.user.fleet||"-")}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div>
+      <div>Inicio: ${escapeHtml(fmtDateShort(t.start&&t.start.time))}</div>
+      <div>Cierre: ${cerrado ? escapeHtml(fmtDateShort(t.closed.time)) : "-"}</div>
+      <div>Últ. posición: ${escapeHtml(lastGpsText(t))}</div>
+      <div>Últ. alerta: ${escapeHtml(lastAlertText(t))}</div>
+    </div>`;
+  }).join("");
+}
+
 function transit(){return load(LS.transit,null)}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
 function show(id){
-  const views=["inicio","tracking","alertas","clima","usuario","ultimo"];
-  const buttons=["btn-inicio","btn-tracking","btn-alertas","btn-clima","btn-usuario","btn-ultimo"];
+  const views=["inicio","tracking","alertas","clima","usuario","embarque","ultimo"];
+  const buttons=["btn-inicio","btn-tracking","btn-alertas","btn-clima","btn-usuario","btn-embarque","btn-ultimo"];
 
   views.forEach(v=>{
     const e=$(v);
@@ -86,6 +170,7 @@ function show(id){
   if(id==="alertas") renderAlertas();
   if(id==="clima") renderClima();
   if(id==="usuario") loadUserForm();
+  if(id==="embarque") renderEmbarque();
   if(id==="ultimo") renderUltimo();
 }
 
@@ -194,9 +279,10 @@ function renderInicio(){
 
   const t=transit();
   if(t && $("lote")) $("lote").value=t.lote||"";
+  if(t && $("embarque")) $("embarque").value=t.embarque||"";
 
   renderTransitStatus();
-    aplicarColorResumenInicio();
+  aplicarColorResumenInicio();
   bloquearFormularioTransito();
 }
 
@@ -223,7 +309,7 @@ async function iniciarTransito(){
   const u=user();
   if(!u.fleet){
     window.alert("Cargá la flota en Usuario.");
-    /* sin telefono: no redirigir a usuario */
+    show("usuario");
     return;
   }
 
@@ -234,6 +320,13 @@ async function iniciarTransito(){
     return;
   }
 
+  const embEl=$("embarque");
+  const embarque=embEl ? embEl.value.trim() : "";
+  if(!embarque){
+    window.alert("Ingresá número de embarque.");
+    return;
+  }
+
   try{
     const gps=await getGps();
     const t={
@@ -241,6 +334,7 @@ async function iniciarTransito(){
       user:u,
       route:selectedRoute(),
       lote:lote,
+      embarque:embarque,
       start:gps,
       updates:[],
       alerts:[],
@@ -248,6 +342,7 @@ async function iniciarTransito(){
     };
 
     save(LS.transit,t);
+    saveTransitHistory(t);
     bloquearFormularioTransito();
     renderTransitStatus();
     aplicarColorResumenInicio();
@@ -275,6 +370,7 @@ async function cerrarTransito(){
     t.closed=gps;
     const msg=await buildCierreMsgAsync(t);
     save(LS.last,{msg,date:now()});
+    saveTransitHistory(t);
 
     localStorage.removeItem(LS.transit);
     stopAutoGps();
@@ -529,6 +625,8 @@ function renderTrackingMap(t){
 
   if(!t || !t.route || !t.start){
     removeRouteLayer();
+    window.lastTrackingMapKey="";
+    window.lastTrackingMapCenter=null;
     map.setView([-34.6037,-58.3816],6,{animate:false});
     return;
   }
@@ -563,13 +661,26 @@ function renderTrackingMap(t){
     addLeafletLayer(L.circleMarker([a.lat,a.lng],{radius:8,color:"#fff",weight:2,fillColor:"#f59e0b",fillOpacity:1}).bindPopup("Alerta "+(i+1)));
   });
 
-  // Evitar el efecto visual de borrar/redibujar y reencuadrar toda la ruta en cada actualización GPS.
-  // El mapa se mantiene cerca del camión con zoom de acercamiento.
+  const key=routeKey(origin,dest);
+  const firstRoute=window.lastTrackingMapKey!==key;
+  window.lastTrackingMapKey=key;
+
+  // Evita el efecto de parpadeo/salto: la ruta no se reencuadra en cada GPS.
+  // Solo se encuadra al cambiar el tránsito/ruta; luego se acompaña suavemente al camión.
+  if(firstRoute && bounds.length>=2){
+    map.fitBounds(bounds,{padding:[28,28],maxZoom:12,animate:false});
+    window.lastTrackingMapCenter=isFinite(cur.lat)&&isFinite(cur.lng)?{lat:cur.lat,lng:cur.lng}:null;
+    return;
+  }
+
   if(isFinite(cur.lat)&&isFinite(cur.lng)){
-    const z=map.getZoom && map.getZoom()>0 ? Math.max(map.getZoom(),10) : 10;
-    map.setView([cur.lat,cur.lng],Math.min(z,13),{animate:false});
-  }else if(bounds.length>=2){
-    map.fitBounds(bounds,{padding:[24,24],maxZoom:10,animate:false});
+    const last=window.lastTrackingMapCenter;
+    const moved=!last || distKm(last.lat,last.lng,cur.lat,cur.lng)>0.35;
+    if(moved){
+      const z=Math.max(map.getZoom()||12,12);
+      map.setView([cur.lat,cur.lng],Math.min(z,14),{animate:false});
+      window.lastTrackingMapCenter={lat:cur.lat,lng:cur.lng};
+    }
   }else if(bounds.length===1){
     map.setView(bounds[0],12,{animate:false});
   }
@@ -663,6 +774,7 @@ async function registrarAlerta(){
     const alerta={type:$("alertType").value,detail:"",gps,time:now()};
     t.alerts.push(alerta);
     save(LS.transit,t);
+    saveTransitHistory(t);
     renderAlertas();
     window.alert("Alerta registrada.");
   }catch(e){
@@ -1188,3 +1300,123 @@ document.addEventListener("DOMContentLoaded",()=>{
   initSelectors();
   show("inicio");
 });
+
+
+/* ===== FIREBASE CLOUD / PERMISOS v1.4.75 ===== */
+const FIREBASE_CONFIG = {"apiKey": "AIzaSyDFk_mPN0r_LLHhS3HeQ2yfbfvHZJ2h2mU", "authDomain": "elta-track-pod.firebaseapp.com", "projectId": "elta-track-pod", "storageBucket": "elta-track-pod.firebasestorage.app", "messagingSenderId": "993768926683", "appId": "1:993768926683:web:8a14e6af8706154a96cbfe", "measurementId": "G-9FSMKJ8KL0"};
+let db=null;
+let cloudReady=false;
+let cloudUser=null;
+let cloudUnsub=null;
+let cloudCache=[];
+
+function cloudUserKey(v){return String(v||"").trim().toLowerCase().replace(/[^a-z0-9_@.-]/g,"_")}
+function cloudStatus(txt,ok){const e=$("cloudStatus"); if(e){e.innerText=txt; e.className="cloudStatus "+(ok?"ok":"bad");}}
+function currentCloudUser(){return cloudUser || load("trackpod_cloud_user",null)}
+
+function initFirebaseCloud(){
+  try{
+    if(typeof firebase==="undefined"){cloudStatus("Cloud: Firebase no cargado",false);return false;}
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db=firebase.firestore(); cloudReady=true;
+    const saved=load("trackpod_cloud_user",null);
+    if(saved){cloudUser=saved; cloudStatus(`Cloud: ${saved.user} (${saved.role})`,true); startCloudListener();}
+    else cloudStatus("Cloud: listo - ingresar",true);
+    return true;
+  }catch(e){console.log("Firebase init",e); cloudStatus("Cloud: error",false); return false;}
+}
+
+async function crearUsuarioInicial(){
+  if(!db && !initFirebaseCloud())return;
+  try{
+    await db.collection("usuarios").doc("manager").set({user:"manager",pass:"elta2026",role:"manager",flota:"",activo:true,createdAt:new Date().toISOString()},{merge:true});
+    const msg=$("loginMsg"); if(msg) msg.innerHTML='<p class="ok">Manager inicial creado: manager / elta2026</p>';
+  }catch(e){window.alert("No se pudo crear manager inicial: "+(e.message||e));}
+}
+
+async function loginCloud(){
+  if(!db && !initFirebaseCloud())return;
+  const u=cloudUserKey($("loginUser")&&$("loginUser").value);
+  const p=($("loginPass")&&$("loginPass").value)||"";
+  if(!u||!p){window.alert("Ingresá usuario y clave.");return;}
+  try{
+    const doc=await db.collection("usuarios").doc(u).get();
+    if(!doc.exists){window.alert("Usuario no existe.");return;}
+    const d=doc.data()||{};
+    if(!d.activo){window.alert("Usuario inactivo.");return;}
+    if(String(d.pass||"")!==p){window.alert("Clave incorrecta.");return;}
+    cloudUser={user:u,role:d.role||"flota",flota:String(d.flota||""),activo:true};
+    save("trackpod_cloud_user",cloudUser);
+    cloudStatus(`Cloud: ${cloudUser.user} (${cloudUser.role})`,true);
+    startCloudListener(); show("inicio");
+  }catch(e){window.alert("Error de acceso: "+(e.message||e));}
+}
+
+function logoutCloud(){localStorage.removeItem("trackpod_cloud_user"); cloudUser=null; if(cloudUnsub){try{cloudUnsub();}catch(e){} cloudUnsub=null;} cloudCache=[]; cloudStatus("Cloud: desconectado",false); show("login");}
+
+function canSeeTransit(t){
+  const u=currentCloudUser(); if(!u)return false;
+  if(u.role==="manager")return true;
+  const f=String(u.flota||""); if(!f)return false;
+  if(String(t.user&&t.user.fleet||t.flota||"")===f)return true;
+  return (t.participantes||[]).map(String).includes(f);
+}
+
+function toCloudDoc(t){
+  const u=t.user||{}; const r=t.route||{};
+  const current=(t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t.closed||t.start||null);
+  const parts=Array.from(new Set([String(u.fleet||""),...((t.participantes||[]).map(String))].filter(Boolean)));
+  return {id:t.id,user:u,route:r,flota:u.fleet||"",chofer:u.driver||"",lote:t.lote||"",embarque:t.embarque||"",estado:t.closed?"cerrado":"abierto",start:t.start||null,closed:t.closed||null,updates:t.updates||[],alerts:t.alerts||[],ultimaPosicion:current,ultimaAlerta:(t.alerts&&t.alerts.length)?t.alerts[t.alerts.length-1]:null,participantes:parts,updatedAt:new Date().toISOString()};
+}
+function fromCloudDoc(doc){const x=doc.data?doc.data():doc; return {id:x.id||doc.id,user:x.user||{fleet:x.flota||"",driver:x.chofer||""},route:x.route||{},lote:x.lote||"",embarque:x.embarque||"",start:x.start||null,closed:x.closed||null,updates:x.updates||[],alerts:x.alerts||[],participantes:x.participantes||[]};}
+async function cloudSaveTransit(t){if(!db||!t||!t.id)return; try{await db.collection("transitos").doc(t.id).set(toCloudDoc(t),{merge:true});}catch(e){console.log("cloudSaveTransit",e); cloudStatus("Cloud: error guardando",false);}}
+function transitPool(){const arr=[]; const cur=transit(); if(cur)arr.push(cur); try{arr.push(...historyTransits());}catch(e){} arr.push(...cloudCache); const by={}; arr.forEach(t=>{if(t&&t.id&&(!currentCloudUser()||canSeeTransit(t)))by[t.id]=t;}); return Object.values(by);}
+function startCloudListener(){
+  if(!db||cloudUnsub)return;
+  cloudUnsub=db.collection("transitos").onSnapshot(snap=>{
+    cloudCache=snap.docs.map(fromCloudDoc).filter(canSeeTransit);
+    if($("embarque") && !$('embarque').classList.contains('hidden')) renderEmbarque();
+    if($("tracking") && !$('tracking').classList.contains('hidden')) renderTracking();
+  },e=>{console.log("listener",e); cloudStatus("Cloud: sin permisos/error",false);});
+}
+
+const showLocalBase=show;
+show=function(id){
+  const views=["login","inicio","tracking","alertas","clima","usuario","embarque","ultimo"];
+  const buttons=["btn-login","btn-inicio","btn-tracking","btn-alertas","btn-clima","btn-usuario","btn-embarque","btn-ultimo"];
+  views.forEach(v=>{const e=$(v); if(e){if(v===id)e.classList.remove("hidden"); else e.classList.add("hidden");}});
+  buttons.forEach(b=>{const e=$(b); if(e)e.classList.remove("active");});
+  const active=$("btn-"+id); if(active)active.classList.add("active");
+  if(id==="inicio") renderInicio();
+  if(id==="tracking") renderTracking();
+  if(id==="alertas") renderAlertas();
+  if(id==="clima") renderClima();
+  if(id==="usuario") loadUserForm();
+  if(id==="embarque") renderEmbarque();
+  if(id==="ultimo") renderUltimo();
+  if(id==="login"){const u=currentCloudUser(); const m=$("loginMsg"); if(u&&m)m.innerHTML=`<p class="ok">Conectado: ${u.user} (${u.role}) <button onclick="logoutCloud()">Salir</button></p>`;}
+}
+
+const iniciarTransitoLocal=iniciarTransito;
+iniciarTransito=async function(){
+  await iniciarTransitoLocal();
+  const t=transit(); if(t){if(!t.participantes)t.participantes=[String(t.user&&t.user.fleet||"")].filter(Boolean); saveTransitHistory(t); cloudSaveTransit(t);}
+}
+const cerrarTransitoLocal=cerrarTransito;
+cerrarTransito=async function(){const t=transit(); await cerrarTransitoLocal(); if(t){t.closed=t.closed||{time:now()}; saveTransitHistory(t); cloudSaveTransit(t);}}
+const registrarAlertaLocal=registrarAlerta;
+registrarAlerta=async function(){await registrarAlertaLocal(); const t=transit(); if(t){saveTransitHistory(t); cloudSaveTransit(t);}}
+const guardarGpsAutomaticoLocal=guardarGpsAutomatico;
+guardarGpsAutomatico=function(gps){guardarGpsAutomaticoLocal(gps); const t=transit(); if(t)cloudSaveTransit(t);}
+
+const renderEmbarqueLocal=renderEmbarque;
+renderEmbarque=function(){
+  const emb=currentEmbarqueValue(); const title=$("embarqueFiltro"); const box=$("embarqueList"); if(!box){return;}
+  if(title) title.innerText=emb?emb:"Todos los visibles";
+  let items=transitPool().filter(t=>t.start&&sameLocalDay(t.start.time,now()));
+  if(emb)items=items.filter(t=>String(t.embarque||"").trim()===String(emb).trim());
+  if(!items.length){box.innerHTML='<div class="emptyBox">No hay tránsitos visibles para hoy.</div>';return;}
+  items.sort((a,b)=>String(a.embarque||"").localeCompare(String(b.embarque||""))||new Date(a.start&&a.start.time||0)-new Date(b.start&&b.start.time||0));
+  box.innerHTML=items.map(t=>{const cerrado=!!t.closed;return `<div class="embarqueItem ${cerrado?'closed':'open'}"><div class="embTop"><b>Emb. ${escapeHtml(t.embarque||'-')} / Flota ${escapeHtml(t.user&&t.user.fleet||'-')}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div><div>Inicio: ${escapeHtml(fmtDateShort(t.start&&t.start.time))}</div><div>Cierre: ${cerrado?escapeHtml(fmtDateShort(t.closed.time)):'-'}</div><div>Últ. posición: ${escapeHtml(lastGpsText(t))}</div><div>Últ. alerta: ${escapeHtml(lastAlertText(t))}</div></div>`;}).join('');
+}
+setTimeout(()=>initFirebaseCloud(),800);
