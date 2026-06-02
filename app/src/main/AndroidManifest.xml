@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <application android:roundIcon="@mipmap/ic_elta_launcher_round" android:icon="@mipmap/ic_elta_launcher"
+    <application
         android:allowBackup="true"
         android:label="Track"
         android:theme="@style/AppTheme"
