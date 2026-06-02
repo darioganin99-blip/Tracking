@@ -1084,3 +1084,50 @@ button:disabled{
 
 /* v1.4.75 Cloud permisos */
 .cloudStatus{margin:4px 18px 8px;padding:6px 10px;border-radius:12px;font-size:11px;font-weight:900;background:#fee2e2;color:#991b1b;text-align:center}.cloudStatus.ok{background:#dcfce7;color:#166534}.loginCard h3{margin:0 0 8px;font-size:16px}.loginActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.loginHelp{margin-top:10px;font-size:11px;line-height:1.25;color:#475569}.loginMsg{font-size:12px}
+
+
+/* v1.4.76 Fix campo Embarque visible */
+.loteEmbarqueRow{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:10px !important;
+  align-items:end !important;
+  width:100% !important;
+}
+
+.loteEmbarqueRow > div{
+  min-width:0 !important;
+  width:100% !important;
+}
+
+.loteEmbarqueRow label{
+  display:block !important;
+  font-size:13px !important;
+  margin:6px 0 4px !important;
+  white-space:nowrap !important;
+}
+
+.loteEmbarqueRow input{
+  display:block !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  min-width:0 !important;
+  height:46px !important;
+  padding:10px 12px !important;
+  font-size:16px !important;
+  border-radius:14px !important;
+}
+
+@media (max-width:420px){
+  .loteEmbarqueRow{
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+  }
+  .loteEmbarqueRow label{
+    font-size:12px !important;
+  }
+  .loteEmbarqueRow input{
+    height:44px !important;
+    font-size:15px !important;
+  }
+}

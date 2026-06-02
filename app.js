@@ -251,7 +251,7 @@ function renderTransitStatus(){
 function bloquearFormularioTransito(){
   const t=transit();
   const bloqueado=!!(t && !t.closed);
-  ["clienteSelect","origenSelect","destinoSelect","lote"].forEach(id=>{
+  ["clienteSelect","origenSelect","destinoSelect","lote","embarque"].forEach(id=>{
     const e=$(id);
     if(e) e.disabled=bloqueado;
   });
