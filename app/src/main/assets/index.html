@@ -4,54 +4,110 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Track - Seguimiento GPS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.5</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.77</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
+  <div id="cloudStatus" class="cloudStatus">Cloud: desconectado</div>
   <nav class="tabs">
     <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
     <button id="btn-tracking" onclick="show('tracking')">📍 Tracking</button>
     <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
+    <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
     <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
+    <button id="btn-login" onclick="show('login')">🔐 Acceso</button>
+    <button id="btn-embarque" onclick="show('embarque')">📦 Embarque</button>
     <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
   </nav>
   <main>
-    <section id="inicio" class="view"><div class="card">
+    <section id="login" class="view hidden"><div class="card loginCard">
+      <h3>Acceso Track-POD Cloud</h3>
+      <label>Usuario</label><input id="loginUser" placeholder="manager / flota105">
+      <label>Clave</label><input id="loginPass" type="password" placeholder="Clave">
+      <div class="loginActions"><button class="btn compactBtn" onclick="loginCloud()">Ingresar</button><button class="btn secondary compactBtn" onclick="crearUsuarioInicial()">Crear manager inicial</button></div>
+      <div id="loginMsg" class="loginMsg"></div>
+      <div class="loginHelp"><b>Primer uso:</b> crear manager inicial y entrar con <b>manager / elta2026</b>.</div>
+    </div></section>
+
+  <section id="inicio" class="view"><div class="card">
       
       <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
       <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
       <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
       <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
-      <label>Número de Lote / Carga</label><input id="lote" placeholder="Ej: 1234">
-      <div id="rutaInfo" class="infoBox"></div>
-      <button class="btn" onclick="iniciarTransito()">Iniciar tránsito</button>
-      <button class="btn danger" onclick="cerrarTransito()">Cierre tránsito</button>
+      <div class="loteEmbarqueRow">
+        <div class="loteBox">
+          <label>Lote / Carga</label>
+          <input id="lote" placeholder="Ej: 1234">
+        </div>
+        <div class="embarqueBox">
+          <label>Embarque</label>
+          <input id="embarque" placeholder="Ej: EMB-001">
+        </div>
+      </div>
+      <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
+      <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>
     </div></section>
-    <section id="tracking" class="view hidden"><div class="card">
-      <div id="trackingBox" class="summary"></div>
-      <div class="routeBox"><div class="routeLine"><span id="routeProgress"></span></div><div class="routeLabels"><span>Origen</span><span>Destino</span></div></div>
-      <div id="chileBox" class="infoBox hidden"></div>
-      <button class="btn secondary" onclick="actualizarGps()">Actualizar GPS</button>
-      <button class="btn" onclick="enviarActualizacion()">Enviar actualización de tránsito</button>
+    <section id="tracking" class="view hidden"><div class="card trackingCard">
+      <div id="realMap" class="realMap"></div>
+
+      <div class="mapLegend compactLegend">
+        <span><b class="dot origin"></b>Origen</span>
+        <span><b class="dot current"></b>GPS</span>
+        <span><b class="dot dest"></b>Destino</span>
+        <span><b class="dot alert"></b>Alertas</span>
+      </div>
+
+      <div id="trackingBox" class="trackingStats compactStats"></div>
+
+      <div class="trackingActions bottomActions">
+        <button class="btn compactBtn singleActionBtn" onclick="enviarActualizacion()">📤 Enviar actualización</button>
+      </div>
     </div></section>
     <section id="alertas" class="view hidden"><div class="card">
       
-      <label>Tipo de alerta</label><select id="alertType"><option>Control de carga</option><option>Ingreso Aduana</option><option>Liberación Aduana</option><option>Accidente</option><option>Paso Cortado</option><option>Niebla</option><option>Rotura</option><option>Otros</option></select>
-      <label>Detalle</label><textarea id="alertDetail" placeholder="Comentario opcional"></textarea>
+      <label>Tipo de alerta</label><select id="alertType"><option>Control de carga</option><option>Ingreso Aduana</option><option>Salida Aduana</option><option>Liberación Aduana</option><option>Accidente</option><option>Paso Cortado</option><option>Niebla</option><option>Rotura</option><option>Otros</option></select>
       <button class="btn warning" onclick="registrarAlerta()">Registrar alerta con GPS</button>
       <div id="alertList" class="summary"></div>
     </div></section>
+    <section id="clima" class="view hidden"><div class="card climaCard climaCardNew">
+      <div id="weatherNow" class="weatherCardNew">
+        <div class="weatherIconBig">🌤️</div>
+        <div class="weatherMainNew">
+          <div class="weatherTempNew">--°</div>
+          <div class="weatherDescNew">Presioná actualizar</div>
+          <div id="weatherLocation" class="weatherLocNew">Según posición GPS</div>
+        </div>
+      </div>
+      <div class="forecastCardNew">
+        
+        <div id="weatherForecast" class="forecastListNew"></div>
+      </div>
+      <div class="passCardNew">
+        <div class="passTitleNew">🚛 Pasos Fronterizos</div>
+        <div id="passStatus" class="passStatusNew">Estado pendiente de actualizar.</div>
+      </div>
+      <div class="passAlertCardNew">
+        
+        <div id="passAlerts" class="passAlertsNew">Sin datos actualizados.</div>
+      </div>
+    </div></section>
+
     <section id="usuario" class="view hidden"><div class="card">
       
       <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
       <label>Nombre de chofer</label><input id="userDriver" placeholder="Ej: Ganin">
-      <label>Teléfonos o grupo WhatsApp</label><textarea id="userPhones" placeholder="Uno o más teléfonos separados por coma. Ej: 54911...,54911..."></textarea>
+      <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
       <button class="btn" onclick="saveUser()">Guardar usuario</button><div id="userMsg"></div>
     </div></section>
     <section id="ultimo" class="view hidden"><div class="card">
       <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar información</button>
     </div></section>
   </main>
-  <script src="data.js"></script><script src="app.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
 </body></html>

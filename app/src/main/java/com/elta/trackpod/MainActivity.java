@@ -16,6 +16,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
+    private WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +32,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        WebView webView = new WebView(this);
+        webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -40,24 +42,14 @@ public class MainActivity extends Activity {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    return handleExternalUrl(request.getUrl().toString());
-                }
-                return false;
-            }
-            @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return handleExternalUrl(url);
+                return handleUrl(url);
             }
-            private boolean handleExternalUrl(String url) {
-                if (url != null && (url.startsWith("https://wa.me/") || url.startsWith("whatsapp://"))) {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                        return true;
-                    } catch (Exception e) {
-                        return false;
-                    }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && request != null && request.getUrl() != null) {
+                    return handleUrl(request.getUrl().toString());
                 }
                 return false;
             }
@@ -68,15 +60,69 @@ public class MainActivity extends Activity {
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
                 callback.invoke(origin, true, false);
             }
+
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    runOnUiThread(() -> request.grant(request.getResources()));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            request.grant(request.getResources());
+                        }
+                    });
                 }
             }
         });
 
         webView.loadUrl("file:///android_asset/index.html");
         setContentView(webView);
+    }
+
+    private boolean handleUrl(String url) {
+        if (url == null) return false;
+
+        if (url.startsWith("trackpodshare://")) {
+            try {
+                Uri uri = Uri.parse(url);
+                String text = uri.getQueryParameter("text");
+                if (text == null) text = "";
+                shareText(text);
+                return true;
+            } catch (Exception e) {
+                return true;
+            }
+        }
+
+        if (url.startsWith("https://wa.me/") ||
+            url.startsWith("https://api.whatsapp.com/") ||
+            url.startsWith("whatsapp://")) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private void shareText(String text) {
+        try {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+            Intent chooser = Intent.createChooser(sendIntent, "Enviar actualización");
+            startActivity(chooser);
+        } catch (Exception e) {
+            try {
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.setPackage("com.whatsapp");
+                startActivity(sendIntent);
+            } catch (Exception ignored) {}
+        }
     }
 }
