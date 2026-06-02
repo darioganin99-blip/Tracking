@@ -357,7 +357,7 @@ function show(id){
   if(id==="alertas") renderAlertas();
   if(id==="clima") renderClima();
   if(id==="usuario") loadUserForm();
-  if(id==="embarque") renderEmbarque();
+  if(id==="embarque"){ renderEmbarque(); refreshEmbarquesCloud(); }
   if(id==="ultimo") renderUltimo();
 }
 
@@ -1579,7 +1579,7 @@ show=function(id){
   if(id==="alertas") renderAlertas();
   if(id==="clima") renderClima();
   if(id==="usuario") loadUserForm();
-  if(id==="embarque") renderEmbarque();
+  if(id==="embarque"){ renderEmbarque(); refreshEmbarquesCloud(); }
   if(id==="ultimo") renderUltimo();
   if(id==="login"){const u=currentCloudUser(); const m=$("loginMsg"); if(u&&m)m.innerHTML=`<p class="ok">Conectado: ${u.user} (${u.role}) <button onclick="logoutCloud()">Salir</button></p>`;}
 }
@@ -1607,3 +1607,284 @@ renderEmbarque=function(){
   box.innerHTML=items.map(t=>{const cerrado=!!t.closed;return `<div class="embarqueItem ${cerrado?'closed':'open'}"><div class="embTop"><b>Emb. ${escapeHtml(t.embarque||'-')} / Flota ${escapeHtml(t.user&&t.user.fleet||'-')}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div><div>Inicio: ${escapeHtml(fmtDateShort(t.start&&t.start.time))}</div><div>Cierre: ${cerrado?escapeHtml(fmtDateShort(t.closed.time)):'-'}</div><div>Últ. posición: ${escapeHtml(lastGpsText(t))}</div><div>Últ. alerta: ${escapeHtml(lastAlertText(t))}</div></div>`;}).join('');
 }
 setTimeout(()=>initFirebaseCloud(),800);
+
+
+
+/* ===== FIX FINAL EMBARQUE FIRESTORE v1.4.78 ===== */
+function tpodFirebaseReady(){
+  try{
+    if(typeof firebase==="undefined"){
+      const d=$("embarqueDebug");
+      if(d)d.innerText="Firebase SDK no cargó. Revisar conexión a Internet.";
+      return false;
+    }
+    if(typeof FIREBASE_CONFIG!=="undefined" && !firebase.apps.length){
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+    db=firebase.firestore();
+    cloudReady=true;
+    return true;
+  }catch(e){
+    console.log("tpodFirebaseReady error",e);
+    const d=$("embarqueDebug");
+    if(d)d.innerText="Error Firebase: "+(e.message||e);
+    return false;
+  }
+}
+
+function tpodNormDate(v){
+  if(!v)return null;
+  try{
+    if(v.toDate)return v.toDate();
+    if(v.seconds)return new Date(v.seconds*1000);
+    if(typeof v==="string" || typeof v==="number")return new Date(v);
+    if(v.time)return tpodNormDate(v.time);
+  }catch(e){}
+  return null;
+}
+
+function tpodDateText(v){
+  const d=tpodNormDate(v);
+  if(!d || isNaN(d.getTime()))return "-";
+  const dd=String(d.getDate()).padStart(2,"0");
+  const mm=String(d.getMonth()+1).padStart(2,"0");
+  const hh=String(d.getHours()).padStart(2,"0");
+  const mi=String(d.getMinutes()).padStart(2,"0");
+  return `${dd}/${mm} ${hh}:${mi}`;
+}
+
+function normalizeCloudTransit(id,x){
+  x=x||{};
+  const route=x.route||{};
+  const userObj=x.user||{fleet:x.flota||"",driver:x.chofer||""};
+
+  return {
+    id:x.id||id||"",
+    user:userObj,
+    route:{
+      ...route,
+      cliente:route.cliente||x.cliente||"",
+      origen:route.origen||x.origen||"",
+      destino:route.destino||x.destino||"",
+      origen_lat:route.origen_lat||x.origen_lat,
+      origen_lng:route.origen_lng||x.origen_lng,
+      destino_lat:route.destino_lat||x.destino_lat,
+      destino_lng:route.destino_lng||x.destino_lng
+    },
+    lote:x.lote||x.carga||"",
+    embarque:x.embarque||"",
+    start:x.start||x.inicio||null,
+    updates:x.updates||[],
+    alerts:x.alerts||[],
+    closed:x.closed||x.cierre||null,
+    participantes:x.participantes||[],
+    estado:x.estado||(x.closed||x.cierre?"cerrado":"abierto"),
+    ultimaPosicion:x.ultimaPosicion||null,
+    ultimaAlerta:x.ultimaAlerta||null,
+    flota:x.flota||userObj.fleet||"",
+    chofer:x.chofer||userObj.driver||""
+  };
+}
+
+function cloudDocToTransit(d){
+  if(d && typeof d.data==="function")return normalizeCloudTransit(d.id,d.data());
+  return normalizeCloudTransit(d&&d.id,d||{});
+}
+
+function currentCloudUser(){
+  return cloudUser || load(LS.cloudUser,null);
+}
+
+function cloudCanSeeTransit(t){
+  const u=currentCloudUser();
+  if(!u)return false;
+  if(u.role==="manager")return true;
+
+  const flota=String(u.flota||"");
+  if(!flota)return false;
+
+  const tFlota=String((t.user&&t.user.fleet)||t.flota||"");
+  if(tFlota===flota)return true;
+
+  const parts=(t.participantes||[]).map(String);
+  if(parts.includes(flota))return true;
+
+  const emb=String(t.embarque||"");
+  return (cloudTransitosCache||[]).some(x=>{
+    const xf=String((x.user&&x.user.fleet)||x.flota||"");
+    return xf===flota && String(x.embarque||"")===emb;
+  });
+}
+
+function lastGpsText(t){
+  const g=(t&&t.ultimaPosicion) || ((t&&t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t?(t.closed||t.start):null));
+  if(!g || g.lat==null || g.lng==null)return "-";
+  return `${Number(g.lat).toFixed(5)}, ${Number(g.lng).toFixed(5)}`;
+}
+
+function lastAlertText(t){
+  const a=(t&&t.ultimaAlerta) || ((t&&t.alerts&&t.alerts.length)?t.alerts[t.alerts.length-1]:null);
+  if(!a)return "-";
+  const km=typeof alertKmText==="function" ? alertKmText(t,a) : "";
+  return `${a.type||"Alerta"}${km ? " - "+km : ""}`;
+}
+
+function getTransitPool(){
+  const byId={};
+
+  try{
+    (cloudTransitosCache||[]).forEach(t=>{if(t&&t.id)byId[t.id]=t;});
+  }catch(e){}
+
+  try{
+    const cur=transit();
+    if(cur&&cur.id)byId[cur.id]=cur;
+  }catch(e){}
+
+  try{
+    if(typeof historyTransits==="function"){
+      historyTransits().forEach(t=>{if(t&&t.id && !byId[t.id])byId[t.id]=t;});
+    }
+  }catch(e){}
+
+  return Object.values(byId);
+}
+
+async function refreshEmbarquesCloud(){
+  const dbg=$("embarqueDebug");
+  if(dbg)dbg.innerText="Leyendo Firestore...";
+
+  if(!tpodFirebaseReady()){
+    if(dbg)dbg.innerText="No se pudo iniciar Firebase.";
+    return;
+  }
+
+  const u=currentCloudUser();
+  if(!u){
+    if(dbg)dbg.innerText="Debe ingresar en Acceso.";
+    show("login");
+    return;
+  }
+
+  try{
+    const snap=await db.collection("transitos").get();
+    cloudTransitosCache=snap.docs.map(cloudDocToTransit);
+    if(dbg)dbg.innerText=`Leídos ${cloudTransitosCache.length} tránsitos de Firebase.`;
+    renderEmbarque();
+  }catch(e){
+    console.log("refreshEmbarquesCloud error",e);
+    if(dbg)dbg.innerText="Error leyendo Firestore: "+(e.message||e);
+  }
+}
+
+function startCloudListener(){
+  if(!tpodFirebaseReady())return;
+  const u=currentCloudUser();
+  if(!u)return;
+
+  try{
+    if(cloudUnsub){try{cloudUnsub();}catch(e){}}
+    cloudUnsub=db.collection("transitos").onSnapshot(snap=>{
+      cloudTransitosCache=snap.docs.map(cloudDocToTransit);
+      const dbg=$("embarqueDebug");
+      if(dbg)dbg.innerText=`Firebase conectado. Tránsitos: ${cloudTransitosCache.length}`;
+      if($("embarque") && !$("embarque").classList.contains("hidden"))renderEmbarque();
+    },e=>{
+      const dbg=$("embarqueDebug");
+      if(dbg)dbg.innerText="Error listener Firestore: "+(e.message||e);
+    });
+    cloudListening=true;
+  }catch(e){
+    const dbg=$("embarqueDebug");
+    if(dbg)dbg.innerText="Error listener: "+(e.message||e);
+  }
+}
+
+function renderEmbarque(){
+  const title=$("embarqueFiltro");
+  const box=$("embarqueList");
+  const dbg=$("embarqueDebug");
+  if(!box)return;
+
+  const u=currentCloudUser();
+  if(!u){
+    if(title)title.innerText="Sin usuario Cloud";
+    if(dbg)dbg.innerText="Ingrese en Acceso.";
+    box.innerHTML='<div class="emptyBox">Ingrese en 🔐 Acceso para ver embarques.</div>';
+    return;
+  }
+
+  if(tpodFirebaseReady() && (!cloudTransitosCache || !cloudTransitosCache.length)){
+    // Ejecuta lectura automática al entrar a la vista
+    db.collection("transitos").get().then(snap=>{
+      cloudTransitosCache=snap.docs.map(cloudDocToTransit);
+      const d=$("embarqueDebug");
+      if(d)d.innerText=`Leídos ${cloudTransitosCache.length} tránsitos de Firebase.`;
+      renderEmbarque();
+    }).catch(e=>{
+      const d=$("embarqueDebug");
+      if(d)d.innerText="Error leyendo Firebase: "+(e.message||e);
+    });
+  }
+
+  const selectedEmb="";
+  let items=getTransitPool().filter(t=>t&&t.id);
+
+  // Manager ve todo. Flota ve sólo permitidos.
+  items=items.filter(cloudCanSeeTransit);
+
+  if(selectedEmb){
+    items=items.filter(t=>String(t.embarque||"").trim()===String(selectedEmb).trim());
+  }
+
+  items.sort((a,b)=>{
+    const ea=String(a.embarque||"");
+    const eb=String(b.embarque||"");
+    if(ea!==eb)return ea.localeCompare(eb);
+    const fa=String((a.user&&a.user.fleet)||a.flota||"");
+    const fb=String((b.user&&b.user.fleet)||b.flota||"");
+    return fa.localeCompare(fb);
+  });
+
+  if(title)title.innerText=`Todos visibles (${items.length})`;
+
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay tránsitos visibles. Tocá Actualizar embarques.</div>';
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const cerrado=!!t.closed || t.estado==="cerrado";
+    const flota=escapeHtml((t.user&&t.user.fleet)||t.flota||"-");
+    const chofer=escapeHtml((t.user&&t.user.driver)||t.chofer||"");
+    const emb=escapeHtml(t.embarque||"-");
+    const lote=escapeHtml(t.lote||"-");
+    const cliente=escapeHtml((t.route&&t.route.cliente)||t.cliente||"-");
+    const destino=escapeHtml((t.route&&t.route.destino)||t.destino||"-");
+    const inicio=escapeHtml(tpodDateText(t.start&&t.start.time||t.start));
+    const cierre=cerrado ? escapeHtml(tpodDateText(t.closed&&t.closed.time||t.closed)) : "-";
+    const pos=escapeHtml(lastGpsText(t));
+    const alerta=escapeHtml(lastAlertText(t));
+
+    return `<div class="embarqueItem ${cerrado?'closed':'open'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')">
+      <div class="embTop"><b>Emb. ${emb} / Flota ${flota}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div>
+      <div>Chofer: ${chofer || "-"}</div>
+      <div>Lote/Carga: ${lote}</div>
+      <div>Cliente: ${cliente}</div>
+      <div>Destino: ${destino}</div>
+      <div>Inicio: ${inicio}</div>
+      <div>Cierre: ${cierre}</div>
+      <div>Últ. posición: ${pos}</div>
+      <div>Últ. alerta: ${alerta}</div>
+    </div>`;
+  }).join("");
+}
+
+function abrirTransitoCloud(id){
+  const t=getTransitPool().find(x=>x.id===id);
+  if(!t)return;
+  save(LS.transit,t);
+  window.alert("Tránsito cargado en Tracking.");
+  show("tracking");
+}
+
