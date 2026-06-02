@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.79</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.80</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Cloud: desconectado</div>
   <nav class="tabs">
@@ -32,21 +32,23 @@
     </div></section>
 
   <section id="inicio" class="view"><div class="card">
-      
+
       <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
       <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
       <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
       <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
-      <div class="loteEmbarqueRow">
-        <div class="loteBox">
+
+      <div class="loteEmbarqueStack">
+        <div>
           <label>Lote / Carga</label>
           <input id="lote" placeholder="Ej: 1234">
         </div>
-        <div class="embarqueBox">
+        <div>
           <label>Embarque</label>
-          <input id="embarque" placeholder="Ej: EMB-001">
+          <input id="embarque" placeholder="Ej: 001">
         </div>
       </div>
+
       <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
       <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>
     </div></section>
@@ -102,8 +104,7 @@
       <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
       <button class="btn" onclick="saveUser()">Guardar usuario</button><div id="userMsg"></div>
     </div></section>
-    <section id="embarque" class="view hidden">
-    <div class="card embarqueCard">
+    <section id="embarque" class="view hidden"><div class="card embarqueCard">
       <div class="embarqueHeader">
         <b>📦 Embarques</b>
         <span id="embarqueFiltro">Cargando...</span>
@@ -111,10 +112,9 @@
       <button id="btnRefreshEmbarque" class="btn compactBtn btnMini" onclick="refreshEmbarquesCloud()">Actualizar embarques</button>
       <div id="embarqueDebug" class="embarqueDebug">Esperando datos de Firebase...</div>
       <div id="embarqueList" class="embarqueList">
-        <div class="emptyBox">Ingresá en Acceso y tocá Actualizar embarques.</div>
+        <div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div>
       </div>
-    </div>
-  </section>
+    </div></section>
 
   <section id="ultimo" class="view hidden"><div class="card">
       <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar información</button>
