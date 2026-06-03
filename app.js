@@ -2391,3 +2391,115 @@ function renderEmbarque(){
   }).join("");
 }
 
+
+
+
+/* ===== v1.4.86 AJUSTES VISUALES ===== */
+function tpodGpsObj(t){
+  return t.ultimaPosicion || ((t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t.closed||t.start));
+}
+
+function tpodLocalidadDesdeCoords(lat,lng){
+  lat=Number(lat); lng=Number(lng);
+  if(!isFinite(lat) || !isFinite(lng)) return "-";
+
+  const lugares=[
+    ["Zárate",-34.095,-59.026],["Campana",-34.163,-58.959],["Buenos Aires",-34.604,-58.382],
+    ["Avellaneda",-34.664,-58.365],["Luján",-34.570,-59.105],["Mercedes",-34.651,-59.430],
+    ["San Nicolás",-33.335,-60.225],["Rosario",-32.947,-60.639],["Villa María",-32.410,-63.243],
+    ["Córdoba",-31.420,-64.188],["San Luis",-33.302,-66.337],["Mendoza",-32.890,-68.845],
+    ["Uspallata",-32.593,-69.345],["Las Cuevas",-32.816,-70.071],["Los Andes",-32.833,-70.598],
+    ["Santiago de Chile",-33.448,-70.669],["Valparaíso",-33.047,-71.612],["Montevideo",-34.901,-56.164],
+    ["Colonia",-34.462,-57.840],["Paysandú",-32.321,-58.076],["Fray Bentos",-33.132,-58.304],
+    ["Concepción del Uruguay",-32.484,-58.233],["Gualeguaychú",-33.009,-58.517],
+    ["Paraná",-31.741,-60.511],["Santa Fe",-31.633,-60.700],["Paso de los Libres",-29.713,-57.087],
+    ["Uruguaiana",-29.754,-57.088],["Foz do Iguaçu",-25.516,-54.585],["São Paulo",-23.555,-46.639]
+  ];
+  function distKm(a,b,c,d){
+    const R=6371, toRad=x=>x*Math.PI/180;
+    const dLat=toRad(c-a), dLng=toRad(d-b);
+    const A=Math.sin(dLat/2)**2+Math.cos(toRad(a))*Math.cos(toRad(c))*Math.sin(dLng/2)**2;
+    return 2*R*Math.atan2(Math.sqrt(A),Math.sqrt(1-A));
+  }
+  let best=null;
+  lugares.forEach(l=>{
+    const d=distKm(lat,lng,l[1],l[2]);
+    if(!best || d<best.d) best={name:l[0],d};
+  });
+  if(best && best.d<=35) return best.name;
+  if(best && best.d<=80) return best.name+" (zona)";
+  return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+}
+
+function tpodUltimaUbicacionTexto(t){
+  const g=tpodGpsObj(t);
+  if(!g || g.lat==null || g.lng==null) return "-";
+  return tpodLocalidadDesdeCoords(g.lat,g.lng);
+}
+
+function tpodLastGps(t){
+  return tpodUltimaUbicacionTexto(t);
+}
+
+function renderEmbarque(){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  if(!box)return;
+
+  const flota=(typeof tpodCurrentFlota==="function") ? tpodCurrentFlota() : "";
+  if(!flota){
+    tpodSetFiltro("-");
+    box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
+    return;
+  }
+
+  let items=(cloudTransitosCache||[]).map(t=>t&&t.id?t:tpodNormTransit(t&&t.id,t)).filter(Boolean);
+  const embarquesPermitidos=new Set();
+  items.forEach(t=>{
+    const tf=String((t.user&&t.user.fleet)||t.flota||"");
+    const parts=(t.participantes||[]).map(String);
+    if(tf===flota || parts.includes(flota)){
+      if(t.embarque) embarquesPermitidos.add(String(t.embarque));
+    }
+  });
+
+  const currentEmb=(typeof currentEmbarqueValue==="function") ? currentEmbarqueValue() : "";
+  if(currentEmb) embarquesPermitidos.add(String(currentEmb));
+
+  items=items.filter(t=>embarquesPermitidos.has(String(t.embarque||"")));
+  const seen=new Set();
+  items=items.filter(t=>{
+    const key=String(t.id||"")+"|"+String(t.embarque||"")+"|"+String((t.user&&t.user.fleet)||t.flota||"")+"|"+String(t.lote||"");
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  items.sort((a,b)=>{
+    const ea=String(a.embarque||"");
+    const eb=String(b.embarque||"");
+    if(ea!==eb) return ea.localeCompare(eb);
+    const fa=String((a.user&&a.user.fleet)||a.flota||"");
+    const fb=String((b.user&&b.user.fleet)||b.flota||"");
+    return fa.localeCompare(fb);
+  });
+
+  const embTitulo=currentEmb || (items[0]&&items[0].embarque) || "-";
+  tpodSetFiltro(embTitulo);
+
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay embarques compartidos para esta flota.</div>';
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const cerrado=!!t.closed || t.estado==="cerrado";
+    const flotaT=escapeHtml((t.user&&t.user.fleet)||t.flota||"-");
+    const emb=escapeHtml(t.embarque||"-");
+    const inicio=escapeHtml(tpodDate(t.start));
+    const ubicacion=escapeHtml(tpodUltimaUbicacionTexto(t));
+    const alerta=escapeHtml(tpodLastAlert(t));
+    return `<div class="embarqueItem ${cerrado?'closed':'open'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${emb} / Flota ${flotaT}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div><div>Inicio: ${inicio}</div><div>Cierre: ${cerrado?escapeHtml(tpodDate(t.closed)):"-"}</div><div>Últ. posición: ${ubicacion}</div><div>Últ. alerta: ${alerta}</div></div>`;
+  }).join("");
+}
+

@@ -1372,3 +1372,14 @@ section#embarque:not(.hidden){display:block !important;min-height:60vh !importan
 .embarqueItem{padding:8px 10px !important;font-size:12px !important;line-height:1.18 !important;}
 .embarqueItem div{margin:1px 0 !important;}
 .embTop{margin-bottom:4px !important;}
+
+
+/* v1.4.86 ajustes compactos */
+.inicioActions{display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important;margin-top:7px !important;}
+.inicioActions .btn,.inicioActions button,#inicio .inicioActions .btn{min-height:36px !important;height:38px !important;padding:6px 8px !important;font-size:14px !important;line-height:1 !important;border-radius:13px !important;}
+#sendUpdateBtn,button[onclick="enviarActualizacion()"],button[onclick="sendUpdate()"],#tracking .btn,#tracking button.btn{min-height:36px !important;height:38px !important;padding:6px 10px !important;font-size:13px !important;border-radius:13px !important;}
+.embarqueHeader b{font-size:14px !important;line-height:1.1 !important;}
+.embarqueHeader span{font-size:16px !important;line-height:1.1 !important;}
+.embarqueItem{font-size:11.5px !important;line-height:1.16 !important;padding:7px 9px !important;}
+.embTop b{font-size:12.5px !important;}
+.embTop span{font-size:12.5px !important;}
