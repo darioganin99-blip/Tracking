@@ -1420,3 +1420,45 @@ button[onclick="sendUpdate()"],
   font-size:13.5px !important;
   border-radius:13px !important;
 }
+
+
+/* v1.4.88 UI ajuste fino */
+.inicioActions .btn,
+.inicioActions button,
+#inicio .inicioActions .btn{
+  min-height:44px !important;
+  height:44px !important;
+  padding:8px 10px !important;
+  font-size:13px !important;
+  line-height:1.05 !important;
+  border-radius:14px !important;
+  font-weight:800 !important;
+}
+#tracking .card,
+#tracking .trackingCard,
+#trackingMapCard,
+.trackingMapCard,
+.mapCard{
+  margin-top:-6px !important;
+}
+#tracking .mapWrap,
+#tracking #map,
+#tracking #trackingMap,
+#map{
+  margin-top:-14px !important;
+}
+#tracking .infoBox,
+#tracking .trackingInfo{
+  margin-bottom:4px !important;
+}
+#sendUpdateBtn,
+button[onclick="enviarActualizacion()"],
+button[onclick="sendUpdate()"],
+#tracking .btn,
+#tracking button.btn{
+  min-height:40px !important;
+  height:40px !important;
+  padding:7px 10px !important;
+  font-size:13px !important;
+  border-radius:13px !important;
+}
