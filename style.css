@@ -1462,3 +1462,9 @@ button[onclick="sendUpdate()"],
   font-size:13px !important;
   border-radius:13px !important;
 }
+
+
+/* v1.4.89 ajuste estado conexion */
+.cloudStatus{
+  font-size:10px !important;
+}
