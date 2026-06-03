@@ -2503,3 +2503,133 @@ function renderEmbarque(){
   }).join("");
 }
 
+
+
+
+/* ===== v1.4.87 LOCALIDAD Y UI ===== */
+async function tpodReverseLocalidad(lat,lng){
+  lat=Number(lat); lng=Number(lng);
+  if(!isFinite(lat)||!isFinite(lng)) return "-";
+
+  const key=`tpod_loc_${lat.toFixed(4)}_${lng.toFixed(4)}`;
+  try{
+    const cached=localStorage.getItem(key);
+    if(cached) return cached;
+  }catch(e){}
+
+  // Primero aproximación local para que no dependa de Internet.
+  const local=tpodLocalidadDesdeCoords(lat,lng);
+  if(local && !/^[-0-9.]+,\s*[-0-9.]+$/.test(local)){
+    try{localStorage.setItem(key,local);}catch(e){}
+    return local;
+  }
+
+  // Fallback online usando Nominatim si hay conexión.
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=10&addressdetails=1`;
+    const r=await fetch(url,{headers:{"Accept":"application/json"}});
+    if(r.ok){
+      const data=await r.json();
+      const a=data.address||{};
+      const name=a.city||a.town||a.village||a.municipality||a.county||a.state_district||a.state||data.name;
+      if(name){
+        try{localStorage.setItem(key,name);}catch(e){}
+        return name;
+      }
+    }
+  }catch(e){}
+  return local;
+}
+
+function tpodGpsObj(t){
+  return t.ultimaPosicion || ((t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:(t.closed||t.start));
+}
+
+function tpodUltimaUbicacionTexto(t){
+  const g=tpodGpsObj(t);
+  if(!g || g.lat==null || g.lng==null) return "-";
+  const local=tpodLocalidadDesdeCoords(g.lat,g.lng);
+  return local;
+}
+
+function renderEmbarque(){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  if(!box)return;
+
+  const flota=(typeof tpodCurrentFlota==="function") ? tpodCurrentFlota() : "";
+  if(!flota){
+    tpodSetFiltro("-");
+    box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
+    return;
+  }
+
+  let items=(cloudTransitosCache||[]).map(t=>t&&t.id?t:tpodNormTransit(t&&t.id,t)).filter(Boolean);
+
+  const embarquesPermitidos=new Set();
+  items.forEach(t=>{
+    const tf=String((t.user&&t.user.fleet)||t.flota||"");
+    const parts=(t.participantes||[]).map(String);
+    if(tf===flota || parts.includes(flota)){
+      if(t.embarque) embarquesPermitidos.add(String(t.embarque));
+    }
+  });
+
+  const currentEmb=(typeof currentEmbarqueValue==="function") ? currentEmbarqueValue() : "";
+  if(currentEmb) embarquesPermitidos.add(String(currentEmb));
+
+  items=items.filter(t=>embarquesPermitidos.has(String(t.embarque||"")));
+
+  const seen=new Set();
+  items=items.filter(t=>{
+    const key=String(t.id||"")+"|"+String(t.embarque||"")+"|"+String((t.user&&t.user.fleet)||t.flota||"")+"|"+String(t.lote||"");
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  items.sort((a,b)=>{
+    const ea=String(a.embarque||"");
+    const eb=String(b.embarque||"");
+    if(ea!==eb) return ea.localeCompare(eb);
+    const fa=String((a.user&&a.user.fleet)||a.flota||"");
+    const fb=String((b.user&&b.user.fleet)||b.flota||"");
+    return fa.localeCompare(fb);
+  });
+
+  const embTitulo=currentEmb || (items[0]&&items[0].embarque) || "-";
+  tpodSetFiltro(embTitulo);
+
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay embarques compartidos para esta flota.</div>';
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const cerrado=!!t.closed || t.estado==="cerrado";
+    const flotaT=escapeHtml((t.user&&t.user.fleet)||t.flota||"-");
+    const emb=escapeHtml(t.embarque||"-");
+    const inicio=escapeHtml(tpodDate(t.start));
+    const ubicacion=escapeHtml(tpodUltimaUbicacionTexto(t));
+    const alerta=escapeHtml(tpodLastAlert(t));
+    const id=escapeHtml(t.id||"");
+    return `<div class="embarqueItem ${cerrado?'closed':'open'}" onclick="abrirTransitoCloud('${id}')">
+      <div class="embTop"><b>Emb. ${emb} / Flota ${flotaT}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div>
+      <div>Inicio: ${inicio}</div>
+      <div>Cierre: ${cerrado?escapeHtml(tpodDate(t.closed)):"-"}</div>
+      <div>Últ. posición: <span class="ubicacionTxt" data-id="${id}">${ubicacion}</span></div>
+      <div>Últ. alerta: ${alerta}</div>
+    </div>`;
+  }).join("");
+
+  // Actualiza en segundo plano con geocodificación online si está disponible.
+  items.forEach(t=>{
+    const g=tpodGpsObj(t);
+    if(!g || g.lat==null || g.lng==null || !t.id) return;
+    tpodReverseLocalidad(g.lat,g.lng).then(name=>{
+      const el=document.querySelector(`.ubicacionTxt[data-id="${CSS.escape(String(t.id))}"]`);
+      if(el && name) el.innerText=name;
+    }).catch(()=>{});
+  });
+}
+
