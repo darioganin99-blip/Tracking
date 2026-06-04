@@ -8,16 +8,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.89</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.91</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Desconectado</div>
   <nav class="tabs">
-    <button id="btn-inicio" onclick="show('inicio')" class="active">🚚 Inicio / Fin</button>
-    <button id="btn-tracking" onclick="show('tracking')">📍 Tracking</button>
+    <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
+    <button id="btn-inicio" onclick="show('inicio')">🚚 Inicio / Fin</button>
+    <button id="btn-tracking" onclick="show('tracking')">🛰️ Tracking</button>
+    <button id="btn-embarque" onclick="show('embarque')">📦 Embarques</button>
     <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
     <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
-    <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
-    <button id="btn-embarque" onclick="show('embarque')">📦 Embarque</button>
     <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
   </nav>
   <main>
@@ -92,7 +92,7 @@
       <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
       <label>Nombre de chofer</label><input id="userDriver" placeholder="Ej: Ganin">
       <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
-      <button class="btn" onclick="saveUser()">Guardar usuario</button><div id="userMsg"></div>
+      <button class="btn" onclick="saveUser()">Validar Flota</button><div id="userMsg"></div>
     </div></section>
     <section id="embarque" class="view hidden"><div class="card embarqueCard">
       <div class="embarqueHeader"><b>Número Embarque</b><span id="embarqueFiltro">Cargando...</span></div>

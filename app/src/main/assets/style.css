@@ -1468,3 +1468,8 @@ button[onclick="sendUpdate()"],
 .cloudStatus{
   font-size:10px !important;
 }
+
+
+/* v1.4.91 usuario validacion compacta */
+#userMsg,#userMsg p{font-size:50% !important;color:#111827 !important;line-height:1.15 !important;}
+#userMsg .ok,#userMsg .err{color:#111827 !important;}
