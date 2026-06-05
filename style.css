@@ -1482,3 +1482,9 @@ button.disabledView{pointer-events:none !important;}
 
 /* v1.4.95 usuario pass */
 .passRow{display:grid !important;grid-template-columns:1fr 44px !important;gap:6px !important;align-items:end !important;}#btnTogglePass{height:42px !important;border-radius:12px !important;border:1px solid #cbd5e1 !important;background:#fff !important;font-size:16px !important;}#userDriver[readonly],#userPhones[readonly]{background:#f8fafc !important;color:#111827 !important;}
+
+/* v1.4.96 embarques detalle */
+.embarqueItem div{word-break:break-word !important;}.embarqueItem{font-size:11.8px !important;}
+
+/* v1.4.97 usuario readonly */
+#userDriver[readonly],#userPhones[readonly]{background:#f8fafc !important;color:#111827 !important;}
