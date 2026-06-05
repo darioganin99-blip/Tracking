@@ -1479,3 +1479,6 @@ button[onclick="sendUpdate()"],
 .disabledView{opacity:.35 !important;filter:grayscale(1);}
 button.disabledView{pointer-events:none !important;}
 #userPass{display:block !important;width:100% !important;box-sizing:border-box !important;height:42px !important;padding:8px 10px !important;font-size:15px !important;border-radius:13px !important;border:1px solid #cbd5e1 !important;background:#fff !important;color:#111827 !important;}
+
+/* v1.4.95 usuario pass */
+.passRow{display:grid !important;grid-template-columns:1fr 44px !important;gap:6px !important;align-items:end !important;}#btnTogglePass{height:42px !important;border-radius:12px !important;border:1px solid #cbd5e1 !important;background:#fff !important;font-size:16px !important;}#userDriver[readonly],#userPhones[readonly]{background:#f8fafc !important;color:#111827 !important;}

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.94</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.4.95</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Desconectado</div>
   <nav class="tabs">
@@ -90,8 +90,8 @@
     <section id="usuario" class="view hidden"><div class="card">
       
       <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
-      <label>PASS</label><input id="userPass" type="password" placeholder="PASS flota">
-      <label>Nombre de chofer</label><input id="userDriver" placeholder="Ej: Ganin">
+      <label>PASS</label><div class="passRow"><input id="userPass" type="password" placeholder="PASS flota"><button id="btnTogglePass" type="button" onclick="togglePass()">👁️</button></div>
+      <label>Nombre de chofer</label><input id="userDriver" readonly placeholder="Ej: Ganin">
       <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
       <button class="btn" onclick="saveUser()">Validar Flota</button><div id="userMsg"></div>
     </div></section>
