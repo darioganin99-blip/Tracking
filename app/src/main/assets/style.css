@@ -1473,3 +1473,9 @@ button[onclick="sendUpdate()"],
 /* v1.4.91 usuario validacion compacta */
 #userMsg,#userMsg p{font-size:50% !important;color:#111827 !important;line-height:1.15 !important;}
 #userMsg .ok,#userMsg .err{color:#111827 !important;}
+
+
+/* v1.4.94 auth flota */
+.disabledView{opacity:.35 !important;filter:grayscale(1);}
+button.disabledView{pointer-events:none !important;}
+#userPass{display:block !important;width:100% !important;box-sizing:border-box !important;height:42px !important;padding:8px 10px !important;font-size:15px !important;border-radius:13px !important;border:1px solid #cbd5e1 !important;background:#fff !important;color:#111827 !important;}
