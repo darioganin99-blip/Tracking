@@ -4671,3 +4671,327 @@ try{
   };
 }catch(e){}
 
+
+
+
+/* ===== v1.5.02 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+window.__tpodEmbarquesLoading = false;
+window.__tpodLastEmbarquesHtml = "";
+
+function tpodClearUsuarioCampos(){
+  ["userDriver","userPhones","userPass"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.value="";
+      try{el.dispatchEvent(new Event("input",{bubbles:true}));}catch(e){}
+      try{el.dispatchEvent(new Event("change",{bubbles:true}));}catch(e){}
+    }
+  });
+}
+
+function tpodClearUltimoView(){
+  const box=document.getElementById("lastBox");
+  if(box) box.innerText="No hay envíos registrados.";
+  ["ultimoList","ultimoContent","lastContent","lastTransit","ultimoBody"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML='<div class="emptyBox">Sin registros enviados para la flota validada.</div>';
+  });
+}
+
+function tpodHardClearTransitForm(){
+  try{localStorage.removeItem(LS.transit);}catch(e){}
+  try{localStorage.removeItem("trackpod_transit");}catch(e){}
+  ["lote","embarqueInput"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.value="";el.disabled=false;el.removeAttribute("readonly");}
+  });
+  ["clienteSelect","origenSelect","destinoSelect"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.disabled=false;el.removeAttribute("readonly");}
+  });
+  const filtro=document.getElementById("embarqueFiltro"); if(filtro) filtro.innerText="-";
+  const list=document.getElementById("embarqueList"); if(list) list.innerHTML='<div class="emptyBox">Sin tránsito abierto.</div>';
+  tpodClearUltimoView();
+}
+
+function tpodIsOpen1502(t){
+  if(!t) return false;
+  const estado=String(t.estado||"").toLowerCase().trim();
+  if(t.closed===true) return false;
+  if(t.closed && t.closed!==null && String(t.closed).toLowerCase()!=="null") return false;
+  if(estado==="cerrado"||estado==="closed"||estado==="finalizado") return false;
+  return estado==="abierto" || t.closed===null || t.closed===undefined;
+}
+function tpodFleet1502(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
+function tpodParticipa1502(t,flota){
+  const f=String(flota||"").trim();
+  const parts=(t&&t.participantes||[]).map(x=>String(x).trim());
+  return tpodFleet1502(t)===f || parts.includes(f);
+}
+function tpodTime1502Value(v){
+  try{
+    const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));
+    return d && !isNaN(d.getTime()) ? d.getTime() : 0;
+  }catch(e){return 0;}
+}
+function tpodTime1502(t){return tpodTime1502Value((t&&t.start&&t.start.time)||t.start||t.createdAt||0);}
+function tpodEventTime1502(ev){return tpodTime1502Value((ev&&ev.time)||(ev&&ev.fecha)||(ev&&ev.createdAt)||(ev&&ev.ts)||0);}
+
+function tpodNormTransit1502(id,x){
+  x=x||{};
+  const route=x.route||{};
+  const user=x.user||{fleet:x.flota||"",driver:x.chofer||""};
+  return {
+    id:x.id||id||"",
+    user:user,
+    route:{
+      ...route,
+      cliente:route.cliente||x.cliente||"",
+      origen:route.origen||x.origen||"",
+      destino:route.destino||x.destino||"",
+      origen_lat:route.origen_lat||x.origen_lat,
+      origen_lng:route.origen_lng||x.origen_lng,
+      destino_lat:route.destino_lat||x.destino_lat,
+      destino_lng:route.destino_lng||x.destino_lng
+    },
+    lote:x.lote||"",
+    embarque:x.embarque||"",
+    start:x.start||null,
+    updates:x.updates||[],
+    alerts:x.alerts||[],
+    closed:x.closed,
+    participantes:x.participantes||[],
+    estado:x.estado||"",
+    ultimaPosicion:x.ultimaPosicion||null,
+    ultimaAlerta:x.ultimaAlerta||null,
+    flota:x.flota||user.fleet||"",
+    chofer:x.chofer||user.driver||""
+  };
+}
+
+async function tpodLeerTransitos1502(){
+  if(!tpodInitFirebase()) return [];
+  const snap=await db.collection("transitos").get();
+  const all=snap.docs.map(d=>tpodNormTransit1502(d.id,d.data()));
+  cloudTransitosCache=all;
+  return all;
+}
+
+async function tpodBuscarEmbarqueBase(numero){
+  const emb=String(numero||"").trim();
+  if(!emb) return {ok:false,msg:"Debe ingresar número de embarque."};
+  if(!tpodInitFirebase()) return {ok:false,msg:"Sin conexión a Firebase."};
+  const ids=[emb,"emb"+emb,"embarque"+emb];
+  for(const id of ids){
+    const d=await db.collection("embarque").doc(id).get();
+    if(d.exists) return {ok:true,id:id,data:d.data()||{}};
+  }
+  const snap=await db.collection("embarque").where("embarque","==",emb).limit(1).get();
+  if(!snap.empty) return {ok:true,id:snap.docs[0].id,data:snap.docs[0].data()||{}};
+  return {ok:false,msg:"El embarque "+emb+" no existe en la base."};
+}
+
+function tpodTextNorm1502(v){return String(v||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ");}
+function tpodGetSelectedText1502(id){
+  const el=document.getElementById(id);
+  if(!el) return "";
+  if(el.options && el.selectedIndex>=0) return el.options[el.selectedIndex].text||"";
+  return el.value||"";
+}
+async function tpodValidarEmbarqueInicio(){
+  const embEl=document.getElementById("embarqueInput");
+  const emb=embEl ? embEl.value.trim() : "";
+  const r=await tpodBuscarEmbarqueBase(emb);
+  if(!r.ok) return r;
+  const x=r.data||{};
+  if(x.activo===false) return {ok:false,msg:"El embarque está inactivo."};
+  const clienteBase=x.cliente||x.cliente_nombre||x.customer||"";
+  const origenBase=x.origen||x.origen_nombre||x.origin||"";
+  const destinoBase=x.destino||x.destino_nombre||x.destination||"";
+  const errores=[];
+  if(clienteBase && tpodTextNorm1502(clienteBase)!==tpodTextNorm1502(tpodGetSelectedText1502("clienteSelect"))) errores.push("Cliente no coincide. Base: "+clienteBase);
+  if(origenBase && tpodTextNorm1502(origenBase)!==tpodTextNorm1502(tpodGetSelectedText1502("origenSelect"))) errores.push("Origen no coincide. Base: "+origenBase);
+  if(destinoBase && tpodTextNorm1502(destinoBase)!==tpodTextNorm1502(tpodGetSelectedText1502("destinoSelect"))) errores.push("Destino no coincide. Base: "+destinoBase);
+  if(errores.length) return {ok:false,msg:errores.join("\n"),data:x};
+  return {ok:true,msg:"Embarque validado.",data:x};
+}
+
+async function tpodStartTransitValidated1502(fn){
+  const v=await tpodValidarEmbarqueInicio();
+  if(!v.ok){window.alert(v.msg);return false;}
+  return fn();
+}
+try{
+  if(typeof startTransit==="function" && !window.__tpodStartTransitOriginal1502){
+    window.__tpodStartTransitOriginal1502=startTransit;
+    startTransit=function(){return tpodStartTransitValidated1502(window.__tpodStartTransitOriginal1502);};
+  }
+}catch(e){}
+try{
+  if(typeof iniciarTransito==="function" && !window.__tpodIniciarTransitoOriginal1502){
+    window.__tpodIniciarTransitoOriginal1502=iniciarTransito;
+    iniciarTransito=function(){return tpodStartTransitValidated1502(window.__tpodIniciarTransitoOriginal1502);};
+  }
+}catch(e){}
+
+async function saveUser(){
+  const fleetEl=document.getElementById("userFleet");
+  const passEl=document.getElementById("userPass");
+  const fleet=fleetEl ? fleetEl.value.trim() : "";
+  const pass=passEl ? passEl.value.trim() : "";
+  const msg=document.getElementById("userMsg");
+  if(msg) msg.innerHTML='<p>Validando flota...</p>';
+  tpodSetAuthorized(false);
+  tpodDisableViews();
+  tpodHardClearTransitForm();
+  tpodClearUsuarioCampos();
+  const val=await validarFlotaEnBase(fleet,pass);
+  if(!val.ok){
+    if(msg) msg.innerHTML='<p class="err">'+escapeHtml(val.msg)+'</p>';
+    tpodStatus("Desconectado",false);
+    setTimeout(()=>tpodClearUsuarioCampos(),0);
+    setTimeout(()=>tpodClearUsuarioCampos(),150);
+    tpodHardClearTransitForm();
+    tpodClearUltimoView();
+    show("usuario");
+    return;
+  }
+  const nombre=val.nombre||("Flota "+fleet);
+  const data=val.data||{};
+  tpodSetUsuarioCampos(data,nombre);
+  const chofer=tpodChoferDesdeBase(data,nombre);
+  const tel=tpodTelefonoDesdeBase(data);
+  save(LS.user,{fleet:fleet,driver:chofer,phones:tel,validado:true,cloudUserId:val.id,nombre:nombre});
+  cloudUser={user:val.id,role:"flota",flota:fleet,activo:true,nombre:nombre,chofer:chofer,telefono:tel};
+  if(LS.cloudUser) save(LS.cloudUser,cloudUser);
+  tpodSetAuthorized(true,fleet,nombre);
+  tpodStatus("Conectado",true);
+  tpodDisableViews();
+  let abierto=null;
+  try{abierto=await tpodCargarTransitoAbiertoDeFlota(fleet);}
+  catch(e){console.log("Error cargando tránsito abierto",e);tpodHardClearTransitForm();}
+  if(!abierto) tpodHardClearTransitForm();
+  if(msg) msg.innerHTML='<p class="ok">'+escapeHtml(tpodResumenTransito(abierto))+'</p>';
+  renderInicio();
+  setTimeout(()=>{show("inicio");renderInicio();},350);
+}
+
+function tpodLastEventFromTransit1502(t){
+  const events=[];
+  (t.updates||[]).forEach(u=>events.push({type:"Actualización GPS",time:u.time||u.fecha||u.createdAt,detail:tpodUltimaUbicacionTexto({ultimaPosicion:u.gps||u.ultimaPosicion||u})}));
+  (t.alerts||[]).forEach(a=>events.push({type:"Alerta",time:a.time||a.fecha||a.createdAt,detail:(a.tipo||a.type||a.motivo||"Alerta")+(a.km?" - Km "+a.km:"")}));
+  if(t.closed) events.push({type:"Cierre tránsito",time:(t.closed&&t.closed.time)||t.closed,detail:"Tránsito cerrado"});
+  if(t.start) events.push({type:"Inicio tránsito",time:(t.start&&t.start.time)||t.start,detail:"Tránsito iniciado"});
+  events.sort((a,b)=>tpodEventTime1502(b)-tpodEventTime1502(a));
+  return events[0]||null;
+}
+function tpodFormatEventDate1502(v){
+  const ms=tpodEventTime1502({time:v});
+  if(!ms) return "-";
+  return new Date(ms).toLocaleString("es-AR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+}
+async function renderUltimo(){
+  const box=document.getElementById("lastBox");
+  if(!box) return;
+  const flota=tpodCurrentFlota ? tpodCurrentFlota() : "";
+  if(!tpodIsAuthorized || !tpodIsAuthorized() || !flota){box.innerText="No hay envíos registrados.";return;}
+  let all=cloudTransitosCache||[];
+  try{all=await tpodLeerTransitos1502();}catch(e){console.log("renderUltimo read",e);}
+  const propios=all.filter(t=>tpodParticipa1502(t,flota));
+  if(!propios.length){box.innerText="No hay envíos registrados.";return;}
+  let best=null;
+  propios.forEach(t=>{
+    const ev=tpodLastEventFromTransit1502(t);
+    if(!ev) return;
+    const score=tpodEventTime1502(ev);
+    if(!best || score>best.score) best={t,ev,score};
+  });
+  if(!best){box.innerText="No hay envíos registrados.";return;}
+  const t=best.t, ev=best.ev;
+  box.innerText=`${ev.type} - ${tpodFormatEventDate1502(ev.time)}
+Emb. ${t.embarque||"-"} / Flota ${tpodFleet1502(t)||flota}
+${ev.detail||"-"}`;
+}
+
+function tpodDedup1502(items){
+  const map=new Map();
+  items.forEach(t=>{
+    const key=String(t.embarque||"")+"|"+tpodFleet1502(t);
+    if(!map.has(key) || tpodTime1502(t)>tpodTime1502(map.get(key))) map.set(key,t);
+  });
+  return Array.from(map.values());
+}
+async function refreshEmbarquesCloud(){
+  if(window.__tpodEmbarquesLoading) return;
+  window.__tpodEmbarquesLoading=true;
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  const flota=tpodCurrentFlota ? tpodCurrentFlota() : "";
+  if(!tpodIsAuthorized || !tpodIsAuthorized() || !flota){
+    tpodSetFiltro("-");
+    if(box) box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
+    window.__tpodEmbarquesLoading=false;
+    return;
+  }
+  if(box && !window.__tpodLastEmbarquesHtml) box.innerHTML='<div class="emptyBox">Leyendo embarques...</div>';
+  try{
+    const all=await tpodLeerTransitos1502();
+    const embarquesDeFlota=new Set();
+    all.forEach(t=>{if(tpodParticipa1502(t,flota)&&t.embarque) embarquesDeFlota.add(String(t.embarque));});
+    const embarquesConAbierto=new Set();
+    all.forEach(t=>{if(t.embarque&&tpodIsOpen1502(t)) embarquesConAbierto.add(String(t.embarque));});
+    const visibles=new Set(Array.from(embarquesDeFlota).filter(e=>embarquesConAbierto.has(e)));
+    let items=all.filter(t=>visibles.has(String(t.embarque||"")));
+    items=tpodDedup1502(items);
+    items.sort((a,b)=>{
+      const ea=String(a.embarque||""), eb=String(b.embarque||"");
+      if(ea!==eb) return ea.localeCompare(eb);
+      const oa=tpodIsOpen1502(a)?0:1, ob=tpodIsOpen1502(b)?0:1;
+      if(oa!==ob) return oa-ob;
+      return tpodFleet1502(a).localeCompare(tpodFleet1502(b));
+    });
+    tpodRenderEmbarques1502(items,visibles);
+  }catch(e){
+    console.log("refreshEmbarquesCloud 1502",e);
+    tpodStatus("Desconectado",false);
+    if(box) box.innerHTML=window.__tpodLastEmbarquesHtml || '<div class="emptyBox">Error leyendo embarques.</div>';
+  }finally{window.__tpodEmbarquesLoading=false;}
+}
+function tpodRenderEmbarques1502(items,visibles){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  if(!box) return;
+  const embTitulo=Array.from(visibles||[])[0] || (items[0]&&items[0].embarque) || "-";
+  tpodSetFiltro(embTitulo);
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay embarques compartidos activos para esta flota.</div>';
+    window.__tpodLastEmbarquesHtml=box.innerHTML;
+    return;
+  }
+  box.innerHTML=items.map(t=>{
+    const abierto=tpodIsOpen1502(t);
+    const flota=escapeHtml(tpodFleet1502(t)||"-");
+    const emb=escapeHtml(t.embarque||"-");
+    const lote=escapeHtml(t.lote||"-");
+    const cliente=escapeHtml((t.route&&t.route.cliente)||"-");
+    const origen=escapeHtml((t.route&&t.route.origen)||"-");
+    const destino=escapeHtml((t.route&&t.route.destino)||"-");
+    const inicio=escapeHtml(tpodDate(t.start));
+    const cierre=abierto ? "-" : escapeHtml(tpodDate(t.closed));
+    const ubicacion=escapeHtml(tpodUltimaUbicacionTexto(t));
+    const alerta=escapeHtml(tpodLastAlert(t));
+    return `<div class="embarqueItem ${abierto?'open':'closed'} ${abierto?'':'embarqueCerrado'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${emb} / Flota ${flota}</b><span class="${abierto?'estadoAbierto':'estadoCerrado'}">${abierto?'Abierto':'Cerrado'}</span></div><div>Lote/Carga: ${lote}</div><div>Cliente: ${cliente}</div><div>Origen: ${origen}</div><div>Destino: ${destino}</div><div>Inicio: ${inicio}</div><div>Cierre: ${cierre}</div><div>Últ. posición: ${ubicacion}</div><div>Últ. alerta: ${alerta}</div></div>`;
+  }).join("");
+  window.__tpodLastEmbarquesHtml=box.innerHTML;
+}
+function renderEmbarque(){refreshEmbarquesCloud();}
+try{
+  const oldShow1502=show;
+  show=function(id){
+    oldShow1502(id);
+    if(id==="embarque") setTimeout(()=>refreshEmbarquesCloud(),150);
+    if(id==="ultimo") setTimeout(()=>renderUltimo(),80);
+    if(id==="inicio") setTimeout(()=>renderInicio(),80);
+  };
+}catch(e){}
+

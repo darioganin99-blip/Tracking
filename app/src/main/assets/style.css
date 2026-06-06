@@ -1512,3 +1512,13 @@ button.disabledView{pointer-events:none !important;}
 /* v1.5.01 scroll embarque */
 .embarqueCard{max-height:68vh !important;overflow:hidden !important;}
 .embarqueList{max-height:56vh !important;overflow-y:auto !important;padding-right:4px !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
+
+
+/* v1.5.02 estado cerrado y scroll */
+.embarqueList{max-height:56vh !important;overflow-y:auto !important;padding-right:4px !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
+.embarqueItem.closed,.embarqueItem.embarqueCerrado{background:#f1f5f9 !important;border:1px solid #cbd5e1 !important;color:#475569 !important;}
+.embarqueItem.open{background:#ffffff !important;}
+.embTop{display:grid !important;grid-template-columns:1fr auto !important;gap:8px !important;align-items:start !important;}
+.embTop span,.estadoCerrado,.estadoAbierto{white-space:nowrap !important;display:inline-block !important;min-width:64px !important;text-align:center !important;font-size:11px !important;line-height:1.05 !important;padding:4px 5px !important;border-radius:10px !important;}
+.estadoCerrado{color:#64748b !important;background:#e2e8f0 !important;}
+.estadoAbierto{color:#0f766e !important;background:#dcfce7 !important;}
