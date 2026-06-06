@@ -1507,3 +1507,8 @@ button.disabledView{pointer-events:none !important;}
   overscroll-behavior:contain !important;
   -webkit-overflow-scrolling:touch !important;
 }
+
+
+/* v1.5.01 scroll embarque */
+.embarqueCard{max-height:68vh !important;overflow:hidden !important;}
+.embarqueList{max-height:56vh !important;overflow-y:auto !important;padding-right:4px !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
