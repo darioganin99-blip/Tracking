@@ -1488,3 +1488,8 @@ button.disabledView{pointer-events:none !important;}
 
 /* v1.4.97 usuario readonly */
 #userDriver[readonly],#userPhones[readonly]{background:#f8fafc !important;color:#111827 !important;}
+
+
+/* v1.4.98 embarque scroll interno */
+.embarqueCard{max-height:68vh !important;overflow:hidden !important;}
+.embarqueList{max-height:56vh !important;overflow-y:auto !important;padding-right:4px !important;overscroll-behavior:contain !important;}
