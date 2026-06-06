@@ -4034,13 +4034,43 @@ try{
 
 
 
-/* ===== v1.4.99 ULTIMO REGISTRO + LIMPIEZA VALIDACION ===== */
+/* ===== v1.5.00 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+
+/*
+Nueva colección Firestore requerida:
+
+colección: embarques
+documento: número de embarque. Ej: 2001
+campos:
+  embarque: "2001"          opcional si el ID ya es el número
+  cliente: "Stellantis ARG"
+  origen: "CLZ - Centro Logistico Zarate"
+  destino: "STLI - Chile"
+  activo: true              opcional
+
+También acepta:
+  cliente_nombre / cliente
+  origen_nombre / origen
+  destino_nombre / destino
+*/
 
 function tpodClearUsuarioCampos(){
   ["userDriver","userPhones","userPass"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
+}
+
+function tpodClearUltimoView(){
+  const box=document.getElementById("lastBox");
+  if(box) box.innerText="No hay envíos registrados.";
+}
+
+function renderUltimo(){
+  const last=load(LS.last,null);
+  const box=document.getElementById("lastBox");
+  if(!box) return;
+  box.innerText=last ? (last.msg||"No hay envíos registrados.") : "No hay envíos registrados.";
 }
 
 function tpodHardClearTransitForm(){
@@ -4069,119 +4099,125 @@ function tpodHardClearTransitForm(){
 
   const list=document.getElementById("embarqueList");
   if(list) list.innerHTML='<div class="emptyBox">Sin tránsito abierto.</div>';
+
+  tpodClearUltimoView();
 }
 
-function tpodClearUltimoView(){
-  const sec=document.getElementById("ultimo");
-  if(sec){
-    sec.innerHTML='<div class="card"><b>Último registro enviado</b><div class="emptyBox">Sin registros enviados para la flota validada.</div></div>';
-  }
-  ["ultimoList","ultimoContent","lastContent","lastTransit","ultimoBody"].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.innerHTML='<div class="emptyBox">Sin registros enviados para la flota validada.</div>';
-  });
+function tpodTextNorm(v){
+  return String(v||"").trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ");
 }
 
-function tpodEventoTime99(ev){
-  try{
-    const v=ev.time||ev.fecha||ev.createdAt||ev.ts||0;
-    const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));
-    return d && !isNaN(d.getTime()) ? d.getTime() : 0;
-  }catch(e){return 0;}
+function tpodGetSelectedText(id){
+  const el=document.getElementById(id);
+  if(!el) return "";
+  if(el.options && el.selectedIndex>=0) return el.options[el.selectedIndex].text || "";
+  return el.value || "";
 }
 
-function tpodFormatFecha99(v){
-  try{
-    const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));
-    if(!d || isNaN(d.getTime())) return "-";
-    return d.toLocaleString("es-AR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
-  }catch(e){return "-";}
+function tpodSetSelectByText(id, expected){
+  const el=document.getElementById(id);
+  if(!el || !el.options || !expected) return false;
+  const exp=tpodTextNorm(expected);
+  for(let i=0;i<el.options.length;i++){
+    const txt=tpodTextNorm(el.options[i].text);
+    if(txt===exp || txt.includes(exp) || exp.includes(txt)){
+      el.value=el.options[i].value;
+      try{ el.dispatchEvent(new Event("change")); }catch(e){}
+      return true;
+    }
+  }
+  return false;
 }
 
-function tpodUltimoRegistroDeTransito99(t){
-  const eventos=[];
+async function tpodBuscarEmbarqueBase(numero){
+  const emb=String(numero||"").trim();
+  if(!emb) return {ok:false,msg:"Debe ingresar número de embarque."};
+  if(!tpodInitFirebase()) return {ok:false,msg:"Sin conexión a Firebase."};
 
-  (t.updates||[]).forEach((u,i)=>{
-    eventos.push({
-      tipo:"Actualización GPS",
-      time:u.time||u.fecha||u.createdAt,
-      detalle:tpodUltimaUbicacionTexto({ultimaPosicion:u.gps||u.ultimaPosicion||u}),
-      raw:u
-    });
-  });
-
-  (t.alerts||[]).forEach((a,i)=>{
-    eventos.push({
-      tipo:"Alerta",
-      time:a.time||a.fecha||a.createdAt,
-      detalle:(a.tipo||a.type||a.motivo||"Alerta") + (a.km ? " - Km "+a.km : ""),
-      raw:a
-    });
-  });
-
-  if(t.closed){
-    eventos.push({
-      tipo:"Cierre tránsito",
-      time:(t.closed&&t.closed.time)||t.closed,
-      detalle:"Tránsito cerrado",
-      raw:t.closed
-    });
+  const ids=[emb, "emb"+emb, "embarque"+emb];
+  for(const id of ids){
+    const d=await db.collection("embarques").doc(id).get();
+    if(d.exists) return {ok:true,id:id,data:d.data()||{}};
   }
 
-  if(t.start){
-    eventos.push({
-      tipo:"Inicio tránsito",
-      time:(t.start&&t.start.time)||t.start,
-      detalle:"Tránsito iniciado",
-      raw:t.start
-    });
-  }
+  const snap=await db.collection("embarques").where("embarque","==",emb).limit(1).get();
+  if(!snap.empty) return {ok:true,id:snap.docs[0].id,data:snap.docs[0].data()||{}};
 
-  eventos.sort((a,b)=>tpodEventoTime99(b)-tpodEventoTime99(a));
-  return eventos[0]||null;
+  return {ok:false,msg:"El embarque no existe en la base."};
 }
 
-function renderUltimo(){
-  const sec=document.getElementById("ultimo");
-  if(!sec) return;
+async function tpodValidarEmbarqueInicio(){
+  const embEl=document.getElementById("embarqueInput");
+  const emb=embEl ? embEl.value.trim() : "";
+  if(!emb) return {ok:false,msg:"Debe ingresar número de embarque."};
 
-  const flota=tpodCurrentFlota ? tpodCurrentFlota() : "";
-  const t=transit();
+  const r=await tpodBuscarEmbarqueBase(emb);
+  if(!r.ok) return r;
 
-  if(!tpodIsAuthorized || !tpodIsAuthorized() || !flota){
-    tpodClearUltimoView();
-    return;
+  const x=r.data||{};
+  if(x.activo===false) return {ok:false,msg:"El embarque está inactivo."};
+
+  const clienteBase=x.cliente||x.cliente_nombre||x.customer||"";
+  const origenBase=x.origen||x.origen_nombre||x.origin||"";
+  const destinoBase=x.destino||x.destino_nombre||x.destination||"";
+
+  const clienteSel=tpodGetSelectedText("clienteSelect");
+  const origenSel=tpodGetSelectedText("origenSelect");
+  const destinoSel=tpodGetSelectedText("destinoSelect");
+
+  const errores=[];
+
+  if(clienteBase && tpodTextNorm(clienteBase)!==tpodTextNorm(clienteSel)){
+    const fixed=tpodSetSelectByText("clienteSelect",clienteBase);
+    if(!fixed) errores.push("Cliente no coincide. Base: "+clienteBase);
+  }
+  if(origenBase && tpodTextNorm(origenBase)!==tpodTextNorm(origenSel)){
+    const fixed=tpodSetSelectByText("origenSelect",origenBase);
+    if(!fixed) errores.push("Origen no coincide. Base: "+origenBase);
+  }
+  if(destinoBase && tpodTextNorm(destinoBase)!==tpodTextNorm(destinoSel)){
+    const fixed=tpodSetSelectByText("destinoSelect",destinoBase);
+    if(!fixed) errores.push("Destino no coincide. Base: "+destinoBase);
   }
 
-  if(!t || !tpodFlotaParticipa(t,flota)){
-    tpodClearUltimoView();
-    return;
-  }
+  if(errores.length) return {ok:false,msg:errores.join("\n"),data:x};
 
-  const ev=tpodUltimoRegistroDeTransito99(t);
-  if(!ev){
-    tpodClearUltimoView();
-    return;
-  }
-
-  const emb=escapeHtml(t.embarque||"-");
-  const flotaT=escapeHtml(tpodFlotaDeTransito ? tpodFlotaDeTransito(t) : (t.flota||flota));
-  const tipo=escapeHtml(ev.tipo||"-");
-  const fecha=escapeHtml(tpodFormatFecha99(ev.time));
-  const detalle=escapeHtml(ev.detalle||"-");
-  const lote=escapeHtml(t.lote||"-");
-
-  sec.innerHTML=`<div class="card ultimoCard">
-    <b>Último registro enviado</b>
-    <div class="embarqueItem open">
-      <div class="embTop"><b>${tipo}</b><span>${fecha}</span></div>
-      <div>Embarque: ${emb}</div>
-      <div>Flota: ${flotaT}</div>
-      <div>Lote/Carga: ${lote}</div>
-      <div>Detalle: ${detalle}</div>
-    </div>
-  </div>`;
+  return {ok:true,msg:"Embarque validado.",data:x};
 }
+
+// En Inicio/Fin: validar embarque antes de iniciar tránsito.
+try{
+  if(!window.__tpodOriginalStartTransit1500 && typeof startTransit==="function"){
+    window.__tpodOriginalStartTransit1500=startTransit;
+    startTransit=async function(){
+      const v=await tpodValidarEmbarqueInicio();
+      if(!v.ok){
+        window.alert(v.msg);
+        return;
+      }
+      return window.__tpodOriginalStartTransit1500();
+    };
+  }
+}catch(e){
+  console.log("patch startTransit embarque",e);
+}
+
+// Compatibilidad por si el botón llama iniciarTransito().
+try{
+  if(typeof iniciarTransito==="function" && !window.__tpodOriginalIniciarTransito1500){
+    window.__tpodOriginalIniciarTransito1500=iniciarTransito;
+    iniciarTransito=async function(){
+      const v=await tpodValidarEmbarqueInicio();
+      if(!v.ok){
+        window.alert(v.msg);
+        return;
+      }
+      return window.__tpodOriginalIniciarTransito1500();
+    };
+  }
+}catch(e){}
 
 async function saveUser(){
   const fleetEl=document.getElementById("userFleet");
@@ -4195,16 +4231,16 @@ async function saveUser(){
   tpodSetAuthorized(false);
   tpodDisableViews();
   tpodHardClearTransitForm();
-  tpodClearUltimoView();
+  tpodClearUsuarioCampos();
 
   const val=await validarFlotaEnBase(fleet,pass);
 
   if(!val.ok){
     if(msg) msg.innerHTML='<p class="err">'+escapeHtml(val.msg)+'</p>';
     tpodStatus("Desconectado",false);
+    // Limpieza pedida: chofer, teléfono y PASS si hay error de pass o flota.
     tpodClearUsuarioCampos();
     tpodHardClearTransitForm();
-    tpodClearUltimoView();
     show("usuario");
     return;
   }
@@ -4251,7 +4287,6 @@ async function saveUser(){
 
   if(!abierto){
     tpodHardClearTransitForm();
-    tpodClearUltimoView();
   }
 
   if(msg) msg.innerHTML='<p class="ok">'+escapeHtml(tpodResumenTransito(abierto))+'</p>';
@@ -4265,9 +4300,9 @@ async function saveUser(){
 }
 
 try{
-  const oldShow99=show;
+  const oldShow1500=show;
   show=function(id){
-    oldShow99(id);
+    oldShow1500(id);
     if(id==="ultimo") setTimeout(()=>renderUltimo(),80);
     if(id==="inicio") setTimeout(()=>renderInicio(),80);
     if(id==="embarque") setTimeout(()=>refreshEmbarquesCloud(),150);

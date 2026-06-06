@@ -1495,7 +1495,15 @@ button.disabledView{pointer-events:none !important;}
 .embarqueList{max-height:56vh !important;overflow-y:auto !important;padding-right:4px !important;overscroll-behavior:contain !important;}
 
 
-/* v1.4.99 ultimo */
-.ultimoCard .embarqueItem{
-  font-size:12px !important;
+/* v1.5.00 embarque scroll fijo */
+.embarqueCard{
+  max-height:68vh !important;
+  overflow:hidden !important;
+}
+.embarqueList{
+  max-height:56vh !important;
+  overflow-y:auto !important;
+  padding-right:4px !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
 }
