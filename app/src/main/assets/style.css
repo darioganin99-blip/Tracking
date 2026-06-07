@@ -1629,3 +1629,17 @@ button.disabledView{pointer-events:none !important;}
 .estadoCerrado{color:#64748b !important;background:#e2e8f0 !important;}
 .estadoAbierto{color:#0b63ce !important;background:#dbeafe !important;}
 .embarqueList{max-height:56vh !important;overflow-y:auto !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
+
+
+/* v1.5.07 boton ultimo compacto */
+#ultimo .btn,
+#ultimo button.btn,
+#ultimo button[onclick="reenviarUltimo()"]{
+  min-height:52px !important;
+  height:52px !important;
+  font-size:20px !important;
+  font-weight:700 !important;
+  padding:8px 16px !important;
+  line-height:1.1 !important;
+  border-radius:14px !important;
+}
