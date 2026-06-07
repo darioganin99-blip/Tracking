@@ -1643,3 +1643,43 @@ button.disabledView{pointer-events:none !important;}
   line-height:1.1 !important;
   border-radius:14px !important;
 }
+
+
+/* v1.5.08 boton ultimo final compacto */
+#ultimo button,
+#ultimo .btn,
+#ultimo button.btn,
+#ultimo .primary,
+#ultimo .bigBtn,
+#ultimo [onclick*="reenviar"],
+#ultimo [onclick*="Reenviar"]{
+  width:100% !important;
+  min-height:44px !important;
+  height:44px !important;
+  max-height:44px !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  padding:4px 10px !important;
+  line-height:1 !important;
+  border-radius:12px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+#ultimo button *,
+#ultimo .btn *,
+#ultimo .primary *,
+#ultimo .bigBtn *{
+  font-size:15px !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+}
+
+#ultimo .card,
+#ultimo .panel{
+  padding-bottom:12px !important;
+}
