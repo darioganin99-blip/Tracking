@@ -5902,3 +5902,222 @@ try{
   };
 }catch(e){}
 
+
+
+
+/* ===== v1.5.09 TRACKING EMBARQUES POS FIX ===== */
+window.__tpodEmbarquesLoading=false;
+window.__tpodLastEmbarquesHtml="";
+
+function tpodFleet1509(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
+function tpodParticipa1509(t,flota){const f=String(flota||"").trim();const parts=(t&&t.participantes||[]).map(x=>String(x).trim());return tpodFleet1509(t)===f||parts.includes(f);}
+function tpodIsOpen1509(t){if(!t)return false;const estado=String(t.estado||"").toLowerCase().trim();if(t.closed===true)return false;if(t.closed&&t.closed!==null&&String(t.closed).toLowerCase()!=="null")return false;if(estado==="cerrado"||estado==="closed"||estado==="finalizado")return false;return estado==="abierto"||t.closed===null||t.closed===undefined;}
+function tpodTimeVal1509(v){try{const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));return d&&!isNaN(d.getTime())?d.getTime():0;}catch(e){return 0;}}
+function tpodTime1509(t){return tpodTimeVal1509((t&&t.start&&t.start.time)||t.start||t.createdAt||0);}
+function tpodEventTime1509(ev){return tpodTimeVal1509((ev&&ev.time)||(ev&&ev.fecha)||(ev&&ev.createdAt)||(ev&&ev.ts)||0);}
+
+function tpodNormTransit1509(id,x){
+  x=x||{};const route=x.route||{};const user=x.user||{fleet:x.flota||"",driver:x.chofer||""};
+  return {id:x.id||id||"",user:user,route:{...route,cliente:route.cliente||x.cliente||"",origen:route.origen||x.origen||"",destino:route.destino||x.destino||"",origen_lat:route.origen_lat||x.origen_lat,origen_lng:route.origen_lng||x.origen_lng,destino_lat:route.destino_lat||x.destino_lat,destino_lng:route.destino_lng||x.destino_lng},lote:x.lote||"",embarque:x.embarque||"",start:x.start||null,updates:x.updates||[],alerts:x.alerts||[],closed:x.closed,participantes:x.participantes||[],estado:x.estado||"",ultimaPosicion:x.ultimaPosicion||null,ultimaAlerta:x.ultimaAlerta||null,flota:x.flota||user.fleet||"",chofer:x.chofer||user.driver||""};
+}
+
+async function tpodLeerTransitos1509(){
+  if(!tpodInitFirebase())return [];
+  const snap=await db.collection("transitos").get();
+  const all=snap.docs.map(d=>tpodNormTransit1509(d.id,d.data()));
+  cloudTransitosCache=all;
+  return all;
+}
+
+function tpodTextLocation1509(obj){
+  if(!obj)return "";
+  const o=obj.gps||obj.ultimaPosicion||obj.location||obj.posicion||obj;
+  const fields=[o.localidad,o.locality,o.city,o.ciudad,o.municipio,o.partido,o.address,o.direccion,o.locationName,o.place,o.ubicacion,o.nombre,o.name,obj.localidad,obj.locality,obj.city,obj.ciudad,obj.address,obj.ubicacion];
+  for(const f of fields){
+    const s=String(f||"").trim();
+    if(s&&s!=="-"&&!/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(s))return s;
+  }
+  return "";
+}
+
+function tpodLatestUpdate1509(t){
+  const ups=(t&&t.updates||[]).slice();
+  ups.sort((a,b)=>tpodEventTime1509(b)-tpodEventTime1509(a));
+  return ups[0]||null;
+}
+
+function tpodUbicacionReal1509(t){
+  const u=tpodLatestUpdate1509(t);
+  const txtU=tpodTextLocation1509(u);
+  if(txtU)return txtU;
+  if(u){
+    try{
+      const generated=tpodUltimaUbicacionTexto({ultimaPosicion:u.gps||u.ultimaPosicion||u});
+      if(generated&&generated!=="-")return generated;
+    }catch(e){}
+  }
+  const txtT=tpodTextLocation1509(t&&t.ultimaPosicion);
+  if(txtT)return txtT;
+  try{const generated=tpodUltimaUbicacionTexto(t);if(generated&&generated!=="-")return generated;}catch(e){}
+  return "-";
+}
+
+function tpodEmbarqueValidadoActual1509(){
+  const t=transit();
+  if(t&&t.embarque)return String(t.embarque).trim();
+  const el=document.getElementById("embarqueInput");
+  if(el&&el.value)return String(el.value).trim();
+  const filtro=document.getElementById("embarqueFiltro");
+  if(filtro&&filtro.innerText&&filtro.innerText!=="-")return String(filtro.innerText).trim();
+  return "";
+}
+
+function tpodClearLeyendo1509(){
+  const box=document.getElementById("embarqueList");
+  if(box&&/Leyendo embarques/i.test(box.innerText||"")){
+    box.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Actualizando embarques...</div>';
+  }
+}
+
+async function refreshEmbarquesCloud(){
+  if(window.__tpodEmbarquesLoading){setTimeout(tpodClearLeyendo1509,700);return;}
+  window.__tpodEmbarquesLoading=true;
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  const flota=tpodCurrentFlota?tpodCurrentFlota():"";
+
+  if(!tpodIsAuthorized||!tpodIsAuthorized()||!flota){
+    tpodSetFiltro("-");
+    if(box)box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
+    window.__tpodLastEmbarquesHtml=box?box.innerHTML:"";
+    window.__tpodEmbarquesLoading=false;
+    return;
+  }
+
+  const fallbackTimer=setTimeout(()=>{if(window.__tpodEmbarquesLoading){tpodClearLeyendo1509();window.__tpodEmbarquesLoading=false;}},5000);
+
+  try{
+    const all=await tpodLeerTransitos1509();
+    let emb=tpodEmbarqueValidadoActual1509();
+
+    if(!emb){
+      const propiosAbiertos=all.filter(t=>tpodParticipa1509(t,flota)&&tpodIsOpen1509(t)&&t.embarque).sort((a,b)=>tpodTime1509(b)-tpodTime1509(a));
+      if(propiosAbiertos.length)emb=String(propiosAbiertos[0].embarque||"").trim();
+    }
+
+    if(!emb){
+      tpodSetFiltro("-");
+      if(box)box.innerHTML='<div class="emptyBox">No hay embarque validado para esta flota.</div>';
+      window.__tpodLastEmbarquesHtml=box?box.innerHTML:"";
+      return;
+    }
+
+    let items=all.filter(t=>String(t.embarque||"").trim()===emb);
+    const ids=new Set();
+    items=items.filter(t=>{const id=String(t.id||"");if(!id)return true;if(ids.has(id))return false;ids.add(id);return true;});
+
+    items.sort((a,b)=>{
+      const mineA=tpodParticipa1509(a,flota)?0:1,mineB=tpodParticipa1509(b,flota)?0:1;
+      if(mineA!==mineB)return mineA-mineB;
+      const oa=tpodIsOpen1509(a)?0:1,ob=tpodIsOpen1509(b)?0:1;
+      if(oa!==ob)return oa-ob;
+      const fa=tpodFleet1509(a),fb=tpodFleet1509(b);
+      if(fa!==fb)return fa.localeCompare(fb);
+      return tpodTime1509(b)-tpodTime1509(a);
+    });
+
+    tpodRenderEmbarques1509(items,emb,flota);
+  }catch(e){
+    console.log("refreshEmbarquesCloud v1509",e);
+    tpodStatus("Desconectado",false);
+    if(box)box.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Error leyendo embarques.</div>';
+  }finally{
+    clearTimeout(fallbackTimer);
+    window.__tpodEmbarquesLoading=false;
+  }
+}
+
+function tpodRenderEmbarques1509(items,emb,flotaValidada){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  if(!box)return;
+  tpodSetFiltro(emb||"-");
+
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay tránsitos para este embarque.</div>';
+    window.__tpodLastEmbarquesHtml=box.innerHTML;
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const abierto=tpodIsOpen1509(t);
+    const flota=tpodFleet1509(t)||"-";
+    const propia=tpodParticipa1509(t,flotaValidada);
+    const embTxt=escapeHtml(t.embarque||"-");
+    const inicio=escapeHtml(tpodDate(t.start));
+    const cierre=abierto?"-":escapeHtml(tpodDate(t.closed));
+    const ubicacion=escapeHtml(tpodUbicacionReal1509(t));
+    const alerta=escapeHtml(tpodLastAlert(t));
+    const lote=escapeHtml(t.lote||"-");
+    const flotaHtml=propia?`<span class="flotaValidada">${escapeHtml(flota)}</span>`:escapeHtml(flota);
+
+    return `<div class="embarqueItem ${abierto?'open':'closed'} ${propia?'miFlota':''} ${abierto?'':'embarqueCerrado'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${embTxt} / Flota ${flotaHtml}</b><span class="${abierto?'estadoAbierto':'estadoCerrado'}">${abierto?'Abierto':'Cerrado'}</span></div><div>Lote/Carga: ${lote}</div><div>Inicio: ${inicio}</div><div>Cierre: ${cierre}</div><div>Últ. posición: ${ubicacion}</div><div>Últ. alerta: ${alerta}</div></div>`;
+  }).join("");
+  window.__tpodLastEmbarquesHtml=box.innerHTML;
+}
+
+function renderEmbarque(){window.__tpodEmbarquesLoading=false;refreshEmbarquesCloud();}
+
+try{
+  const oldShow1509=show;
+  show=function(id){
+    if(id!=="embarque")window.__tpodEmbarquesLoading=false;
+    oldShow1509(id);
+    if(id==="tracking")setTimeout(()=>{window.__tpodEmbarquesLoading=false;},100);
+    if(id==="embarque")setTimeout(()=>{window.__tpodEmbarquesLoading=false;refreshEmbarquesCloud();},180);
+    if(id==="ultimo")setTimeout(()=>renderUltimo(),80);
+    if(id==="inicio")setTimeout(()=>renderInicio(),80);
+  };
+}catch(e){}
+
+setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leyendo embarques/i.test(box.innerText||""))tpodClearLeyendo1509();},2000);
+
+
+
+
+/* ===== v1.5.10 CERRAR APP EN USUARIO ===== */
+function tpodClearRuntimeCaches1510(){
+  try{ window.__tpodEmbarquesLoading=false; }catch(e){}
+  try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
+  try{ cloudTransitosCache=[]; }catch(e){}
+}
+
+function cerrarApp(){
+  const ok = window.confirm("¿Desea salir de Track POD?");
+  if(!ok) return;
+
+  tpodClearRuntimeCaches1510();
+
+  try{
+    if(window.Android && typeof window.Android.closeApp === "function"){
+      window.Android.closeApp();
+      return;
+    }
+  }catch(e){}
+
+  try{
+    if(navigator.app && typeof navigator.app.exitApp === "function"){
+      navigator.app.exitApp();
+      return;
+    }
+  }catch(e){}
+
+  try{
+    window.close();
+  }catch(e){}
+
+  try{
+    history.back();
+  }catch(e){}
+}
+

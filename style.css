@@ -1683,3 +1683,39 @@ button.disabledView{pointer-events:none !important;}
 #ultimo .panel{
   padding-bottom:12px !important;
 }
+
+
+/* v1.5.09 fix tracking embarques */
+.embarqueList{
+  max-height:56vh !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+
+/* v1.5.10 botones usuario compactos */
+#usuario button,
+#usuario .btn{
+  min-height:42px !important;
+  height:42px !important;
+  max-height:42px !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  padding:6px 12px !important;
+  line-height:1 !important;
+  border-radius:12px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+
+#btnCerrarApp,
+#usuario .btnCerrarApp{
+  margin-top:8px !important;
+  background:#64748b !important;
+  color:#ffffff !important;
+  border:0 !important;
+  box-shadow:0 6px 14px rgba(15,23,42,.16) !important;
+}
