@@ -1610,3 +1610,22 @@ button.disabledView{pointer-events:none !important;}
 .estadoCerrado,.estadoAbierto{white-space:nowrap !important;display:inline-block !important;min-width:64px !important;text-align:center !important;font-size:11px !important;line-height:1.05 !important;padding:4px 5px !important;border-radius:10px !important;}
 .estadoCerrado{color:#64748b !important;background:#e2e8f0 !important;}.estadoAbierto{color:#0b63ce !important;background:#dbeafe !important;}
 .embarqueList{max-height:56vh !important;overflow-y:auto !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
+
+
+/* v1.5.06 ultimo compacto */
+#lastBox.summary{
+  white-space:pre-line !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+  max-height:42vh !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+#ultimo .btn{font-size:22px !important;padding:14px 18px !important;}
+.flotaValidada{color:#0b63ce !important;background:#dbeafe !important;border-radius:8px !important;padding:1px 6px !important;font-weight:900 !important;}
+.embarqueItem.miFlota{border:2px solid #2563eb !important;}
+.embarqueItem.closed,.embarqueItem.embarqueCerrado{background:#f1f5f9 !important;border:1px solid #cbd5e1 !important;color:#475569 !important;}
+.estadoCerrado,.estadoAbierto{white-space:nowrap !important;display:inline-block !important;min-width:64px !important;text-align:center !important;font-size:11px !important;line-height:1.05 !important;padding:4px 5px !important;border-radius:10px !important;}
+.estadoCerrado{color:#64748b !important;background:#e2e8f0 !important;}
+.estadoAbierto{color:#0b63ce !important;background:#dbeafe !important;}
+.embarqueList{max-height:56vh !important;overflow-y:auto !important;overscroll-behavior:contain !important;-webkit-overflow-scrolling:touch !important;}
