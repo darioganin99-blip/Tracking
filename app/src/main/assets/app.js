@@ -6121,3 +6121,121 @@ function cerrarApp(){
   }catch(e){}
 }
 
+
+
+
+/* ===== v1.5.11 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+function cerrarApp(){
+  const ok=window.confirm("¿Desea salir de Track POD?");
+  if(!ok)return;
+  try{window.__tpodEmbarquesLoading=false;}catch(e){}
+  try{window.__tpodLastEmbarquesHtml="";}catch(e){}
+  try{cloudTransitosCache=[];}catch(e){}
+
+  try{
+    if(window.Android && typeof window.Android.closeApp==="function"){
+      window.Android.closeApp();
+      return;
+    }
+  }catch(e){}
+  try{
+    location.href="trackpodclose://close";
+    setTimeout(()=>{try{window.close();}catch(e){}},200);
+  }catch(e){}
+}
+
+function tpodGetByPath1511(obj,path){
+  try{
+    return path.split(".").reduce((a,k)=>a&&a[k],obj);
+  }catch(e){return null;}
+}
+
+function tpodBestLocationFromObject1511(obj){
+  if(!obj)return "";
+  const candidates=[
+    "localidad_precisa","localidadPrecisa","localidad","locality","city","ciudad",
+    "municipio","partido","barrio","neighborhood","address","direccion",
+    "formattedAddress","formatted_address","display_name","place","placeName",
+    "ubicacion","nombre","name",
+    "gps.localidad_precisa","gps.localidadPrecisa","gps.localidad","gps.locality","gps.city","gps.ciudad",
+    "gps.address","gps.direccion","gps.formattedAddress","gps.formatted_address","gps.display_name","gps.place","gps.ubicacion",
+    "ultimaPosicion.localidad_precisa","ultimaPosicion.localidadPrecisa","ultimaPosicion.localidad","ultimaPosicion.city","ultimaPosicion.ciudad",
+    "ultimaPosicion.address","ultimaPosicion.direccion","ultimaPosicion.formattedAddress","ultimaPosicion.formatted_address","ultimaPosicion.display_name","ultimaPosicion.place","ultimaPosicion.ubicacion"
+  ];
+  for(const p of candidates){
+    const v=p.includes(".")?tpodGetByPath1511(obj,p):obj[p];
+    const s=String(v||"").trim();
+    if(s && s!=="-" && !/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(s)){
+      return s;
+    }
+  }
+  return "";
+}
+
+function tpodLatestByTime1511(arr){
+  arr=(arr||[]).slice();
+  arr.sort((a,b)=>{
+    const tb=tpodEventTime1509?tpodEventTime1509(b):0;
+    const ta=tpodEventTime1509?tpodEventTime1509(a):0;
+    return tb-ta;
+  });
+  return arr[0]||null;
+}
+
+function tpodUbicacionReal1511(t){
+  const updates=(t&&t.updates)||[];
+  const latest=tpodLatestByTime1511(updates);
+
+  // Prioridad absoluta: el mismo campo textual que usa el mensaje de WhatsApp si existe.
+  const latestTxt=tpodBestLocationFromObject1511(latest);
+  if(latestTxt)return latestTxt;
+
+  if(latest){
+    try{
+      const generated=tpodUltimaUbicacionTexto({ultimaPosicion:latest.gps||latest.ultimaPosicion||latest});
+      if(generated && generated!=="-")return generated;
+    }catch(e){}
+  }
+
+  const posTxt=tpodBestLocationFromObject1511(t&&t.ultimaPosicion);
+  if(posTxt)return posTxt;
+
+  try{
+    const generated=tpodUltimaUbicacionTexto(t);
+    if(generated && generated!=="-")return generated;
+  }catch(e){}
+
+  return "-";
+}
+
+// Reemplaza sólo el render de embarques para usar ubicación precisa.
+function tpodRenderEmbarques1509(items,emb,flotaValidada){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");
+  if(!box)return;
+
+  tpodSetFiltro(emb||"-");
+
+  if(!items.length){
+    box.innerHTML='<div class="emptyBox">No hay tránsitos para este embarque.</div>';
+    window.__tpodLastEmbarquesHtml=box.innerHTML;
+    return;
+  }
+
+  box.innerHTML=items.map(t=>{
+    const abierto=tpodIsOpen1509(t);
+    const flota=tpodFleet1509(t)||"-";
+    const propia=tpodParticipa1509(t,flotaValidada);
+    const embTxt=escapeHtml(t.embarque||"-");
+    const inicio=escapeHtml(tpodDate(t.start));
+    const cierre=abierto?"-":escapeHtml(tpodDate(t.closed));
+    const ubicacion=escapeHtml(tpodUbicacionReal1511(t));
+    const alerta=escapeHtml(tpodLastAlert(t));
+    const lote=escapeHtml(t.lote||"-");
+    const flotaHtml=propia?`<span class="flotaValidada">${escapeHtml(flota)}</span>`:escapeHtml(flota);
+
+    return `<div class="embarqueItem ${abierto?'open':'closed'} ${propia?'miFlota':''} ${abierto?'':'embarqueCerrado'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${embTxt} / Flota ${flotaHtml}</b><span class="${abierto?'estadoAbierto':'estadoCerrado'}">${abierto?'Abierto':'Cerrado'}</span></div><div>Lote/Carga: ${lote}</div><div>Inicio: ${inicio}</div><div>Cierre: ${cierre}</div><div>Últ. posición: ${ubicacion}</div><div>Últ. alerta: ${alerta}</div></div>`;
+  }).join("");
+  window.__tpodLastEmbarquesHtml=box.innerHTML;
+}
+

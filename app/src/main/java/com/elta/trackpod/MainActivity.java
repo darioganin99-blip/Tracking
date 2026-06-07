@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -74,8 +75,30 @@ public class MainActivity extends Activity {
             }
         });
 
+        webView.addJavascriptInterface(new AndroidBridge(), "Android");
         webView.loadUrl("file:///android_asset/index.html");
         setContentView(webView);
+    }
+
+
+    public class AndroidBridge {
+        @JavascriptInterface
+        public void closeApp() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            finishAndRemoveTask();
+                        } else {
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        finish();
+                    }
+                }
+            });
+        }
     }
 
     private boolean handleUrl(String url) {
