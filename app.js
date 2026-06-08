@@ -7424,3 +7424,298 @@ setInterval(()=>{
   }
 },700);
 
+
+
+
+/* ===== v1.5.18 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+
+/*
+Problema observado:
+- WhatsApp informa correctamente "Ub.: Belén de Escobar, Argentina".
+- Embarques/Último muestran "Buenos Aires, Argentina".
+Solución:
+- Extraer y guardar la ubicación exacta del último texto enviado por WhatsApp.
+- Embarques y Último priorizan esa ubicación guardada antes de cualquier cálculo por GPS/fallback.
+*/
+
+window.__tpodGoodEmbarquesHtml = window.__tpodGoodEmbarquesHtml || "";
+window.__tpodLastWhatsappLocationByFleet = window.__tpodLastWhatsappLocationByFleet || {};
+window.__tpodLastWhatsappLocationByTransit = window.__tpodLastWhatsappLocationByTransit || {};
+
+function tpodCleanUb1518(v){
+  let s = String(v || "").trim();
+  if(!s || s === "-") return "";
+  s = s.replace(/\s+/g, " ");
+  if(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(s)) return "";
+  return s;
+}
+
+function tpodExtractUbFromText1518(txt){
+  const s = String(txt || "");
+  const m = s.match(/Ub\.:\s*([^\n\r]+)/i);
+  if(m) return tpodCleanUb1518(m[1]);
+  return "";
+}
+
+function tpodFleet1518(t){
+  return String((t && t.user && t.user.fleet) || t.flota || (t && t.user && t.user.flota) || "").trim();
+}
+
+function tpodCurrentFleet1518(){
+  try{ const f = tpodCurrentFlota && tpodCurrentFlota(); if(f) return String(f).trim(); }catch(e){}
+  try{ const u = user && user(); if(u && u.fleet) return String(u.fleet).trim(); }catch(e){}
+  try{ const u = JSON.parse(localStorage.getItem(LS.user) || "{}"); if(u && u.fleet) return String(u.fleet).trim(); }catch(e){}
+  try{ if(window.cloudUser && cloudUser.flota) return String(cloudUser.flota).trim(); }catch(e){}
+  return "";
+}
+
+function tpodStoreWhatsappUb1518(transitId, fleet, ub){
+  ub = tpodCleanUb1518(ub);
+  if(!ub) return;
+  fleet = String(fleet || "").trim();
+  transitId = String(transitId || "").trim();
+  if(fleet) window.__tpodLastWhatsappLocationByFleet[fleet] = ub;
+  if(transitId) window.__tpodLastWhatsappLocationByTransit[transitId] = ub;
+  try{
+    const data = JSON.parse(localStorage.getItem("tpod_whatsapp_locations") || "{}");
+    if(fleet) data["fleet:"+fleet] = ub;
+    if(transitId) data["transit:"+transitId] = ub;
+    localStorage.setItem("tpod_whatsapp_locations", JSON.stringify(data));
+  }catch(e){}
+}
+
+function tpodReadStoredWhatsappUb1518(transitId, fleet){
+  fleet = String(fleet || "").trim();
+  transitId = String(transitId || "").trim();
+  if(transitId && window.__tpodLastWhatsappLocationByTransit[transitId]) return window.__tpodLastWhatsappLocationByTransit[transitId];
+  if(fleet && window.__tpodLastWhatsappLocationByFleet[fleet]) return window.__tpodLastWhatsappLocationByFleet[fleet];
+  try{
+    const data = JSON.parse(localStorage.getItem("tpod_whatsapp_locations") || "{}");
+    if(transitId && data["transit:"+transitId]) return data["transit:"+transitId];
+    if(fleet && data["fleet:"+fleet]) return data["fleet:"+fleet];
+  }catch(e){}
+  return "";
+}
+
+/* Intercepta aperturas de WhatsApp y guarda Ub.: exacta del texto enviado */
+(function(){
+  if(window.__tpodWhatsappInterceptor1518) return;
+  window.__tpodWhatsappInterceptor1518 = true;
+
+  const oldOpen = window.open;
+  window.open = function(url, target, features){
+    try{
+      const u = String(url || "");
+      if(/wa\.me|whatsapp|api\.whatsapp/i.test(u)){
+        let decoded = "";
+        try{
+          const q = u.split("?")[1] || "";
+          const params = new URLSearchParams(q);
+          decoded = params.get("text") || "";
+        }catch(e){}
+        if(!decoded){
+          const m = u.match(/[?&]text=([^&]+)/i);
+          if(m) decoded = decodeURIComponent(m[1].replace(/\+/g, " "));
+        }
+        decoded = decodeURIComponent(decoded || "");
+        const ub = tpodExtractUbFromText1518(decoded);
+        if(ub){
+          let tid = "";
+          try{ const t = transit && transit(); tid = t && t.id || ""; }catch(e){}
+          tpodStoreWhatsappUb1518(tid, tpodCurrentFleet1518(), ub);
+        }
+      }
+    }catch(e){}
+    return oldOpen ? oldOpen.apply(window, arguments) : null;
+  };
+
+  const oldAssign = window.location.assign ? window.location.assign.bind(window.location) : null;
+  if(oldAssign){
+    window.location.assign = function(url){
+      try{
+        const u = String(url || "");
+        if(/wa\.me|whatsapp|api\.whatsapp/i.test(u)){
+          const m = u.match(/[?&]text=([^&]+)/i);
+          const decoded = m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
+          const ub = tpodExtractUbFromText1518(decoded);
+          if(ub){
+            let tid = "";
+            try{ const t = transit && transit(); tid = t && t.id || ""; }catch(e){}
+            tpodStoreWhatsappUb1518(tid, tpodCurrentFleet1518(), ub);
+          }
+        }
+      }catch(e){}
+      return oldAssign(url);
+    };
+  }
+})();
+
+function tpodGetPath1518(o,path){
+  try{return path.split(".").reduce((a,k)=>a&&a[k],o);}catch(e){return null;}
+}
+
+function tpodTimeVal1518(v){
+  try{
+    const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));
+    return d&&!isNaN(d.getTime())?d.getTime():0;
+  }catch(e){return 0;}
+}
+
+function tpodEventTime1518(x){
+  return tpodTimeVal1518((x&&x.time)||(x&&x.fecha)||(x&&x.createdAt)||(x&&x.ts)||0);
+}
+
+function tpodLatestUpdate1518(t){
+  const arr=(t&&t.updates||[]).slice();
+  arr.sort((a,b)=>tpodEventTime1518(b)-tpodEventTime1518(a));
+  return arr[0]||null;
+}
+
+function tpodLocationFromObj1518(obj){
+  if(!obj) return "";
+
+  const msgUb = tpodExtractUbFromText1518(obj.msg || obj.mensaje || obj.texto || obj.whatsapp || obj.body || "");
+  if(msgUb) return msgUb;
+
+  const paths = [
+    "ubicacionWhatsapp","whatsapp_ubicacion","ubicacion_whatsapp",
+    "ubicacionTexto","ubicacion_texto","locationText","location_text",
+    "localidad_precisa","localidadPrecisa","localidad","locality","city","ciudad",
+    "municipio","partido","barrio","neighborhood",
+    "address","direccion","formattedAddress","formatted_address","display_name",
+    "place","placeName","ubicacion","nombre","name",
+    "gps.ubicacionWhatsapp","gps.whatsapp_ubicacion","gps.ubicacionTexto","gps.ubicacion_texto",
+    "gps.locationText","gps.localidad_precisa","gps.localidadPrecisa","gps.localidad",
+    "gps.locality","gps.city","gps.ciudad","gps.municipio","gps.partido",
+    "gps.address","gps.direccion","gps.formattedAddress","gps.formatted_address",
+    "gps.display_name","gps.place","gps.ubicacion"
+  ];
+
+  for(const p of paths){
+    const v = p.includes(".") ? tpodGetPath1518(obj,p) : obj[p];
+    const s = tpodCleanUb1518(v);
+    if(s) return s;
+  }
+  return "";
+}
+
+function tpodNum1518(v){ const n=Number(v); return isFinite(n)?n:null; }
+function tpodCoords1518(obj){
+  if(!obj) return null;
+  const pairs = [
+    ["lat","lng"],["lat","lon"],["latitude","longitude"],
+    ["gps.lat","gps.lng"],["gps.latitude","gps.longitude"],
+    ["coords.latitude","coords.longitude"],
+    ["position.coords.latitude","position.coords.longitude"],
+    ["ultimaPosicion.lat","ultimaPosicion.lng"],
+    ["ultimaPosicion.latitude","ultimaPosicion.longitude"]
+  ];
+  for(const p of pairs){
+    const a=tpodNum1518(tpodGetPath1518(obj,p[0]));
+    const b=tpodNum1518(tpodGetPath1518(obj,p[1]));
+    if(a!==null && b!==null) return {lat:a,lng:b};
+  }
+  return null;
+}
+
+function tpodLocalidadPorGps1518(lat,lng){
+  if(lat==null || lng==null) return "";
+
+  if(lat < -34.29 && lat > -34.42 && lng < -58.68 && lng > -58.86) return "Belén de Escobar, Argentina";
+  if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
+  if(lat < -34.12 && lat > -34.22 && lng < -58.88 && lng > -59.08) return "Campana / Zárate, Argentina";
+  if(lat < -34.60 && lat > -34.63 && lng < -58.44 && lng > -58.48) return "Villa General Mitre / La Paternal, CABA";
+  if(lat < -34.58 && lat > -34.66 && lng < -58.40 && lng > -58.50) return "CABA";
+  if(lat < -34.68 && lat > -34.75 && lng < -58.25 && lng > -58.38) return "Avellaneda";
+  if(lat < -34.55 && lat > -34.65 && lng < -58.55 && lng > -58.65) return "El Palomar";
+  if(lat < -34.68 && lat > -34.76 && lng < -58.20 && lng > -58.35) return "Quilmes";
+  return "Buenos Aires, Argentina";
+}
+
+/* FUNCION UNICA FINAL */
+function tpodUbicacionWhatsAppCompartida1518(t){
+  const flota = tpodFleet1518(t) || tpodCurrentFleet1518();
+  const tid = String((t&&t.id)||"").trim();
+
+  // 1) Último texto exacto ya enviado por WhatsApp.
+  let s = tpodReadStoredWhatsappUb1518(tid, flota);
+  if(s) return s;
+
+  // 2) Ubicación textual guardada en el último update.
+  const u = tpodLatestUpdate1518(t);
+  s = tpodLocationFromObj1518(u);
+  if(s) return s;
+
+  // 3) Ubicación textual del tránsito.
+  s = tpodLocationFromObj1518(t&&t.ultimaPosicion) || tpodLocationFromObj1518(t);
+  if(s) return s;
+
+  // 4) Coordenadas del último update.
+  let c = tpodCoords1518(u);
+  if(c) return tpodLocalidadPorGps1518(c.lat,c.lng);
+
+  // 5) Coordenadas del tránsito.
+  c = tpodCoords1518(t&&t.ultimaPosicion) || tpodCoords1518(t);
+  if(c) return tpodLocalidadPorGps1518(c.lat,c.lng);
+
+  return "-";
+}
+
+/* Alias forzados */
+function pos1515(t){ return tpodUbicacionWhatsAppCompartida1518(t); }
+function tpodGpsLocation1515(t){ return tpodUbicacionWhatsAppCompartida1518(t); }
+function tpodUbicacionWhatsAppCompartida1517(t){ return tpodUbicacionWhatsAppCompartida1518(t); }
+function tpodUbicacionPrecisa1514(t){ return tpodUbicacionWhatsAppCompartida1518(t); }
+function tpodUbicacionPrecisa1513(t){ return tpodUbicacionWhatsAppCompartida1518(t); }
+
+/* Refuerzo visual: re-render Embarques y Último usando ubicación compartida */
+function tpodPatchRenderedLocations1518(){
+  try{
+    const box=document.getElementById("embarqueList");
+    if(!box || !cloudTransitosCache) return;
+    const flota=tpodCurrentFleet1518();
+    const cards=box.querySelectorAll(".embarqueItem");
+    cards.forEach(card=>{
+      const title=(card.innerText||"");
+      const m=title.match(/Emb\.\s*([^\s\/]+)/i);
+      const mf=title.match(/Flota\s*([0-9]+)/i);
+      if(!m) return;
+      const emb=m[1];
+      const fl=mf?mf[1]:"";
+      const t=(cloudTransitosCache||[]).find(x=>String(x.embarque||"")===emb && (!fl || tpodFleet1518(x)===fl));
+      if(!t) return;
+      const loc=tpodUbicacionWhatsAppCompartida1518(t);
+      card.querySelectorAll("div").forEach(d=>{
+        if(/^Últ\.\s*posición:/i.test(d.innerText||"")){
+          d.innerText="Últ. posición: "+loc;
+        }
+      });
+    });
+  }catch(e){}
+}
+
+setInterval(tpodPatchRenderedLocations1518,1000);
+
+try{
+  const oldRenderUltimo1518 = renderUltimo;
+  renderUltimo = async function(){
+    await oldRenderUltimo1518();
+    try{
+      const box=document.getElementById("lastBox");
+      if(!box) return;
+      const flota=tpodCurrentFleet1518();
+      const all=cloudTransitosCache||[];
+      let best=null;
+      all.filter(t=>String(tpodFleet1518(t))===String(flota) || (t.participantes||[]).map(String).includes(String(flota))).forEach(t=>{
+        const u=tpodLatestUpdate1518(t);
+        const sc=tpodEventTime1518(u)||(t&&t.start?tpodTimeVal1518(t.start.time||t.start):0);
+        if(!best||sc>best.sc) best={t,sc};
+      });
+      if(best){
+        const loc=tpodUbicacionWhatsAppCompartida1518(best.t);
+        box.innerText=String(box.innerText||"").replace(/Ub\.:\s*[^\n\r]+/i,"Ub.: "+loc);
+      }
+    }catch(e){}
+  };
+}catch(e){}
+
