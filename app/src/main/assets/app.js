@@ -6924,3 +6924,64 @@ async function renderUltimo(){let box=document.getElementById("lastBox");if(!box
 try{const oldShow1515=show;show=function(id){oldShow1515(id);if(id==="embarque")setTimeout(renderEmbarque,80);if(id==="ultimo")setTimeout(renderUltimo,80);if(id==="inicio")setTimeout(()=>renderInicio(),80)}}catch(e){}
 setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|Leyendo|Actualizando|Toque Embarques)/i.test(b.innerText||"")){if(window.__tpodGoodEmbarquesHtml)b.innerHTML=window.__tpodGoodEmbarquesHtml;else refreshEmbarquesCloud()}},700);
 
+
+
+
+/* ===== v1.5.16 GPS ZARATE FIX ===== */
+function tpodFallbackLocalidad1515(lat,lng){
+  if(lat==null || lng==null) return "";
+  if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
+  if(lat < -34.12 && lat > -34.22 && lng < -58.88 && lng > -59.08) return "Campana / Zárate, Argentina";
+  if(lat < -34.60 && lat > -34.63 && lng < -58.44 && lng > -58.48) return "Villa General Mitre / La Paternal, CABA";
+  if(lat < -34.58 && lat > -34.66 && lng < -58.40 && lng > -58.50) return "CABA";
+  if(lat < -34.68 && lat > -34.75 && lng < -58.25 && lng > -58.38) return "Avellaneda";
+  if(lat < -34.55 && lat > -34.65 && lng < -58.55 && lng > -58.65) return "El Palomar";
+  if(lat < -34.68 && lat > -34.76 && lng < -58.20 && lng > -58.35) return "Quilmes";
+  return "Buenos Aires, Argentina";
+}
+function tpodFallbackLocalidad1514(lat,lng){ return tpodFallbackLocalidad1515(lat,lng); }
+function tpodFallbackLocalidad1513(lat,lng){ return tpodFallbackLocalidad1515(lat,lng); }
+function tpodFallbackLocalidad1512(lat,lng){ return tpodFallbackLocalidad1515(lat,lng); }
+
+function tpodZarateFromCoords1516(t){
+  try{
+    const u = typeof latest1515 === "function" ? latest1515(t) :
+              typeof tpodLatestUpdate1514 === "function" ? tpodLatestUpdate1514(t) :
+              typeof tpodLatestUpdate1513 === "function" ? tpodLatestUpdate1513(t) : null;
+    const coordFn = typeof coords1515 === "function" ? coords1515 :
+                    typeof tpodCoords1514 === "function" ? tpodCoords1514 :
+                    typeof tpodCoords1513 === "function" ? tpodCoords1513 : null;
+    if(!coordFn) return "";
+    const c = coordFn(u) || coordFn(t && t.ultimaPosicion) || coordFn(t);
+    if(!c) return "";
+    if(c.lat < -34.02 && c.lat > -34.18 && c.lng < -59.00 && c.lng > -59.18) return "Zárate, Argentina";
+    if(c.lat < -34.12 && c.lat > -34.22 && c.lng < -58.88 && c.lng > -59.08) return "Campana / Zárate, Argentina";
+  }catch(e){}
+  return "";
+}
+
+if(typeof pos1515 === "function" && !window.__pos1515Original1516){
+  window.__pos1515Original1516 = pos1515;
+  pos1515 = function(t){
+    const z = tpodZarateFromCoords1516(t);
+    if(z) return z;
+    return window.__pos1515Original1516(t);
+  };
+}
+if(typeof tpodGpsLocation1515 === "function" && !window.__tpodGpsLocation1515Original1516){
+  window.__tpodGpsLocation1515Original1516 = tpodGpsLocation1515;
+  tpodGpsLocation1515 = function(t){
+    const z = tpodZarateFromCoords1516(t);
+    if(z) return z;
+    return window.__tpodGpsLocation1515Original1516(t);
+  };
+}
+if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrecisa1514Original1516){
+  window.__tpodUbicacionPrecisa1514Original1516 = tpodUbicacionPrecisa1514;
+  tpodUbicacionPrecisa1514 = function(t){
+    const z = tpodZarateFromCoords1516(t);
+    if(z) return z;
+    return window.__tpodUbicacionPrecisa1514Original1516(t);
+  };
+}
+
