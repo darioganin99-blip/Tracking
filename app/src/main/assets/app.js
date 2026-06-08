@@ -1602,7 +1602,7 @@ renderEmbarque=function(){
   if(title) title.innerText=emb?emb:"Todos los visibles";
   let items=transitPool().filter(t=>t.start&&sameLocalDay(t.start.time,now()));
   if(emb)items=items.filter(t=>String(t.embarque||"").trim()===String(emb).trim());
-  if(!items.length){box.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';return;}
+  if(!items.length){box.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';return;}
   items.sort((a,b)=>String(a.embarque||"").localeCompare(String(b.embarque||""))||new Date(a.start&&a.start.time||0)-new Date(b.start&&b.start.time||0));
   box.innerHTML=items.map(t=>{const cerrado=!!t.closed;return `<div class="embarqueItem ${cerrado?'closed':'open'}"><div class="embTop"><b>Emb. ${escapeHtml(t.embarque||'-')} / Flota ${escapeHtml(t.user&&t.user.fleet||'-')}</b><span>${cerrado?'Cerrado':'Abierto'}</span></div><div>Inicio: ${escapeHtml(fmtDateShort(t.start&&t.start.time))}</div><div>Cierre: ${cerrado?escapeHtml(fmtDateShort(t.closed.time)):'-'}</div><div>Últ. posición: ${escapeHtml(lastGpsText(t))}</div><div>Últ. alerta: ${escapeHtml(lastAlertText(t))}</div></div>`;}).join('');
 }
@@ -3750,7 +3750,7 @@ async function refreshEmbarquesCloud(){
     if(box)box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
     return;
   }
-  if(box)box.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';
+  if(box)box.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';
   try{
     const abiertos=await tpodLoadOpenDirect96();
     cloudTransitosCache=abiertos;
@@ -3972,7 +3972,7 @@ async function refreshEmbarquesCloud(){
     if(box)box.innerHTML='<div class="emptyBox">Valide la flota en Usuario.</div>';
     return;
   }
-  if(box)box.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';
+  if(box)box.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';
   try{
     const all=await tpodLeerTransitos98();
     const abiertos=all.filter(tpodIsOpen98);
@@ -4566,7 +4566,7 @@ async function refreshEmbarquesCloud(){
     return;
   }
 
-  if(box) box.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';
+  if(box) box.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';
 
   try{
     const all=await tpodLeerTransitos1501();
@@ -4933,7 +4933,7 @@ async function refreshEmbarquesCloud(){
     window.__tpodEmbarquesLoading=false;
     return;
   }
-  if(box && !window.__tpodLastEmbarquesHtml) box.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';
+  if(box && !window.__tpodLastEmbarquesHtml) box.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';
   try{
     const all=await tpodLeerTransitos1502();
     const embarquesDeFlota=new Set();
@@ -5975,7 +5975,7 @@ function tpodEmbarqueValidadoActual1509(){
 function tpodClearLeyendo1509(){
   const box=document.getElementById("embarqueList");
   if(box&&/Leyendo embarques/i.test(box.innerText||"")){
-    box.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Actualizando embarques...</div>';
+    box.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Toque Embarques para actualizar.</div>';
   }
 }
 
@@ -6404,7 +6404,7 @@ async function refreshEmbarquesCloud(){
 
     // No se muestra "Leyendo..." si ya hay datos, para evitar parpadeo y estados pegados.
     if(box2 && !window.__tpodLastEmbarquesHtml && !/Leyendo embarques/i.test(box2.innerText||"")){
-      box2.innerHTML='<div class="emptyBox">Actualizando embarques...</div>';
+      box2.innerHTML='<div class="emptyBox">Toque Embarques para actualizar.</div>';
     }
 
     const all=await tpodLeerTransitos1512();
@@ -6508,4 +6508,135 @@ setInterval(()=>{
     window.__tpodEmbarquesLoading=false;
   }
 },1000);
+
+
+
+
+/* ===== v1.5.13 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+window.__tpodEmbarquesLoading=false;
+window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
+window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
+
+function tpodFleet1513(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
+function tpodParticipa1513(t,flota){const f=String(flota||"").trim();const parts=(t&&t.participantes||[]).map(x=>String(x).trim());return tpodFleet1513(t)===f||parts.includes(f);}
+function tpodIsOpen1513(t){if(!t)return false;const e=String(t.estado||"").toLowerCase().trim();if(t.closed===true)return false;if(t.closed&&t.closed!==null&&String(t.closed).toLowerCase()!=="null")return false;if(e==="cerrado"||e==="closed"||e==="finalizado")return false;return e==="abierto"||t.closed===null||t.closed===undefined;}
+function tpodTimeVal1513(v){try{const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));return d&&!isNaN(d.getTime())?d.getTime():0;}catch(e){return 0;}}
+function tpodTime1513(t){return tpodTimeVal1513((t&&t.start&&t.start.time)||t.start||t.createdAt||0);}
+function tpodEventTime1513(ev){return tpodTimeVal1513((ev&&ev.time)||(ev&&ev.fecha)||(ev&&ev.createdAt)||(ev&&ev.ts)||0);}
+function tpodNormTransit1513(id,x){
+  x=x||{};const r=x.route||{};const u=x.user||{fleet:x.flota||"",driver:x.chofer||""};
+  return {id:x.id||id||"",user:u,route:{...r,cliente:r.cliente||x.cliente||"",origen:r.origen||x.origen||"",destino:r.destino||x.destino||"",origen_lat:r.origen_lat||x.origen_lat,origen_lng:r.origen_lng||x.origen_lng,destino_lat:r.destino_lat||x.destino_lat,destino_lng:r.destino_lng||x.destino_lng},lote:x.lote||"",embarque:x.embarque||"",start:x.start||null,updates:x.updates||[],alerts:x.alerts||[],closed:x.closed,participantes:x.participantes||[],estado:x.estado||"",ultimaPosicion:x.ultimaPosicion||null,ultimaAlerta:x.ultimaAlerta||null,flota:x.flota||u.fleet||"",chofer:x.chofer||u.driver||""};
+}
+async function tpodLeerTransitos1513(){
+  if(!tpodInitFirebase())return [];
+  const snap=await db.collection("transitos").get();
+  const all=snap.docs.map(d=>tpodNormTransit1513(d.id,d.data()));
+  cloudTransitosCache=all;
+  return all;
+}
+function tpodEmbarqueActual1513(){
+  const t=transit();
+  if(t&&t.embarque)return String(t.embarque).trim();
+  const el=document.getElementById("embarqueInput");
+  if(el&&el.value)return String(el.value).trim();
+  const filtro=document.getElementById("embarqueFiltro");
+  if(filtro&&filtro.innerText&&filtro.innerText!=="-")return String(filtro.innerText).trim();
+  return "";
+}
+function tpodGetPath1513(o,path){try{return path.split(".").reduce((a,k)=>a&&a[k],o);}catch(e){return null;}}
+function tpodNum1513(v){const n=Number(v);return isFinite(n)?n:null;}
+function tpodCoords1513(obj){
+  if(!obj)return null;
+  const paths=[["lat","lng"],["lat","lon"],["latitude","longitude"],["gps.lat","gps.lng"],["gps.latitude","gps.longitude"],["coords.latitude","coords.longitude"],["position.coords.latitude","position.coords.longitude"],["ultimaPosicion.lat","ultimaPosicion.lng"],["ultimaPosicion.latitude","ultimaPosicion.longitude"],["location.lat","location.lng"],["posicion.lat","posicion.lng"]];
+  for(const p of paths){const a=tpodNum1513(tpodGetPath1513(obj,p[0]));const b=tpodNum1513(tpodGetPath1513(obj,p[1]));if(a!==null&&b!==null)return {lat:a,lng:b};}
+  return null;
+}
+function tpodCleanLoc1513(v){
+  let s=String(v||"").trim();
+  if(!s||s==="-")return "";
+  s=s.replace(/\s+/g," ");
+  if(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(s))return "";
+  return s;
+}
+function tpodLocFrom1513(obj){
+  if(!obj)return "";
+  const paths=["whatsapp_ubicacion","ubicacion_whatsapp","ubicacionTexto","ubicacion_texto","locationText","location_text","localidad_precisa","localidadPrecisa","localidad","locality","city","ciudad","municipio","partido","barrio","address","direccion","formattedAddress","formatted_address","display_name","place","placeName","ubicacion","nombre","name","gps.whatsapp_ubicacion","gps.ubicacionTexto","gps.localidad_precisa","gps.localidadPrecisa","gps.localidad","gps.locality","gps.city","gps.ciudad","gps.municipio","gps.partido","gps.address","gps.direccion","gps.formattedAddress","gps.formatted_address","gps.display_name","gps.place","gps.ubicacion"];
+  for(const p of paths){const s=tpodCleanLoc1513(p.includes(".")?tpodGetPath1513(obj,p):obj[p]);if(s)return s;}
+  return "";
+}
+function tpodLatestUpdate1513(t){const arr=(t&&t.updates||[]).slice();arr.sort((a,b)=>tpodEventTime1513(b)-tpodEventTime1513(a));return arr[0]||null;}
+function tpodFallbackLocalidad1513(lat,lng){
+  if(lat==null||lng==null)return "";
+  if(lat<-34.60&&lat>-34.64&&lng<-58.43&&lng>-58.48)return "Villa General Mitre / La Paternal, CABA";
+  if(lat<-34.58&&lat>-34.65&&lng<-58.42&&lng>-58.49)return "CABA";
+  if(lat<-34.68&&lat>-34.75&&lng<-58.25&&lng>-58.38)return "Avellaneda";
+  if(lat<-34.55&&lat>-34.65&&lng<-58.55&&lng>-58.65)return "El Palomar";
+  if(lat<-34.68&&lat>-34.76&&lng<-58.20&&lng>-58.35)return "Quilmes";
+  if(lat<-34.52&&lat>-34.70&&lng<-58.30&&lng>-58.55)return "Buenos Aires, Argentina";
+  return "";
+}
+function tpodUbicacionPrecisaSync1513(t){
+  const u=tpodLatestUpdate1513(t);
+  const c=tpodCoords1513(u)||tpodCoords1513(t&&t.ultimaPosicion)||tpodCoords1513(t);
+  if(c){const fb=tpodFallbackLocalidad1513(c.lat,c.lng);if(fb)return fb;}
+  const msgs=[u&&u.msg,u&&u.mensaje,u&&u.texto,u&&u.whatsapp,t&&t.lastMsg,t&&t.ultimoMensaje].map(x=>String(x||""));
+  for(const msg of msgs){const m=msg.match(/Ub\.:\s*([^\n\r]+)/i);if(m&&tpodCleanLoc1513(m[1]))return tpodCleanLoc1513(m[1]);}
+  let s=tpodLocFrom1513(u);if(s)return s;
+  s=tpodLocFrom1513(t&&t.ultimaPosicion);if(s)return s;
+  try{const g=tpodUltimaUbicacionTexto({ultimaPosicion:u&&(u.gps||u.ultimaPosicion||u)});if(tpodCleanLoc1513(g))return tpodCleanLoc1513(g);}catch(e){}
+  return "-";
+}
+function tpodSetBox1513(html){const box=document.getElementById("embarqueList");if(!box)return;box.innerHTML=html;window.__tpodLastEmbarquesHtml=html;}
+async function refreshEmbarquesCloud(){
+  const box=document.getElementById("embarqueList");
+  if(window.__tpodEmbarquesLoading){if(box&&window.__tpodLastEmbarquesHtml)box.innerHTML=window.__tpodLastEmbarquesHtml;return;}
+  window.__tpodEmbarquesLoading=true;
+  try{
+    tpodBuildEmbarqueScreen();
+    const box2=document.getElementById("embarqueList");
+    const flota=tpodCurrentFlota?tpodCurrentFlota():"";
+    if(!tpodIsAuthorized||!tpodIsAuthorized()||!flota){tpodSetFiltro("-");tpodSetBox1513('<div class="emptyBox">Valide la flota en Usuario.</div>');return;}
+    if(box2&&window.__tpodLastEmbarquesHtml)box2.innerHTML=window.__tpodLastEmbarquesHtml;
+    const all=await tpodLeerTransitos1513();
+    let emb=tpodEmbarqueActual1513();
+    if(!emb){const propios=all.filter(t=>tpodParticipa1513(t,flota)&&tpodIsOpen1513(t)&&t.embarque).sort((a,b)=>tpodTime1513(b)-tpodTime1513(a));if(propios.length)emb=String(propios[0].embarque||"").trim();}
+    if(!emb){tpodSetFiltro("-");tpodSetBox1513('<div class="emptyBox">No hay embarque validado para esta flota.</div>');return;}
+    let items=all.filter(t=>String(t.embarque||"").trim()===emb);
+    const ids=new Set();
+    items=items.filter(t=>{const id=String(t.id||"");if(!id)return true;if(ids.has(id))return false;ids.add(id);return true;});
+    items.sort((a,b)=>{const ma=tpodParticipa1513(a,flota)?0:1,mb=tpodParticipa1513(b,flota)?0:1;if(ma!==mb)return ma-mb;const oa=tpodIsOpen1513(a)?0:1,ob=tpodIsOpen1513(b)?0:1;if(oa!==ob)return oa-ob;const fa=tpodFleet1513(a),fb=tpodFleet1513(b);if(fa!==fb)return fa.localeCompare(fb);return tpodTime1513(b)-tpodTime1513(a);});
+    tpodRenderEmbarques1513(items,emb,flota);
+  }catch(e){
+    console.log("refreshEmbarquesCloud v1513",e);
+    const b=document.getElementById("embarqueList");if(b)b.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Error leyendo embarques.</div>';
+  }finally{
+    window.__tpodEmbarquesLoading=false;
+    setTimeout(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo|Actualizando) embarques/i.test(b.innerText||""))b.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Toque Embarques para actualizar.</div>';},100);
+  }
+}
+function tpodRenderEmbarques1513(items,emb,flotaValidada){
+  tpodBuildEmbarqueScreen();
+  const box=document.getElementById("embarqueList");if(!box)return;
+  tpodSetFiltro(emb||"-");
+  if(!items.length){tpodSetBox1513('<div class="emptyBox">No hay tránsitos para este embarque.</div>');return;}
+  const html=items.map(t=>{
+    const abierto=tpodIsOpen1513(t),flota=tpodFleet1513(t)||"-",propia=tpodParticipa1513(t,flotaValidada);
+    const flotaHtml=propia?`<span class="flotaValidada">${escapeHtml(flota)}</span>`:escapeHtml(flota);
+    return `<div class="embarqueItem ${abierto?'open':'closed'} ${propia?'miFlota':''} ${abierto?'':'embarqueCerrado'}" onclick="abrirTransitoCloud('${escapeHtml(t.id)}')"><div class="embTop"><b>Emb. ${escapeHtml(t.embarque||"-")} / Flota ${flotaHtml}</b><span class="${abierto?'estadoAbierto':'estadoCerrado'}">${abierto?'Abierto':'Cerrado'}</span></div><div>Lote/Carga: ${escapeHtml(t.lote||"-")}</div><div>Inicio: ${escapeHtml(tpodDate(t.start))}</div><div>Cierre: ${abierto?"-":escapeHtml(tpodDate(t.closed))}</div><div>Últ. posición: ${escapeHtml(tpodUbicacionPrecisaSync1513(t))}</div><div>Últ. alerta: ${escapeHtml(tpodLastAlert(t))}</div></div>`;
+  }).join("");
+  tpodSetBox1513(html);
+}
+function renderEmbarque(){window.__tpodEmbarquesLoading=false;const b=document.getElementById("embarqueList");if(b&&window.__tpodLastEmbarquesHtml)b.innerHTML=window.__tpodLastEmbarquesHtml;refreshEmbarquesCloud();}
+try{
+  const oldShow1513=show;
+  show=function(id){
+    if(id!=="embarque")window.__tpodEmbarquesLoading=false;
+    oldShow1513(id);
+    if(id==="tracking")setTimeout(()=>{window.__tpodEmbarquesLoading=false;},50);
+    if(id==="embarque")setTimeout(()=>{window.__tpodEmbarquesLoading=false;renderEmbarque();},80);
+    if(id==="ultimo")setTimeout(()=>renderUltimo(),80);
+    if(id==="inicio")setTimeout(()=>renderInicio(),80);
+  };
+}catch(e){}
+setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo|Actualizando) embarques/i.test(b.innerText||"")){b.innerHTML=window.__tpodLastEmbarquesHtml||'<div class="emptyBox">Toque Embarques para actualizar.</div>';window.__tpodEmbarquesLoading=false;}},600);
 
