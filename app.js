@@ -7904,3 +7904,214 @@ setInterval(()=>{
   }
 },1500);
 
+
+
+
+/* ===== v1.5.23 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
+function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
+function tpodClean1523(v){
+  let s=String(v||"").trim().replace(/\s+/g," ");
+  if(!s||s==="-"||/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(s))return "";
+  return s;
+}
+function tpodCoords1523(o){
+  if(!o)return null;
+  const pairs=[
+    ["lat","lng"],["lat","lon"],["latitude","longitude"],
+    ["gps.lat","gps.lng"],["gps.latitude","gps.longitude"],
+    ["coords.latitude","coords.longitude"],["position.coords.latitude","position.coords.longitude"],
+    ["ultimaPosicion.lat","ultimaPosicion.lng"],["ultimaPosicion.latitude","ultimaPosicion.longitude"],
+    ["location.lat","location.lng"],["posicion.lat","posicion.lng"]
+  ];
+  for(const p of pairs){
+    const a=tpodNum1523(tpodGetPath1523(o,p[0]));
+    const b=tpodNum1523(tpodGetPath1523(o,p[1]));
+    if(a!==null&&b!==null)return {lat:a,lng:b};
+  }
+  return null;
+}
+function tpodTimeVal1523(v){
+  try{
+    const d=(v&&v.toDate)?v.toDate():(v&&v.seconds?new Date(v.seconds*1000):new Date(v));
+    return d&&!isNaN(d.getTime())?d.getTime():0;
+  }catch(e){return 0}
+}
+function tpodLatestUpdate1523(t){
+  const arr=(t&&t.updates||[]).slice();
+  arr.sort((a,b)=>tpodTimeVal1523((b&&b.time)||(b&&b.fecha)||(b&&b.createdAt)||(b&&b.ts))-tpodTimeVal1523((a&&a.time)||(a&&a.fecha)||(a&&a.createdAt)||(a&&a.ts)));
+  return arr[0]||null;
+}
+function tpodCoordKey1523(c){
+  if(!c)return "";
+  return "geo1523_"+Number(c.lat).toFixed(5)+"_"+Number(c.lng).toFixed(5);
+}
+function tpodFallbackLocalidadProvincia1523(lat,lng){
+  if(lat==null||lng==null)return "";
+  if(lat<-34.29&&lat>-34.42&&lng<-58.68&&lng>-58.86)return "Belén de Escobar, Buenos Aires";
+  if(lat<-34.02&&lat>-34.18&&lng<-59.00&&lng>-59.18)return "Zárate, Buenos Aires";
+  if(lat<-34.12&&lat>-34.22&&lng<-58.88&&lng>-59.08)return "Campana, Buenos Aires";
+  if(lat<-34.60&&lat>-34.63&&lng<-58.44&&lng>-58.48)return "Villa General Mitre / La Paternal, CABA";
+  if(lat<-34.58&&lat>-34.66&&lng<-58.40&&lng>-58.50)return "CABA";
+  if(lat<-34.68&&lat>-34.75&&lng<-58.25&&lng>-58.38)return "Avellaneda, Buenos Aires";
+  if(lat<-34.55&&lat>-34.65&&lng<-58.55&&lng>-58.65)return "El Palomar, Buenos Aires";
+  if(lat<-34.68&&lat>-34.76&&lng<-58.20&&lng>-58.35)return "Quilmes, Buenos Aires";
+  return "Buenos Aires";
+}
+function tpodFormatAddr1523(a,displayName){
+  a=a||{};
+  const localidad=tpodClean1523(
+    a.city || a.town || a.village || a.municipality || a.suburb ||
+    a.city_district || a.neighbourhood || a.county || ""
+  );
+  const provincia=tpodClean1523(a.state || a.province || a.region || "");
+  if(localidad&&provincia&&localidad!==provincia)return `${localidad}, ${provincia}`;
+  if(localidad)return localidad;
+  if(provincia)return provincia;
+  const dn=tpodClean1523(displayName);
+  if(dn){
+    const parts=dn.split(",").map(x=>x.trim()).filter(Boolean);
+    if(parts.length>=2)return `${parts[0]}, ${parts.find(x=>/Buenos Aires|CABA|Ciudad Autónoma/i.test(x))||parts[1]}`;
+    return parts[0];
+  }
+  return "";
+}
+async function tpodReverseLocalidadProvincia1523(gps){
+  const c=tpodCoords1523(gps)||gps;
+  if(!c||c.lat==null||c.lng==null)return "Ubicación no disponible";
+  const key=tpodCoordKey1523(c);
+  try{
+    const cached=localStorage.getItem(key);
+    if(cached)return cached;
+  }catch(e){}
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(c.lat)}&lon=${encodeURIComponent(c.lng)}&zoom=14&addressdetails=1`;
+    const res=await fetch(url,{headers:{"Accept":"application/json"}});
+    const data=await res.json();
+    let loc=tpodFormatAddr1523(data.address||{},data.display_name);
+    if(!loc||/^Buenos Aires,? Argentina$/i.test(loc))loc=tpodFallbackLocalidadProvincia1523(Number(c.lat),Number(c.lng));
+    try{localStorage.setItem(key,loc)}catch(e){}
+    return loc;
+  }catch(e){
+    return tpodFallbackLocalidadProvincia1523(Number(c.lat),Number(c.lng))||"Localidad no disponible";
+  }
+}
+async function localidadDesdeGps(gps){
+  return await tpodReverseLocalidadProvincia1523(gps);
+}
+async function localidadDesdeGpsRapida(gps){
+  try{
+    return await Promise.race([
+      tpodReverseLocalidadProvincia1523(gps),
+      new Promise((_,reject)=>setTimeout(()=>reject(new Error("timeout")),2500))
+    ]);
+  }catch(e){
+    const c=tpodCoords1523(gps)||gps;
+    return c?tpodFallbackLocalidadProvincia1523(Number(c.lat),Number(c.lng)):"Localidad no disponible";
+  }
+}
+function tpodSyncLocFromCache1523(t){
+  const u=tpodLatestUpdate1523(t);
+  const c=tpodCoords1523(u)||tpodCoords1523(t&&t.ultimaPosicion)||tpodCoords1523(t);
+  if(c){
+    try{
+      const cached=localStorage.getItem(tpodCoordKey1523(c));
+      if(cached)return cached;
+    }catch(e){}
+    return tpodFallbackLocalidadProvincia1523(Number(c.lat),Number(c.lng));
+  }
+  return "";
+}
+function tpodSharedLocationSync1523(t){
+  const s=tpodSyncLocFromCache1523(t);
+  if(s)return s;
+  try{
+    if(typeof tpodUbicacionWhatsAppCompartida1518==="function"){
+      const old=tpodClean1523(tpodUbicacionWhatsAppCompartida1518(t));
+      if(old)return old.replace(/,\s*Argentina$/i,"");
+    }
+  }catch(e){}
+  return "-";
+}
+async function tpodSharedLocationAsync1523(t){
+  const u=tpodLatestUpdate1523(t);
+  const c=tpodCoords1523(u)||tpodCoords1523(t&&t.ultimaPosicion)||tpodCoords1523(t);
+  if(c)return await tpodReverseLocalidadProvincia1523(c);
+  return tpodSharedLocationSync1523(t);
+}
+
+/* Todas las funciones de ubicación existentes pasan por esta lógica */
+function pos1515(t){return tpodSharedLocationSync1523(t)}
+function tpodGpsLocation1515(t){return tpodSharedLocationSync1523(t)}
+function tpodUbicacionWhatsAppCompartida1518(t){return tpodSharedLocationSync1523(t)}
+function tpodUbicacionWhatsAppCompartida1517(t){return tpodSharedLocationSync1523(t)}
+function tpodUbicacionPrecisa1514(t){return tpodSharedLocationSync1523(t)}
+function tpodUbicacionPrecisa1513(t){return tpodSharedLocationSync1523(t)}
+
+async function tpodActualizarLocalidadesVisibles1523(){
+  try{
+    const cache=cloudTransitosCache||[];
+    const cards=document.querySelectorAll("#embarque .embarqueItem");
+    for(const card of cards){
+      const txt=card.innerText||"";
+      const mEmb=txt.match(/Emb\.\s*([^\s\/]+)/i);
+      const mFlota=txt.match(/Flota\s*([0-9]+)/i);
+      if(!mEmb)continue;
+      const emb=mEmb[1], fl=mFlota?mFlota[1]:"";
+      const t=cache.find(x=>String(x.embarque||"")===String(emb)&&(!fl||String((x.user&&x.user.fleet)||x.flota||"")===String(fl)));
+      if(!t)continue;
+      const loc=await tpodSharedLocationAsync1523(t);
+      card.querySelectorAll("div").forEach(d=>{
+        if(/^Últ\.\s*posición:/i.test(d.innerText||""))d.innerText="Últ. posición: "+loc;
+      });
+    }
+  }catch(e){}
+}
+try{
+  const oldRenderEmbarque1523=renderEmbarque;
+  renderEmbarque=function(){
+    oldRenderEmbarque1523();
+    setTimeout(tpodActualizarLocalidadesVisibles1523,200);
+    setTimeout(tpodActualizarLocalidadesVisibles1523,1200);
+  };
+}catch(e){}
+try{
+  const oldShow1523=show;
+  show=function(id){
+    oldShow1523(id);
+    if(id==="embarque"){
+      setTimeout(tpodActualizarLocalidadesVisibles1523,250);
+      setTimeout(tpodActualizarLocalidadesVisibles1523,1200);
+    }
+    if(id==="ultimo"){
+      setTimeout(tpodActualizarUltimoUb1523,300);
+      setTimeout(tpodActualizarUltimoUb1523,1200);
+    }
+  };
+}catch(e){}
+async function tpodActualizarUltimoUb1523(){
+  try{
+    const box=document.getElementById("lastBox");
+    if(!box)return;
+    const flota=(typeof tpodCurrentFlota==="function"?tpodCurrentFlota():"") || (typeof user==="function"?(user().fleet||""):"");
+    const all=cloudTransitosCache||[];
+    let best=null;
+    all.filter(t=>{
+      const f=String((t.user&&t.user.fleet)||t.flota||"");
+      const ps=(t.participantes||[]).map(String);
+      return f===String(flota)||ps.includes(String(flota));
+    }).forEach(t=>{
+      const u=tpodLatestUpdate1523(t);
+      const sc=tpodTimeVal1523((u&&u.time)||(u&&u.fecha)||(u&&u.createdAt)||(u&&u.ts)||(t.start&&t.start.time)||t.start);
+      if(!best||sc>best.sc)best={t,sc};
+    });
+    if(!best)return;
+    const loc=await tpodSharedLocationAsync1523(best.t);
+    box.innerText=String(box.innerText||"").replace(/Ub\.:\s*[^\n\r]+/i,"Ub.: "+loc);
+  }catch(e){}
+}
+setInterval(()=>{
+  const sec=document.getElementById("embarque");
+  if(sec&&(sec.classList.contains("active")||sec.style.display!=="none"))tpodActualizarLocalidadesVisibles1523();
+},5000);
+
