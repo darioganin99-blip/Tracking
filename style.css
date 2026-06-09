@@ -1808,3 +1808,29 @@ button.disabledView{pointer-events:none !important;}
 #embarqueList .embarqueItem:last-child{
   margin-bottom:90px !important;
 }
+
+
+/* v1.5.22 espaciado entre tarjetas de embarques */
+#emb19list,
+#embarqueList1519,
+#embarqueList,
+#embarque .embarqueList{
+  padding-top:8px !important;
+  padding-bottom:110px !important;
+}
+
+#emb19list .embarqueItem,
+#embarqueList1519 .embarqueItem,
+#embarqueList .embarqueItem,
+#embarque .embarqueItem{
+  margin-bottom:18px !important;
+  padding:14px !important;
+  border-radius:18px !important;
+}
+
+#emb19list .embarqueItem:last-child,
+#embarqueList1519 .embarqueItem:last-child,
+#embarqueList .embarqueItem:last-child,
+#embarque .embarqueItem:last-child{
+  margin-bottom:110px !important;
+}

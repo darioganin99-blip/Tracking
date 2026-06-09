@@ -7858,3 +7858,49 @@ setInterval(()=>{
   }
 },1500);
 
+
+
+
+/* ===== v1.5.22 ESPACIADO EMBARQUES ===== */
+function tpodFixEspaciadoEmbarques1522(){
+  try{
+    const ids=["emb19list","embarqueList1519","embarqueList"];
+    ids.forEach(id=>{
+      const list=document.getElementById(id);
+      if(!list)return;
+      list.style.paddingTop="8px";
+      list.style.paddingBottom="110px";
+      const items=list.querySelectorAll(".embarqueItem");
+      items.forEach((item,idx)=>{
+        item.style.marginBottom = idx === items.length-1 ? "110px" : "18px";
+        item.style.padding = "14px";
+        item.style.borderRadius = "18px";
+      });
+    });
+  }catch(e){}
+}
+try{
+  const oldShow1522=show;
+  show=function(id){
+    oldShow1522(id);
+    if(id==="embarque"){
+      setTimeout(tpodFixEspaciadoEmbarques1522,100);
+      setTimeout(tpodFixEspaciadoEmbarques1522,600);
+    }
+  };
+}catch(e){}
+try{
+  const oldRenderEmbarque1522=renderEmbarque;
+  renderEmbarque=function(){
+    oldRenderEmbarque1522();
+    setTimeout(tpodFixEspaciadoEmbarques1522,100);
+    setTimeout(tpodFixEspaciadoEmbarques1522,600);
+  };
+}catch(e){}
+setInterval(()=>{
+  const sec=document.getElementById("embarque");
+  if(sec && (sec.classList.contains("active") || sec.style.display!=="none")){
+    tpodFixEspaciadoEmbarques1522();
+  }
+},1500);
+
