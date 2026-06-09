@@ -7799,3 +7799,62 @@ setInterval(()=>{
   }
 },1500);
 
+
+
+
+/* ===== v1.5.21 SCROLL TOTAL EMBARQUES ===== */
+function tpodFixScrollEmbarques1521(){
+  try{
+    const sec=document.getElementById("embarque");
+    if(!sec)return;
+    sec.style.height="calc(100vh - 230px)";
+    sec.style.maxHeight="calc(100vh - 230px)";
+    sec.style.overflowY="auto";
+    sec.style.overflowX="hidden";
+    sec.style.webkitOverflowScrolling="touch";
+    sec.style.overscrollBehavior="contain";
+    sec.style.touchAction="pan-y";
+    sec.style.paddingBottom="90px";
+    sec.querySelectorAll(".card,.panel,.box,.emb19,.tpodEmbarqueStable1519").forEach(el=>{
+      el.style.height="auto";
+      el.style.maxHeight="none";
+      el.style.overflow="visible";
+    });
+    ["emb19list","embarqueList1519","embarqueList"].forEach(id=>{
+      const list=document.getElementById(id);
+      if(!list)return;
+      list.style.height="auto";
+      list.style.maxHeight="none";
+      list.style.minHeight="auto";
+      list.style.overflow="visible";
+      list.style.paddingBottom="90px";
+    });
+  }catch(e){}
+}
+try{
+  const oldShow1521=show;
+  show=function(id){
+    oldShow1521(id);
+    if(id==="embarque"){
+      setTimeout(tpodFixScrollEmbarques1521,80);
+      setTimeout(tpodFixScrollEmbarques1521,500);
+      setTimeout(tpodFixScrollEmbarques1521,1200);
+    }
+  };
+}catch(e){}
+try{
+  const oldRenderEmbarque1521=renderEmbarque;
+  renderEmbarque=function(){
+    oldRenderEmbarque1521();
+    setTimeout(tpodFixScrollEmbarques1521,100);
+    setTimeout(tpodFixScrollEmbarques1521,600);
+    setTimeout(tpodFixScrollEmbarques1521,1200);
+  };
+}catch(e){}
+setInterval(()=>{
+  const sec=document.getElementById("embarque");
+  if(sec && (sec.classList.contains("active") || sec.style.display!=="none")){
+    tpodFixScrollEmbarques1521();
+  }
+},1500);
+
