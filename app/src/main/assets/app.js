@@ -7746,3 +7746,56 @@ function renderEmbarque(){window.__emb19Busy=false;refreshEmbarquesCloud()}
 try{const oldShow19=show;show=function(id){oldShow19(id);if(id==="embarque")setTimeout(renderEmbarque,80);if(id==="ultimo")setTimeout(()=>renderUltimo(),80);if(id==="inicio")setTimeout(()=>renderInicio(),80)}}catch(e){}
 setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText||"";if(/Cargando|Leyendo|Actualizando|Toque Embarques/i.test(txt)||(!txt.trim()&&window.__emb19Good)){p.list.innerHTML=window.__emb19Good||'<div class="emptyBox">Actualizando datos...</div>'}},700);
 
+
+
+
+/* ===== v1.5.20 SCROLL EMBARQUES FIX ===== */
+function tpodFixScrollEmbarques1520(){
+  try{
+    const sec=document.getElementById("embarque");
+    if(!sec)return;
+    const ids=["emb19list","embarqueList1519","embarqueList"];
+    ids.forEach(id=>{
+      const list=document.getElementById(id);
+      if(!list)return;
+      list.style.display="block";
+      list.style.overflowY="auto";
+      list.style.overflowX="hidden";
+      list.style.webkitOverflowScrolling="touch";
+      list.style.touchAction="pan-y";
+      list.style.height="calc(100vh - 335px)";
+      list.style.maxHeight="calc(100vh - 335px)";
+      list.style.minHeight="220px";
+      list.style.paddingRight="6px";
+    });
+    sec.querySelectorAll(".card,.panel,.box,.emb19,.tpodEmbarqueStable1519").forEach(el=>{
+      el.style.overflow="visible";
+      el.style.maxHeight="none";
+    });
+  }catch(e){}
+}
+try{
+  const oldShow1520=show;
+  show=function(id){
+    oldShow1520(id);
+    if(id==="embarque"){
+      setTimeout(tpodFixScrollEmbarques1520,80);
+      setTimeout(tpodFixScrollEmbarques1520,500);
+    }
+  };
+}catch(e){}
+try{
+  const oldRenderEmbarque1520=renderEmbarque;
+  renderEmbarque=function(){
+    oldRenderEmbarque1520();
+    setTimeout(tpodFixScrollEmbarques1520,100);
+    setTimeout(tpodFixScrollEmbarques1520,600);
+  };
+}catch(e){}
+setInterval(()=>{
+  const sec=document.getElementById("embarque");
+  if(sec && (sec.classList.contains("active") || sec.style.display!=="none")){
+    tpodFixScrollEmbarques1520();
+  }
+},1500);
+

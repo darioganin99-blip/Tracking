@@ -1726,3 +1726,48 @@ button.disabledView{pointer-events:none !important;}
 .emb19h{display:flex!important;justify-content:space-between!important;align-items:center!important;font-size:22px!important;font-weight:900!important;margin-bottom:14px!important}
 #emb19title{color:#2563eb!important;font-weight:900!important}
 #emb19list{max-height:56vh!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+
+
+/* v1.5.20 scroll embarques fix */
+#embarque{
+  overflow:hidden !important;
+}
+#embarque .card,
+#embarque .panel,
+#embarque .box,
+#embarque .emb19,
+#embarque .tpodEmbarqueStable1519{
+  overflow:visible !important;
+  height:auto !important;
+  max-height:none !important;
+}
+#embarque .emb19{
+  display:flex !important;
+  flex-direction:column !important;
+  min-height:0 !important;
+  padding:16px !important;
+}
+#embarque .emb19h,
+#embarque .embarqueHeader{
+  flex:0 0 auto !important;
+}
+#emb19list,
+#embarqueList1519,
+#embarqueList,
+#embarque .embarqueList{
+  display:block !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  height:calc(100vh - 335px) !important;
+  max-height:calc(100vh - 335px) !important;
+  min-height:220px !important;
+  padding-right:6px !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  touch-action:pan-y !important;
+}
+#emb19list .embarqueItem,
+#embarqueList1519 .embarqueItem,
+#embarqueList .embarqueItem{
+  flex:0 0 auto !important;
+}
