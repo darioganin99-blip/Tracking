@@ -1719,3 +1719,10 @@ button.disabledView{pointer-events:none !important;}
   border:0 !important;
   box-shadow:0 6px 14px rgba(15,23,42,.16) !important;
 }
+
+
+/* v1.5.19 panel estable de embarques */
+.emb19{background:#fff!important;border-radius:18px!important;padding:18px!important;box-shadow:0 10px 28px rgba(15,23,42,.08)!important}
+.emb19h{display:flex!important;justify-content:space-between!important;align-items:center!important;font-size:22px!important;font-weight:900!important;margin-bottom:14px!important}
+#emb19title{color:#2563eb!important;font-weight:900!important}
+#emb19list{max-height:56vh!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
