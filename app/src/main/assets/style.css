@@ -1859,3 +1859,54 @@ button.disabledView{pointer-events:none !important;}
 .checklistMsg.ok{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .checklistMsg.err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
 @media(max-width:520px){.checklistOptions{grid-template-columns:1fr}.checklistTitle{font-size:27px}}
+
+
+/* ===== V1.5.27 - Ajustes Check List / Alertas ===== */
+.tabs button.disabledTab,
+.tabs button:disabled{
+  opacity:.45 !important;
+  filter:grayscale(.65) !important;
+  pointer-events:none !important;
+}
+
+.checklistTransitInfo{
+  display:none !important;
+}
+
+.checklistTitle{
+  font-size:26px !important;
+  margin-bottom:2px !important;
+}
+
+.checklistSub{
+  font-size:13px !important;
+  margin-bottom:10px !important;
+}
+
+.checklistCard{
+  padding-top:16px !important;
+}
+
+.checklistMsg{
+  font-size:13px !important;
+  padding:7px 10px !important;
+  border-radius:10px !important;
+  line-height:1.15 !important;
+  margin-top:8px !important;
+}
+
+.checklistMsg.ok{
+  background:#ecfdf5 !important;
+  color:#166534 !important;
+}
+
+#alertList{
+  max-height:330px !important;
+  overflow-y:auto !important;
+  padding-right:4px !important;
+  scroll-behavior:smooth !important;
+}
+
+#alertList .alertItem{
+  margin-bottom:8px !important;
+}

@@ -4036,7 +4036,7 @@ try{
 
 
 
-/* ===== v1.5.26 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.27 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4314,7 +4314,7 @@ try{
 
 
 
-/* ===== v1.5.26 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.27 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4676,7 +4676,7 @@ try{
 
 
 
-/* ===== v1.5.26 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.27 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5000,7 +5000,7 @@ try{
 
 
 
-/* ===== v1.5.26 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.27 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5392,7 +5392,7 @@ try{
 
 
 
-/* ===== v1.5.26 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.27 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5757,7 +5757,7 @@ try{
 
 
 
-/* ===== v1.5.26 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.27 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5788,7 +5788,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.26 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.27 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -5907,7 +5907,7 @@ try{
 
 
 
-/* ===== v1.5.26 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.27 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6087,7 +6087,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.26 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.27 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6126,7 +6126,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.26 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.27 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6244,7 +6244,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.26 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.27 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6514,7 +6514,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.27 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6645,7 +6645,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.26 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.27 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -6896,7 +6896,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.27 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -6929,7 +6929,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.26 GPS ZARATE FIX ===== */
+/* ===== v1.5.27 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -6990,7 +6990,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.26 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.27 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7429,7 +7429,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.27 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7724,7 +7724,7 @@ try{
 
 
 
-/* ===== v1.5.26 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.27 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7751,7 +7751,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.26 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.27 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7804,7 +7804,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.27 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7863,7 +7863,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.27 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -7909,7 +7909,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.26 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.27 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8120,7 +8120,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.26 - Check List Firebase ===== */
+/* ===== V1.5.27 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8320,3 +8320,149 @@ function renderChecklist(){
   cargarTiposChecklist();
 }
 
+
+
+/* ===== V1.5.27 - Ajustes Check List habilitación, cierre Firebase y alertas ===== */
+
+function isFlotaValidadaV1527(){
+  const u = user();
+  return !!(u && String(u.fleet||"").trim());
+}
+
+function updateChecklistTabState(){
+  const btn = $("btn-checklist");
+  if(!btn) return;
+  const ok = isFlotaValidadaV1527();
+  btn.disabled = !ok;
+  btn.classList.toggle("disabledTab", !ok);
+  btn.title = ok ? "Check List" : "Primero valide la flota";
+}
+
+const _show_v1527 = show;
+show = function(id){
+  if(id==="checklist" && !isFlotaValidadaV1527()){
+    window.alert("Primero debe validar la flota en Usuario.");
+    id = "usuario";
+  }
+  _show_v1527(id);
+  updateChecklistTabState();
+};
+
+const _saveUser_v1527 = saveUser;
+saveUser = function(){
+  _saveUser_v1527();
+  updateChecklistTabState();
+};
+
+const _loadUserForm_v1527 = typeof loadUserForm==="function" ? loadUserForm : null;
+if(_loadUserForm_v1527){
+  loadUserForm = function(){
+    _loadUserForm_v1527();
+    updateChecklistTabState();
+  };
+}
+
+function renderChecklist(){
+  updateChecklistTabState();
+  if(!isFlotaValidadaV1527()) return;
+  cargarTiposChecklist();
+}
+
+/* Guardar tránsito en Firebase antes del envío por WhatsApp al cerrar */
+async function guardarTransitoFirebaseAntesWhatsappV1527(t){
+  if(!t) return;
+  if(!firebaseReady()) return;
+  try{
+    const id = t.id || (t.embarque ? String(t.embarque) : null);
+    const data = {
+      ...t,
+      flota: t.user && t.user.fleet ? t.user.fleet : "",
+      chofer: t.user && t.user.driver ? t.user.driver : "",
+      embarque: t.embarque || "",
+      lote: t.lote || "",
+      estado: t.closed ? "cerrado" : "abierto",
+      actualizadoEn: now()
+    };
+    if(id){
+      await db.collection("transitos").doc(String(id)).set(data,{merge:true});
+    }else{
+      await db.collection("transitos").add(data);
+    }
+  }catch(e){
+    console.log("No se pudo guardar tránsito en Firebase antes de WhatsApp", e);
+  }
+}
+
+/* Reemplazo controlado de cierre para persistir antes de enviar */
+if(typeof cerrarTransito==="function"){
+  const _cerrarTransito_v1527 = cerrarTransito;
+  cerrarTransito = async function(){
+    const t0 = transit();
+    if(!t0){
+      window.alert("No hay tránsito iniciado.");
+      return;
+    }
+
+    try{
+      const gps = await getGps();
+
+      if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?")) return;
+
+      t0.closed = gps;
+      save(LS.transit,t0);
+      saveTransitHistory(t0);
+
+      await guardarTransitoFirebaseAntesWhatsappV1527(t0);
+
+      let msg = "";
+      try{
+        msg = typeof buildCloseMsgAsync==="function"
+          ? await buildCloseMsgAsync(t0)
+          : (typeof buildCloseMsg==="function" ? buildCloseMsg(t0) : "");
+      }catch(eMsg){
+        console.log("Fallo mensaje cierre completo", eMsg);
+      }
+
+      if(!msg || !String(msg).trim()){
+        msg = typeof buildBasicUpdateMsg==="function" ? buildBasicUpdateMsg(t0) : "🚚 Cierre de tránsito";
+      }
+
+      save(LS.last,{msg,date:now()});
+      sendToPhones(msg);
+
+      renderTransitStatus && renderTransitStatus();
+      aplicarColorResumenInicio && aplicarColorResumenInicio();
+      show("ultimo");
+    }catch(e){
+      window.alert("No se pudo cerrar tránsito: "+(e.message||e));
+    }
+  };
+}
+
+/* Alertas: ordenar de más reciente a más antigua y usar scroll dentro del contenedor */
+function alertaTimeV1527(a){
+  const raw = a && (a.time || a.fecha || a.createdAt || a.ts);
+  const n = raw ? new Date(raw).getTime() : 0;
+  return isFinite(n) ? n : 0;
+}
+
+if(typeof renderAlertas==="function"){
+  renderAlertas = function(){
+    const t=transit();
+    const box=$("alertList");
+    if(!box) return;
+    if(!t||!t.alerts||!t.alerts.length){
+      box.innerText="Sin alertas registradas.";
+      return;
+    }
+    const ordered = (t.alerts||[]).slice().sort((a,b)=>alertaTimeV1527(b)-alertaTimeV1527(a));
+    box.innerHTML=ordered.map(a=>{
+      const km=typeof alertKmText==="function" ? alertKmText(t,a) : "";
+      const kmHtml=km ? ` <span>${escapeHtml(km)}</span>` : "";
+      return `<div class="alertItem">⚠ <b>${escapeHtml(a.type||a.tipo||"Alerta")}</b>${kmHtml}<br>${fmtDate(a.time||a.fecha||a.createdAt||a.ts)}</div>`;
+    }).join("\n");
+  };
+}
+
+document.addEventListener("DOMContentLoaded", updateChecklistTabState);
+setTimeout(updateChecklistTabState,300);
