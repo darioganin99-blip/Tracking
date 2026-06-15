@@ -1918,3 +1918,62 @@ button.disabledView{pointer-events:none !important;}
 #alertList .alertItem{
   margin-bottom:8px !important;
 }
+
+
+/* ===== V1.5.29 - Ajuste visual Check List ===== */
+
+/* Pestaña Check List: blanco cuando no está seleccionada, verde cuando está activa */
+#btn-checklist{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.08) !important;
+}
+
+#btn-checklist.active{
+  background:#008c45 !important;
+  color:#ffffff !important;
+  border-color:#008c45 !important;
+  box-shadow:0 6px 16px rgba(0,140,69,.28) !important;
+}
+
+/* Si está deshabilitado mantiene aspecto apagado */
+#btn-checklist:disabled,
+#btn-checklist.disabledTab{
+  background:#ffffff !important;
+  color:#111827 !important;
+  opacity:.42 !important;
+  filter:grayscale(.7) !important;
+}
+
+/* Compactar encabezado y combo de Check List */
+.checklistSub{
+  font-size:12px !important;
+  line-height:1.1 !important;
+  margin-bottom:5px !important;
+  color:#374151 !important;
+  font-weight:900 !important;
+}
+
+.checklistCard label[for="checklistTipo"],
+.checklistCard label{
+  margin-top:4px !important;
+  margin-bottom:4px !important;
+}
+
+#checklistTipo{
+  min-height:0 !important;
+  height:42px !important;
+  padding-top:6px !important;
+  padding-bottom:6px !important;
+  font-size:18px !important;
+  border-radius:14px !important;
+}
+
+.checklistCard{
+  padding-top:14px !important;
+}
+
+.checklistTitle{
+  margin-bottom:0 !important;
+}
