@@ -545,7 +545,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.31 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.32 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -4064,7 +4064,7 @@ try{
 
 
 
-/* ===== v1.5.31 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.32 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4342,7 +4342,7 @@ try{
 
 
 
-/* ===== v1.5.31 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.32 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4704,7 +4704,7 @@ try{
 
 
 
-/* ===== v1.5.31 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.32 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5028,7 +5028,7 @@ try{
 
 
 
-/* ===== v1.5.31 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.32 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5420,7 +5420,7 @@ try{
 
 
 
-/* ===== v1.5.31 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.32 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5785,7 +5785,7 @@ try{
 
 
 
-/* ===== v1.5.31 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.32 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5816,7 +5816,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.31 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.32 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -5935,7 +5935,7 @@ try{
 
 
 
-/* ===== v1.5.31 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.32 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6115,7 +6115,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.31 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.32 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6154,7 +6154,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.31 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.32 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6272,7 +6272,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.31 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.32 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6542,7 +6542,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.32 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6673,7 +6673,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.31 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.32 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -6924,7 +6924,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.32 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -6957,7 +6957,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.31 GPS ZARATE FIX ===== */
+/* ===== v1.5.32 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7018,7 +7018,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.31 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.32 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7457,7 +7457,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.32 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7752,7 +7752,7 @@ try{
 
 
 
-/* ===== v1.5.31 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.32 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7779,7 +7779,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.31 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.32 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7832,7 +7832,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.32 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7891,7 +7891,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.32 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -7937,7 +7937,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.31 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.32 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8148,7 +8148,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.31 - Check List Firebase ===== */
+/* ===== V1.5.32 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8350,7 +8350,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.31 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.32 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8440,7 +8440,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.31 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.32 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8461,7 +8461,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.31 - Clientes desde Firebase ===== */
+/* ===== V1.5.32 - Clientes desde Firebase ===== */
 let clientesFirebaseV1531 = [];
 
 async function cargarClientesDesdeFirebaseV1531(){
@@ -8554,3 +8554,123 @@ show = function(id){
 
 document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshClientesFirebaseV1531,500));
 setTimeout(refreshClientesFirebaseV1531,1200);
+
+
+/* ===== V1.5.32 - Destinos desde Firebase ===== */
+let destinosFirebaseV1532 = [];
+let origenesFirebaseV1532 = [];
+
+async function leerColeccionActivosV1532(col){
+  if(!firebaseReady()) return [];
+  const snap = await db.collection(col).get();
+  return snap.docs
+    .map(d => ({ id:d.id, ...d.data() }))
+    .filter(x => x.activo !== false)
+    .map(x => ({
+      id: x.id,
+      nombre: x.nombre || x.name || x.destino || x.origen || x.id,
+      activo: x.activo !== false,
+      ubicacion: x.ubicacion || "",
+      pais: x.pais || "",
+      horarios: x.horarios || "",
+      contacto: x.contacto || "",
+      telefonos: x.telefonos || x.telefono || ""
+    }))
+    .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es",{sensitivity:"base"}));
+}
+
+async function cargarDestinosOrigenesFirebaseV1532(){
+  try{
+    const [destinos, origenes] = await Promise.all([
+      leerColeccionActivosV1532("destinos"),
+      leerColeccionActivosV1532("origenes")
+    ]);
+    destinosFirebaseV1532 = destinos;
+    origenesFirebaseV1532 = origenes;
+    aplicarDestinosOrigenesASelectsV1532();
+    return {destinos, origenes};
+  }catch(e){
+    console.log("No se pudieron cargar destinos/origenes desde Firebase", e);
+    return {destinos:[], origenes:[]};
+  }
+}
+
+function nombreDestinoOrigenV1532(x){
+  return String((x && (x.nombre || x.id)) || "").trim();
+}
+
+function esSelectDestinoV1532(sel){
+  const id = String(sel.id || "").toLowerCase();
+  const name = String(sel.name || "").toLowerCase();
+  const label = String(sel.getAttribute("aria-label") || "").toLowerCase();
+  const combined = id+" "+name+" "+label;
+  if(combined.includes("destino")) return true;
+  if(combined.includes("origen")) return false;
+  return Array.from(sel.options || []).some(o => /stli|chile|uruguay|paraguay|caba|santa rosa|toyota chile|sevel uruguay|garden paraguay/i.test(o.textContent||""));
+}
+
+function esSelectOrigenV1532(sel){
+  const id = String(sel.id || "").toLowerCase();
+  const name = String(sel.name || "").toLowerCase();
+  const label = String(sel.getAttribute("aria-label") || "").toLowerCase();
+  const combined = id+" "+name+" "+label;
+  if(combined.includes("origen")) return true;
+  return false;
+}
+
+function setOptionsV1532(sel, items){
+  if(!sel || !items || !items.length) return;
+  const current = sel.value || "";
+  sel.innerHTML = items.map(x=>{
+    const nombre = nombreDestinoOrigenV1532(x);
+    return `<option value="${escapeHtml(nombre)}">${escapeHtml(nombre)}</option>`;
+  }).join("");
+  if(current && items.some(x=>nombreDestinoOrigenV1532(x)===current)){
+    sel.value = current;
+  }
+}
+
+function aplicarDestinosOrigenesASelectsV1532(){
+  const selects = Array.from(document.querySelectorAll("select"));
+  selects.forEach(sel=>{
+    if(esSelectDestinoV1532(sel)){
+      setOptionsV1532(sel, destinosFirebaseV1532);
+    }else if(esSelectOrigenV1532(sel)){
+      setOptionsV1532(sel, origenesFirebaseV1532);
+    }
+  });
+}
+
+/* Si la app usa rutas internas para selectedRoute, se actualizan los selects igual */
+async function refreshDestinosOrigenesFirebaseV1532(){
+  return await cargarDestinosOrigenesFirebaseV1532();
+}
+
+const _loadOptions_v1532 = typeof loadOptions==="function" ? loadOptions : null;
+if(_loadOptions_v1532){
+  loadOptions = async function(){
+    const r = await _loadOptions_v1532.apply(this, arguments);
+    await refreshDestinosOrigenesFirebaseV1532();
+    return r;
+  };
+}
+
+const _renderInicio_v1532_destinos = typeof renderInicio==="function" ? renderInicio : null;
+if(_renderInicio_v1532_destinos){
+  renderInicio = function(){
+    const r = _renderInicio_v1532_destinos.apply(this, arguments);
+    refreshDestinosOrigenesFirebaseV1532();
+    return r;
+  };
+}
+
+const _show_v1532_destinos = show;
+show = function(id){
+  _show_v1532_destinos(id);
+  if(id==="inicio" || id==="usuario"){
+    refreshDestinosOrigenesFirebaseV1532();
+  }
+};
+
+document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshDestinosOrigenesFirebaseV1532,600));
+setTimeout(refreshDestinosOrigenesFirebaseV1532,1400);
