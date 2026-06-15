@@ -1977,3 +1977,37 @@ button.disabledView{pointer-events:none !important;}
 .checklistTitle{
   margin-bottom:0 !important;
 }
+
+
+/* ===== V1.5.30 - Fix botón Check List no activo ===== */
+/* Regla final: el botón Check List solo se ve verde cuando tiene clase active */
+.tabs #btn-checklist,
+nav.tabs #btn-checklist,
+#btn-checklist.tab-checklist-fix{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
+  box-shadow:0 4px 12px rgba(0,0,0,.08) !important;
+}
+
+/* Activo / seleccionado */
+.tabs #btn-checklist.active,
+nav.tabs #btn-checklist.active,
+#btn-checklist.tab-checklist-fix.active{
+  background:#008c45 !important;
+  color:#ffffff !important;
+  border-color:#008c45 !important;
+  box-shadow:0 6px 16px rgba(0,140,69,.28) !important;
+}
+
+/* Deshabilitado: blanco, negro, apagado */
+.tabs #btn-checklist:disabled,
+nav.tabs #btn-checklist:disabled,
+#btn-checklist.tab-checklist-fix:disabled,
+#btn-checklist.tab-checklist-fix.disabledTab{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
+  opacity:.42 !important;
+  filter:grayscale(.7) !important;
+}
