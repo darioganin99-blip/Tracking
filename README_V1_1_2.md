@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.1.2 - Header ajustado: titulos centrados, menu funcional, campana de alertas funcional con contador y sin bloque Admin.

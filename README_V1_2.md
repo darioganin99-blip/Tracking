@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2 - Mejoras segun adjunto: sidebar mas angosto, menu compacto, header mas alto, titulos centrados y dashboard mas ancho.

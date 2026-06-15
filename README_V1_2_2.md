@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2.2 - Dashboard sin seguimiento en mapa, graficos compactos con porcentajes por estado/cliente/origen/destino y tabla mas compacta.

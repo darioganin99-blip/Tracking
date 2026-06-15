@@ -1,0 +1,1608 @@
+*{box-sizing:border-box}
+:root{
+  --elta:#4cc63f;
+  --elta2:#35ad45;
+  --blue:#1e88e5;
+  --dark:#071a2c;
+  --panel:rgba(9,28,43,.68);
+  --panel2:rgba(255,255,255,.08);
+  --border:rgba(255,255,255,.16);
+  --text:#f8fafc;
+  --muted:rgba(255,255,255,.72);
+  --field:#edf3ff;
+}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#071a2c;color:var(--text)}
+.view{display:none}.view.active{display:block}
+
+/* LOGIN */
+.loginPage{
+  min-height:100vh;position:relative;overflow:hidden;display:none;align-items:center;justify-content:center;
+  padding:40px 20px;background:#102432;
+}
+.loginPage.active{display:flex}
+.bgPhoto{
+  position:absolute;inset:0;z-index:0;background-image:url('assets/fondo-camion.png');
+  background-size:cover;background-position:center 48%;background-repeat:no-repeat;
+  filter:brightness(.92) contrast(1.02) saturate(1.05);opacity:1;
+}
+.bgOverlay{position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(5,18,28,.28),rgba(5,18,28,.38))}
+.cornerLogo{position:absolute;top:30px;left:34px;width:165px;max-width:18vw;height:auto;z-index:3}
+.loginCard{
+  position:relative;z-index:3;width:420px;max-width:88vw;padding:26px 30px 28px;border-radius:22px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(39,59,70,.58);
+  box-shadow:0 20px 45px rgba(0,0,0,.34);backdrop-filter:blur(6px);text-align:center;
+}
+.loginLogo{display:block;width:50%;max-width:180px;height:auto;margin:0 auto 18px}
+.loginCard h1{margin:0;color:white;font-size:24px;letter-spacing:.5px;font-weight:900}
+.loginCard p{margin:10px 0 12px;color:rgba(255,255,255,.78);font-size:14px}
+.greenLine{width:46px;height:3px;background:var(--elta);border-radius:999px;margin:0 auto 22px}
+.loginCard label{display:block;text-align:left;color:white;font-size:13px;font-weight:900;margin:14px 0 7px}
+.inputWrap{position:relative}.inputIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.8}
+.loginCard input{width:100%;height:44px;border:0;border-radius:11px;background:var(--field);color:#111827;font-size:14px;padding:0 42px;outline:none}
+.loginCard input:focus{box-shadow:0 0 0 3px rgba(52,178,69,.32)}
+.eyeBtn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;background:transparent;color:#173649;cursor:pointer;font-size:15px;padding:0}
+.loginButton{width:100%;height:46px;border:0;border-radius:11px;margin-top:20px;background:linear-gradient(90deg,var(--elta),var(--elta2));color:white;font-size:14px;font-weight:900;cursor:pointer}
+.forgot{display:block;margin-top:18px;color:#20b8ff;text-decoration:none;font-size:13px;font-weight:700}
+#msg{min-height:18px;color:#ffced0;font-weight:900;margin-top:10px;font-size:12px}
+.loginFooter{position:absolute;bottom:24px;left:0;right:0;z-index:3;display:flex;gap:32px;justify-content:center;color:rgba(255,255,255,.84);font-size:13px;font-weight:700}
+
+/* APP V1.1 */
+.appPage{min-height:100vh;position:relative;overflow:hidden;background:#071a2c}
+.appBgPhoto{
+  position:fixed;inset:0;z-index:0;background-image:url('assets/fondo-camion.png');
+  background-size:cover;background-position:center 48%;background-repeat:no-repeat;
+  filter:brightness(.68) contrast(1.02) saturate(.95);opacity:1;
+}
+.appBgOverlay{position:fixed;inset:0;z-index:0;background:rgba(5,18,28,.54);pointer-events:none}
+
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:270px;z-index:3;
+  background:linear-gradient(180deg,rgba(6,22,35,.94),rgba(6,22,35,.78));
+  border-right:1px solid var(--border);backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;padding:28px 16px;
+}
+.brandBox{height:100px;display:flex;align-items:center;padding-left:18px}
+.brandBox img{width:150px;height:auto}
+.sideNav{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.sideNav button{
+  width:100%;display:flex;align-items:center;gap:14px;border:0;border-radius:10px;padding:15px 16px;
+  background:transparent;color:rgba(255,255,255,.84);font-weight:800;font-size:15px;text-align:left;cursor:pointer;
+}
+.sideNav button.active{background:linear-gradient(90deg,rgba(76,198,63,.55),rgba(76,198,63,.16));color:white;border-left:3px solid var(--elta)}
+.sideNav button:hover{background:rgba(255,255,255,.08)}
+.adminBox{
+  margin-top:auto;border-top:1px solid var(--border);padding:18px 0 10px;display:flex;align-items:center;gap:12px;color:white;
+}
+.adminAvatar{width:38px;height:38px;border-radius:50%;background:var(--elta);display:flex;align-items:center;justify-content:center;font-weight:900}
+.adminBox small{display:block;color:var(--muted);margin-top:3px}
+.logoutBtn{background:transparent!important;color:white!important;text-align:left;border:0;padding:14px 0;font-weight:800;cursor:pointer}
+
+.dashboardShell{position:relative;z-index:1;margin-left:270px;min-height:100vh;padding:10px 28px 28px}
+.managerHeader{
+  min-height:86px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.06);
+  backdrop-filter:blur(10px);display:grid;grid-template-columns:60px 1fr auto;align-items:center;padding:12px 18px;margin-bottom:28px;
+}
+.hamburger{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--border);color:white;font-size:20px}
+.headerTitle{text-align:right;padding-right:28px}
+.headerTitle h1{margin:0;font-size:34px;line-height:1;font-weight:900;color:white}
+.headerTitle p{margin:7px 0 0;color:white;font-size:16px}
+.headerTitle span{display:block;margin-top:7px;color:var(--muted);font-size:13px}
+.headerActions{display:flex;gap:12px;align-items:center}
+.miniPill,.userPill{border:1px solid var(--border);background:rgba(255,255,255,.08);color:white;border-radius:12px;padding:10px 12px;font-weight:800}
+.userPill span{display:inline-flex;width:30px;height:30px;border-radius:50%;background:#31a9e8;align-items:center;justify-content:center;margin-right:8px}
+
+.panel{display:none}.panel.active{display:block}
+.sectionTitle{margin:0 0 18px}
+.sectionTitle h2{margin:0;color:white;font-size:26px;font-weight:900}
+.sectionTitle p{margin:6px 0 0;color:var(--muted)}
+
+.kpiGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:18px}
+.kpiCard{
+  min-height:126px;border:1px solid var(--border);border-radius:12px;background:rgba(7,26,42,.72);
+  backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:20px;
+}
+.kpiCard h3{margin:0 0 10px;color:white;font-size:15px}
+.kpiCard strong{font-size:36px;display:block;font-weight:900}
+.kpiCard small{color:var(--muted)}
+.kpiCard span{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.kpiCard.green strong{color:var(--elta)}.kpiCard.green span{background:rgba(76,198,63,.18)}
+.kpiCard.blue strong{color:#38bdf8}.kpiCard.blue span{background:rgba(56,189,248,.16)}
+.kpiCard.yellow strong{color:#facc15}.kpiCard.yellow span{background:rgba(250,204,21,.16)}
+.kpiCard.purple strong{color:#8b5cf6}.kpiCard.purple span{background:rgba(139,92,246,.16)}
+
+.dashGrid{display:grid;grid-template-columns:1fr 1.55fr;gap:18px;margin-bottom:18px}
+.glassPanel{
+  border:1px solid var(--border);border-radius:12px;background:rgba(7,26,42,.72);
+  box-shadow:0 18px 42px rgba(0,0,0,.22);backdrop-filter:blur(12px);padding:18px;color:white;
+}
+.panelHead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.panelHead h3{margin:0;font-size:17px}
+.panelHead button,.glassPanel button{border:0;border-radius:10px;background:rgba(76,198,63,.22);color:#6df35f;padding:9px 12px;font-weight:900;cursor:pointer}
+.donutRow{display:flex;align-items:center;gap:28px;min-height:190px}
+.donut{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--elta) 0 68%, #38bdf8 68% 82%, #facc15 82% 94%, #ef4444 94% 100%);display:flex;align-items:center;justify-content:center}
+.donut:before{content:"";position:absolute;width:88px;height:88px;border-radius:50%;background:#071a2c}
+.donut div{position:relative;text-align:center;z-index:1}.donut b{font-size:28px;display:block}.donut small{color:var(--muted)}
+.legend{display:flex;flex-direction:column;gap:14px;min-width:190px}.legend div{display:flex;align-items:center;gap:10px;color:white}.legend b{margin-left:auto}.dot{width:12px;height:12px;border-radius:50%;display:inline-block}.dot.green{background:var(--elta)}.dot.blue{background:#38bdf8}.dot.yellow{background:#facc15}.dot.red{background:#ef4444}
+
+.mapVisual{position:relative;min-height:245px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,rgba(33,84,66,.72),rgba(14,45,70,.78)),radial-gradient(circle at 60% 40%,rgba(76,198,63,.22),transparent 30%);border:1px solid rgba(255,255,255,.1)}
+.mapVisual.big{min-height:430px}
+.routeLine{position:absolute;left:12%;right:10%;top:55%;height:3px;background:rgba(56,189,248,.55);transform:rotate(-8deg);box-shadow:0 0 18px rgba(56,189,248,.28)}
+.truckPoint{position:absolute;font-size:28px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.p1{left:24%;top:62%}.p2{left:55%;top:34%}.p3{left:76%;top:52%}
+.city{position:absolute;color:white;font-size:13px;text-shadow:0 2px 6px #000}.c1{left:20%;top:47%}.c2{left:50%;top:55%}.c3{left:74%;top:35%}
+
+.tablePanel{margin-bottom:18px}
+.darkTable{overflow-x:auto}
+.darkTable table{width:100%;border-collapse:collapse;color:white}
+.darkTable th,.darkTable td{padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:14px}
+.darkTable th{color:rgba(255,255,255,.72);font-weight:800;background:rgba(255,255,255,.05)}
+.statusBadge{display:inline-block;border-radius:6px;padding:5px 8px;font-size:12px;font-weight:900}
+.statusBadge.open{background:rgba(76,198,63,.25);color:#6df35f}
+.statusBadge.closed{background:rgba(148,163,184,.22);color:#cbd5e1}
+.alertStrip{display:flex;justify-content:space-between;gap:20px;align-items:center}
+.alertStrip h3{margin:0 0 10px}.alertLine{color:#ffb4b4;margin:6px 0}
+
+.cardList{display:flex;flex-direction:column;gap:14px}
+.item{border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(255,255,255,.07);padding:16px;color:white}
+.item.open{border-color:rgba(76,198,63,.7)}.item.closed{background:rgba(148,163,184,.12);color:#cbd5e1}
+.top{display:flex;justify-content:space-between;gap:12px;font-weight:900;font-size:17px;margin-bottom:10px}
+.badge{border-radius:999px;padding:4px 12px;background:rgba(76,198,63,.22);color:#6df35f;font-weight:900}
+.badge.closed{background:rgba(148,163,184,.22);color:#cbd5e1}
+.filters,.form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.filters input,.filters select,.form input,.form select{height:44px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.1);color:white;padding:0 12px}
+.filters input::placeholder,.form input::placeholder{color:rgba(255,255,255,.55)}
+.abmtabs{display:flex;overflow-x:auto;gap:8px;margin:12px 0}.abmtabs button{white-space:nowrap}
+.emptyPanel{min-height:180px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.appFooter{display:flex;gap:34px;justify-content:center;color:var(--muted);font-weight:700;margin:34px 0 0;font-size:14px}
+
+@media(max-width:1000px){
+  .sidebar{width:82px;padding:20px 10px}.brandBox{padding-left:0;justify-content:center}.brandBox img{width:58px}.sideNav button span,.adminBox div,.logoutBtn{display:none}.sideNav button{justify-content:center;font-size:20px}.dashboardShell{margin-left:82px}.managerHeader{grid-template-columns:48px 1fr}.headerActions{display:none}.headerTitle{text-align:right;padding-right:0}.kpiGrid{grid-template-columns:repeat(2,1fr)}.dashGrid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .dashboardShell{padding:10px 12px;margin-left:0}.sidebar{display:none}.managerHeader{grid-template-columns:44px 1fr}.headerTitle h1{font-size:24px}.headerTitle p{font-size:13px}.kpiGrid{grid-template-columns:1fr}.filters,.form{grid-template-columns:1fr}.loginCard{width:320px}.cornerLogo{width:120px;max-width:40vw}.loginFooter{font-size:11px;bottom:12px;gap:10px;flex-wrap:wrap}
+}
+
+
+
+/* ===== V1.1.1 - Login sin iconos en campos ===== */
+.inputIcon{
+  display:none !important;
+}
+.loginCard input{
+  padding-left:20px !important;
+  padding-right:20px !important;
+}
+.inputWrap:has(.eyeBtn) input{
+  padding-right:48px !important;
+}
+.eyeBtn{
+  position:absolute !important;
+  right:14px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  width:24px !important;
+  height:24px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#173649 !important;
+  cursor:pointer !important;
+  font-size:15px !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.forgot{
+  text-align:right !important;
+  margin-top:12px !important;
+  color:#20aaff !important;
+  font-weight:700 !important;
+}
+
+
+/* ===== V1.1.2 - Ajustes header ===== */
+.managerHeader{
+  grid-template-columns:60px 1fr auto !important;
+}
+.headerTitle{
+  text-align:center !important;
+  justify-self:center !important;
+  padding-right:0 !important;
+}
+.headerTitle h1,
+.headerTitle p,
+.headerTitle span{
+  text-align:center !important;
+}
+.headerActions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  min-width:70px !important;
+}
+.userPill{
+  display:none !important;
+}
+.alertBell{
+  position:relative !important;
+  min-width:54px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+}
+.alertBell span{
+  position:absolute;
+  top:-7px;
+  right:-7px;
+  min-width:19px;
+  height:19px;
+  padding:0 5px;
+  border-radius:999px;
+  background:#4cc63f;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:900;
+  box-shadow:0 0 0 2px rgba(7,26,42,.9);
+}
+body.sidebarCollapsed .sidebar{
+  width:82px !important;
+  padding:20px 10px !important;
+}
+body.sidebarCollapsed .brandBox{
+  padding-left:0 !important;
+  justify-content:center !important;
+}
+body.sidebarCollapsed .brandBox img{
+  width:58px !important;
+}
+body.sidebarCollapsed .sideNav button span,
+body.sidebarCollapsed .adminBox div,
+body.sidebarCollapsed .logoutBtn{
+  display:none !important;
+}
+body.sidebarCollapsed .sideNav button{
+  justify-content:center !important;
+  font-size:20px !important;
+}
+body.sidebarCollapsed .dashboardShell{
+  margin-left:82px !important;
+}
+.hamburger{
+  cursor:pointer !important;
+}
+@media(max-width:1000px){
+  .managerHeader{
+    grid-template-columns:48px 1fr 60px !important;
+  }
+  .headerActions{
+    display:flex !important;
+  }
+}
+@media(max-width:640px){
+  .managerHeader{
+    grid-template-columns:44px 1fr 52px !important;
+  }
+  .headerTitle{
+    justify-self:center !important;
+  }
+}
+
+
+
+/* ===== V1.2 - Mejoras según adjunto: menú compacto + header alto ===== */
+
+.sidebar{
+  width:190px !important;
+  padding:22px 10px !important;
+}
+
+.dashboardShell{
+  margin-left:190px !important;
+  padding:12px 24px 28px !important;
+}
+
+.brandBox{
+  height:82px !important;
+  padding-left:8px !important;
+  align-items:center !important;
+}
+
+.brandBox img{
+  width:118px !important;
+  height:auto !important;
+}
+
+.sideNav{
+  gap:5px !important;
+  margin-top:8px !important;
+}
+
+.sideNav button{
+  min-height:42px !important;
+  padding:10px 12px !important;
+  border-radius:9px !important;
+  gap:10px !important;
+  font-size:13px !important;
+  line-height:1.1 !important;
+}
+
+.sideNav button.active{
+  background:linear-gradient(90deg,rgba(76,198,63,.72),rgba(36,120,48,.32)) !important;
+  border-left:3px solid #4cc63f !important;
+  box-shadow:0 8px 18px rgba(76,198,63,.12) !important;
+}
+
+.adminBox{
+  padding:12px 0 8px !important;
+  gap:8px !important;
+}
+
+.adminAvatar{
+  width:32px !important;
+  height:32px !important;
+  font-size:13px !important;
+}
+
+.adminBox b{
+  font-size:12px !important;
+}
+
+.adminBox small{
+  font-size:10px !important;
+}
+
+.logoutBtn{
+  padding:10px 0 !important;
+  font-size:12px !important;
+}
+
+.managerHeader{
+  min-height:112px !important;
+  grid-template-columns:54px 1fr 72px !important;
+  padding:18px 18px !important;
+  align-items:center !important;
+}
+
+.headerTitle{
+  justify-self:center !important;
+  align-self:center !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:center !important;
+  text-align:center !important;
+  padding-right:0 !important;
+  width:100% !important;
+}
+
+.headerTitle h1{
+  margin:0 !important;
+  text-align:center !important;
+  font-size:34px !important;
+  line-height:1.05 !important;
+}
+
+.headerTitle p{
+  margin:7px 0 0 !important;
+  text-align:center !important;
+  font-size:15px !important;
+}
+
+.headerTitle span{
+  margin-top:7px !important;
+  text-align:center !important;
+  font-size:12px !important;
+}
+
+.hamburger{
+  width:42px !important;
+  height:42px !important;
+  font-size:20px !important;
+  cursor:pointer !important;
+}
+
+.headerActions{
+  min-width:62px !important;
+  justify-content:flex-end !important;
+}
+
+.alertBell{
+  min-width:46px !important;
+  height:42px !important;
+  padding:8px !important;
+}
+
+.kpiGrid{
+  gap:14px !important;
+}
+
+.kpiCard{
+  min-height:112px !important;
+  padding:16px !important;
+}
+
+.kpiCard h3{
+  font-size:13px !important;
+}
+
+.kpiCard strong{
+  font-size:32px !important;
+}
+
+.kpiCard span{
+  width:54px !important;
+  height:54px !important;
+  font-size:25px !important;
+}
+
+.sectionTitle{
+  margin-top:4px !important;
+  margin-bottom:18px !important;
+}
+
+.sectionTitle h2{
+  font-size:28px !important;
+}
+
+.sectionTitle p{
+  font-size:14px !important;
+}
+
+.glassPanel{
+  padding:16px !important;
+}
+
+.dashGrid{
+  gap:16px !important;
+}
+
+.darkTable th,.darkTable td{
+  padding:10px 10px !important;
+  font-size:13px !important;
+}
+
+body.sidebarCollapsed .sidebar{
+  width:72px !important;
+  padding:18px 8px !important;
+}
+
+body.sidebarCollapsed .brandBox img{
+  width:50px !important;
+}
+
+body.sidebarCollapsed .dashboardShell{
+  margin-left:72px !important;
+}
+
+body.sidebarCollapsed .sideNav button{
+  min-height:40px !important;
+  padding:9px !important;
+}
+
+@media(max-width:1000px){
+  .sidebar{
+    width:72px !important;
+    padding:18px 8px !important;
+  }
+  .brandBox{
+    height:72px !important;
+    padding-left:0 !important;
+    justify-content:center !important;
+  }
+  .brandBox img{
+    width:50px !important;
+  }
+  .sideNav button span,
+  .adminBox div,
+  .logoutBtn{
+    display:none !important;
+  }
+  .sideNav button{
+    justify-content:center !important;
+    font-size:18px !important;
+  }
+  .dashboardShell{
+    margin-left:72px !important;
+    padding:10px 16px 24px !important;
+  }
+  .managerHeader{
+    min-height:96px !important;
+    grid-template-columns:48px 1fr 58px !important;
+  }
+  .headerTitle h1{
+    font-size:28px !important;
+  }
+}
+
+@media(max-width:640px){
+  .sidebar{
+    display:none !important;
+  }
+  .dashboardShell{
+    margin-left:0 !important;
+    padding:10px 12px 24px !important;
+  }
+  .managerHeader{
+    min-height:90px !important;
+    grid-template-columns:44px 1fr 50px !important;
+    padding:12px !important;
+  }
+  .headerTitle h1{
+    font-size:23px !important;
+  }
+  .headerTitle p{
+    font-size:12px !important;
+  }
+  .headerTitle span{
+    font-size:11px !important;
+  }
+}
+
+
+
+/* ===== V1.2.1 - Dashboard mas compacto y mas alto ===== */
+
+/* Subir todo el contenido principal */
+.dashboardShell{
+  padding-top:6px !important;
+}
+
+/* Header mas compacto verticalmente para que el dashboard suba */
+.managerHeader{
+  min-height:78px !important;
+  padding:10px 16px !important;
+  margin-bottom:10px !important;
+  border-radius:7px !important;
+}
+
+.headerTitle h1{
+  font-size:28px !important;
+  line-height:1 !important;
+}
+
+.headerTitle p{
+  font-size:13px !important;
+  margin-top:5px !important;
+}
+
+.headerTitle span{
+  font-size:11px !important;
+  margin-top:4px !important;
+}
+
+.hamburger{
+  width:38px !important;
+  height:38px !important;
+  font-size:18px !important;
+}
+
+.alertBell{
+  height:38px !important;
+  min-width:42px !important;
+}
+
+/* Dashboard más arriba y con menos aire */
+.sectionTitle{
+  margin-top:0 !important;
+  margin-bottom:8px !important;
+}
+
+.sectionTitle h2{
+  font-size:25px !important;
+  line-height:1 !important;
+}
+
+.sectionTitle p{
+  font-size:13px !important;
+  margin-top:5px !important;
+}
+
+/* KPI mas compactos */
+.kpiGrid{
+  gap:10px !important;
+  margin-bottom:12px !important;
+}
+
+.kpiCard{
+  min-height:92px !important;
+  padding:13px 16px !important;
+  border-radius:11px !important;
+}
+
+.kpiCard h3{
+  font-size:13px !important;
+  margin-bottom:5px !important;
+}
+
+.kpiCard strong{
+  font-size:30px !important;
+  line-height:1 !important;
+}
+
+.kpiCard small{
+  font-size:12px !important;
+}
+
+.kpiCard span{
+  width:48px !important;
+  height:48px !important;
+  border-radius:15px !important;
+  font-size:22px !important;
+}
+
+/* Paneles más compactos */
+.dashGrid{
+  gap:12px !important;
+  margin-bottom:12px !important;
+}
+
+.glassPanel{
+  padding:13px !important;
+  border-radius:11px !important;
+}
+
+.panelHead{
+  margin-bottom:9px !important;
+}
+
+.panelHead h3{
+  font-size:15px !important;
+}
+
+/* Donut y mapa reducidos */
+.donutRow{
+  min-height:142px !important;
+  gap:18px !important;
+}
+
+.donut{
+  width:116px !important;
+  height:116px !important;
+}
+
+.donut:before{
+  width:70px !important;
+  height:70px !important;
+}
+
+.donut b{
+  font-size:22px !important;
+}
+
+.legend{
+  gap:8px !important;
+  font-size:12px !important;
+}
+
+.mapVisual{
+  min-height:180px !important;
+}
+
+/* Tabla mas compacta */
+.tablePanel{
+  margin-bottom:12px !important;
+}
+
+.darkTable th,
+.darkTable td{
+  padding:8px 9px !important;
+  font-size:12px !important;
+}
+
+.statusBadge{
+  padding:4px 7px !important;
+  font-size:11px !important;
+}
+
+/* Alertas inferiores mas compactas */
+.alertStrip{
+  padding:12px 13px !important;
+}
+
+.alertStrip h3{
+  margin-bottom:6px !important;
+  font-size:15px !important;
+}
+
+.alertLine{
+  margin:4px 0 !important;
+  font-size:12px !important;
+}
+
+/* Footer mas cerca y compacto */
+.appFooter{
+  margin-top:16px !important;
+  font-size:12px !important;
+}
+
+/* Menu lateral un poco mas compacto aun */
+.sidebar{
+  padding-top:18px !important;
+}
+
+.brandBox{
+  height:70px !important;
+}
+
+.brandBox img{
+  width:108px !important;
+}
+
+.sideNav{
+  gap:4px !important;
+}
+
+.sideNav button{
+  min-height:38px !important;
+  padding:9px 11px !important;
+  font-size:12.5px !important;
+}
+
+/* Responsive */
+@media(max-width:1000px){
+  .managerHeader{
+    min-height:72px !important;
+    margin-bottom:8px !important;
+  }
+  .headerTitle h1{
+    font-size:24px !important;
+  }
+  .kpiGrid{
+    gap:9px !important;
+  }
+}
+
+@media(max-width:640px){
+  .dashboardShell{
+    padding-top:6px !important;
+  }
+  .managerHeader{
+    min-height:68px !important;
+  }
+  .headerTitle h1{
+    font-size:21px !important;
+  }
+  .kpiCard{
+    min-height:86px !important;
+  }
+}
+
+
+/* ===== V1.2.2 - Dashboard con graficos compactos y sin mapa ===== */
+.chartsGrid{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+  margin-bottom:12px !important;
+}
+
+.chartPanel{
+  min-height:230px !important;
+  padding:13px !important;
+}
+
+.compactChart{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+.chartRow{
+  display:grid !important;
+  grid-template-columns:1fr 42px 48px !important;
+  align-items:center !important;
+  gap:8px !important;
+  min-height:30px !important;
+}
+
+.chartLabel{
+  color:white !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+.chartValue{
+  text-align:right !important;
+  color:white !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+}
+
+.chartPct{
+  text-align:right !important;
+  color:#9be58f !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+}
+
+.barTrack{
+  grid-column:1 / 4 !important;
+  height:8px !important;
+  border-radius:999px !important;
+  overflow:hidden !important;
+  background:rgba(255,255,255,.10) !important;
+}
+
+.barFill{
+  height:100% !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,#4cc63f,#1e88e5) !important;
+}
+
+.chartEmpty{
+  color:rgba(255,255,255,.65) !important;
+  font-size:12px !important;
+  padding:12px 0 !important;
+}
+
+.stateChartSummary{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-bottom:10px !important;
+}
+
+.stateBox{
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.06) !important;
+  padding:10px !important;
+}
+
+.stateBox b{
+  display:block !important;
+  font-size:24px !important;
+  line-height:1 !important;
+}
+
+.stateBox small{
+  display:block !important;
+  margin-top:4px !important;
+  font-size:11px !important;
+  color:rgba(255,255,255,.68) !important;
+}
+
+.stateBox.open b{color:#4cc63f !important}
+.stateBox.closed b{color:#8b5cf6 !important}
+
+/* Ultimos transitos mas compacto */
+.tablePanel{
+  margin-bottom:10px !important;
+}
+
+.darkTable th,
+.darkTable td{
+  padding:6px 8px !important;
+  font-size:11px !important;
+  line-height:1.15 !important;
+}
+
+.darkTable th{
+  height:30px !important;
+}
+
+.darkTable td{
+  height:32px !important;
+}
+
+.statusBadge{
+  padding:3px 6px !important;
+  font-size:10px !important;
+  border-radius:5px !important;
+}
+
+.panelHead{
+  margin-bottom:7px !important;
+}
+
+.panelHead h3{
+  font-size:14px !important;
+}
+
+@media(max-width:1200px){
+  .chartsGrid{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
+
+@media(max-width:700px){
+  .chartsGrid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ===== V1.2.3 - Linea logo + graficos torta + bloques con informacion ===== */
+
+/* Línea debajo del logo ELTA del menú */
+.brandBox{
+  position:relative !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  gap:12px !important;
+}
+
+.brandDivider{
+  width:86% !important;
+  height:1px !important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent) !important;
+  margin:2px auto 0 !important;
+}
+
+/* Gráficos tipo torta alineados */
+.chartsGrid{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+  margin-bottom:12px !important;
+}
+
+.chartPanel{
+  min-height:255px !important;
+  padding:13px !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.compactChart{
+  flex:1 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+}
+
+.pieChartBlock{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+}
+
+.pieChart{
+  width:112px !important;
+  height:112px !important;
+  border-radius:50% !important;
+  position:relative !important;
+  box-shadow:0 0 24px rgba(0,0,0,.28) !important;
+}
+
+.pieChart::after{
+  content:"" !important;
+  position:absolute !important;
+  inset:30px !important;
+  border-radius:50% !important;
+  background:#071a2c !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+}
+
+.pieCenter{
+  position:absolute !important;
+  inset:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  z-index:2 !important;
+  color:white !important;
+  font-weight:900 !important;
+}
+
+.pieCenter b{
+  font-size:20px !important;
+  line-height:1 !important;
+}
+
+.pieCenter small{
+  font-size:9px !important;
+  color:rgba(255,255,255,.65) !important;
+  margin-top:3px !important;
+}
+
+.pieLegend{
+  width:100% !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:6px !important;
+}
+
+.pieLegendRow{
+  display:grid !important;
+  grid-template-columns:12px 1fr 34px 42px !important;
+  gap:6px !important;
+  align-items:center !important;
+  font-size:11px !important;
+  color:white !important;
+}
+
+.pieLegendRow .swatch{
+  width:10px !important;
+  height:10px !important;
+  border-radius:3px !important;
+}
+
+.pieLegendRow .name{
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+  color:rgba(255,255,255,.86) !important;
+}
+
+.pieLegendRow .val{
+  text-align:right !important;
+  font-weight:900 !important;
+}
+
+.pieLegendRow .pct{
+  text-align:right !important;
+  color:#9be58f !important;
+  font-weight:900 !important;
+}
+
+.chartEmpty{
+  min-height:160px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  color:rgba(255,255,255,.68) !important;
+  font-size:12px !important;
+}
+
+/* Tabla y alertas con contenido visible */
+.darkTable.emptyTable,
+.alertEmpty{
+  min-height:110px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  color:rgba(255,255,255,.70) !important;
+  font-size:13px !important;
+  border:1px dashed rgba(255,255,255,.14) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.04) !important;
+}
+
+.alertStrip{
+  min-height:76px !important;
+}
+
+.alertStrip > div{
+  width:100% !important;
+}
+
+#dashAlerts{
+  min-height:24px !important;
+}
+
+/* Renglones todavía más compactos */
+.darkTable th,
+.darkTable td{
+  padding:5px 7px !important;
+  font-size:10.5px !important;
+  line-height:1.1 !important;
+}
+
+.darkTable td{
+  height:28px !important;
+}
+
+.statusBadge{
+  padding:2px 5px !important;
+  font-size:9.5px !important;
+}
+
+/* Responsive gráficos */
+@media(max-width:1300px){
+  .chartsGrid{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
+
+@media(max-width:720px){
+  .chartsGrid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ===== V1.2.4 - filtros selectores + posicion + alertas completas ===== */
+
+.filters{
+  grid-template-columns:1fr 1fr 1fr 180px !important;
+}
+
+.filters select{
+  cursor:pointer !important;
+}
+
+.item .metaGrid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:3px 18px !important;
+  margin-top:6px !important;
+}
+
+.item .metaGrid div{
+  font-size:12px !important;
+  line-height:1.18 !important;
+}
+
+.item .fullLine{
+  grid-column:1 / -1 !important;
+}
+
+.alertListCompact{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+}
+
+.alertCard{
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.06) !important;
+  padding:9px 10px !important;
+  color:white !important;
+}
+
+.alertCard .alertTop{
+  display:flex !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  align-items:center !important;
+  font-weight:900 !important;
+  font-size:12px !important;
+}
+
+.alertCard .alertInfo{
+  margin-top:5px !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:2px 10px !important;
+  color:rgba(255,255,255,.78) !important;
+  font-size:11px !important;
+  line-height:1.2 !important;
+}
+
+.alertCard .alertInfo .fullLine{
+  grid-column:1 / -1 !important;
+}
+
+#dashAlerts{
+  max-height:240px !important;
+  overflow:auto !important;
+  padding-right:4px !important;
+}
+
+@media(max-width:900px){
+  .filters{
+    grid-template-columns:1fr 1fr !important;
+  }
+  .item .metaGrid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media(max-width:640px){
+  .filters{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ===== V1.2.5 - Volver a graficos de barras compactos ===== */
+
+.chartPanel{
+  min-height:218px !important;
+  padding:14px !important;
+}
+
+.compactChart{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  gap:8px !important;
+}
+
+.barChartBlock{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+}
+
+.barChartItem{
+  display:grid !important;
+  grid-template-columns:1fr 42px 46px !important;
+  gap:8px !important;
+  align-items:center !important;
+}
+
+.barChartName{
+  color:white !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+}
+
+.barChartVal{
+  color:white !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  text-align:right !important;
+}
+
+.barChartPct{
+  color:#9be58f !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  text-align:right !important;
+}
+
+.barLine{
+  grid-column:1 / 4 !important;
+  height:8px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.12) !important;
+  overflow:hidden !important;
+}
+
+.barLineFill{
+  height:100% !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,#8ce53f,#4cc63f,#55b8ff) !important;
+}
+
+.estadoSummary{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-bottom:12px !important;
+}
+
+.estadoMini{
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.07) !important;
+  padding:10px !important;
+}
+
+.estadoMini b{
+  display:block !important;
+  font-size:24px !important;
+  line-height:1 !important;
+}
+
+.estadoMini small{
+  display:block !important;
+  margin-top:6px !important;
+  color:rgba(255,255,255,.72) !important;
+  font-size:11px !important;
+}
+
+.estadoMini.open b{
+  color:#4cc63f !important;
+}
+
+.estadoMini.closed b{
+  color:#8b5cf6 !important;
+}
+
+/* Anular estilos de torta previos */
+.pieChartBlock,
+.pieChart,
+.pieLegend,
+.pieLegendRow,
+.pieCenter{
+  all:unset;
+}
+
+.chartEmpty{
+  min-height:120px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  color:rgba(255,255,255,.70) !important;
+  font-size:12px !important;
+}
+
+/* Ajuste visual al estilo mostrado */
+.chartsGrid{
+  gap:12px !important;
+  margin-bottom:12px !important;
+}
+
+.panelHead h3{
+  font-size:14px !important;
+}
+
+
+/* ===== V1.2.8 - Rollback visual según captura ===== */
+
+/* Vista general igual a la versión aprobada */
+.dashboardShell{
+  padding-top:6px !important;
+}
+
+.managerHeader{
+  min-height:78px !important;
+  padding:10px 16px !important;
+  margin-bottom:10px !important;
+  border-radius:7px !important;
+}
+
+.headerTitle{
+  text-align:center !important;
+  justify-self:center !important;
+  align-items:center !important;
+  padding-right:0 !important;
+}
+
+.headerTitle h1{
+  font-size:28px !important;
+  line-height:1 !important;
+  margin:0 !important;
+}
+
+.headerTitle p{
+  font-size:13px !important;
+  margin-top:5px !important;
+}
+
+.headerTitle span{
+  font-size:11px !important;
+  margin-top:4px !important;
+}
+
+.sectionTitle{
+  margin-top:0 !important;
+  margin-bottom:8px !important;
+}
+
+.sectionTitle h2{
+  font-size:25px !important;
+  line-height:1 !important;
+}
+
+.sectionTitle p{
+  font-size:13px !important;
+  margin-top:5px !important;
+}
+
+.kpiGrid{
+  gap:10px !important;
+  margin-bottom:12px !important;
+}
+
+.kpiCard{
+  min-height:92px !important;
+  padding:13px 16px !important;
+  border-radius:11px !important;
+}
+
+.kpiCard h3{
+  font-size:13px !important;
+  margin-bottom:5px !important;
+}
+
+.kpiCard strong{
+  font-size:30px !important;
+  line-height:1 !important;
+}
+
+.kpiCard small{
+  font-size:12px !important;
+}
+
+.kpiCard span{
+  width:48px !important;
+  height:48px !important;
+  border-radius:15px !important;
+  font-size:22px !important;
+}
+
+.chartsGrid{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+  margin-bottom:12px !important;
+}
+
+.chartPanel{
+  min-height:218px !important;
+  padding:14px !important;
+}
+
+.compactChart{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  gap:8px !important;
+}
+
+.barChartBlock{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+}
+
+.barChartItem{
+  display:grid !important;
+  grid-template-columns:1fr 42px 46px !important;
+  gap:8px !important;
+  align-items:center !important;
+}
+
+.barChartName{
+  color:white !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:ellipsis !important;
+}
+
+.barChartVal{
+  color:white !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  text-align:right !important;
+}
+
+.barChartPct{
+  color:#9be58f !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  text-align:right !important;
+}
+
+.barLine{
+  grid-column:1 / 4 !important;
+  height:8px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.12) !important;
+  overflow:hidden !important;
+}
+
+.barLineFill{
+  height:100% !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,#8ce53f,#4cc63f,#55b8ff) !important;
+}
+
+.estadoSummary{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-bottom:12px !important;
+}
+
+.estadoMini{
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.07) !important;
+  padding:10px !important;
+}
+
+.estadoMini b{
+  display:block !important;
+  font-size:24px !important;
+  line-height:1 !important;
+}
+
+.estadoMini small{
+  display:block !important;
+  margin-top:6px !important;
+  color:rgba(255,255,255,.72) !important;
+  font-size:11px !important;
+}
+
+.estadoMini.open b{
+  color:#4cc63f !important;
+}
+
+.estadoMini.closed b{
+  color:#8b5cf6 !important;
+}
+
+.tablePanel{
+  margin-bottom:10px !important;
+}
+
+.darkTable th,
+.darkTable td{
+  padding:5px 7px !important;
+  font-size:10.5px !important;
+  line-height:1.1 !important;
+}
+
+.darkTable td{
+  height:28px !important;
+}
+
+.statusBadge{
+  padding:2px 5px !important;
+  font-size:9.5px !important;
+}
+
+.appFooter{
+  margin-top:16px !important;
+  font-size:12px !important;
+}
+
+/* Sidebar colapsada como en la captura */
+.sidebar{
+  width:72px !important;
+  padding:18px 8px !important;
+}
+
+.brandBox{
+  height:70px !important;
+  padding-left:0 !important;
+  justify-content:center !important;
+}
+
+.brandBox img{
+  width:50px !important;
+}
+
+.sideNav button span,
+.adminBox div,
+.logoutBtn{
+  display:none !important;
+}
+
+.sideNav button{
+  justify-content:center !important;
+  font-size:18px !important;
+  min-height:40px !important;
+  padding:9px !important;
+}
+
+.dashboardShell{
+  margin-left:72px !important;
+}
+
+body.sidebarCollapsed .sidebar{
+  width:190px !important;
+  padding:22px 10px !important;
+}
+
+body.sidebarCollapsed .brandBox img{
+  width:118px !important;
+}
+
+body.sidebarCollapsed .sideNav button span,
+body.sidebarCollapsed .adminBox div,
+body.sidebarCollapsed .logoutBtn{
+  display:block !important;
+}
+
+body.sidebarCollapsed .sideNav button{
+  justify-content:flex-start !important;
+  font-size:13px !important;
+}
+
+body.sidebarCollapsed .dashboardShell{
+  margin-left:190px !important;
+}
+
+@media(max-width:1300px){
+  .chartsGrid{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
+
+@media(max-width:720px){
+  .chartsGrid{
+    grid-template-columns:1fr !important;
+  }
+}

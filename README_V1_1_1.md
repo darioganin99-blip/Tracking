@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.1.1 - Login corregido: sin iconos en campos; solo ojo al final de contraseña.

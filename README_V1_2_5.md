@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2.5 - Graficos compactos tipo barra como referencia: estado, cliente, origen y destino con valores y porcentajes.

@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.0.9 - fondo visible: menos overlay, sin blur fuerte, foto ELTA visible.

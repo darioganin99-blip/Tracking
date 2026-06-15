@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.0.8 - fondo corregido: sin blur fuerte, foco 62% centro, camión visible, overlay equilibrado.

@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2.4 - Filtros selectores, estado En transito/Finalizado, Ultima posicion mejorada y alertas completas con localidad/km/fecha/hora.

@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.1 - Dashboard corporativo con sidebar, header derecho, KPIs modernos, tabla, mapa visual y alertas.
