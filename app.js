@@ -333,8 +333,8 @@ function transit(){return load(LS.transit,null)}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
 function show(id){
-  const views=["usuario","inicio","tracking","embarque","alertas","clima","ultimo"];
-  const buttons=["btn-usuario","btn-inicio","btn-tracking","btn-embarque","btn-alertas","btn-clima","btn-ultimo"];
+  const views=["usuario","inicio","tracking","embarque","alertas","clima","checklist","ultimo"];
+  const buttons=["btn-usuario","btn-inicio","btn-tracking","btn-embarque","btn-alertas","btn-clima","btn-checklist","btn-ultimo"];
 
   views.forEach(v=>{
     const e=$(v);
@@ -356,6 +356,7 @@ function show(id){
   if(id==="tracking") renderTracking();
   if(id==="alertas") renderAlertas();
   if(id==="clima") renderClima();
+  if(id==="checklist") renderChecklist();
   if(id==="usuario") loadUserForm();
   if(id==="embarque"){ renderEmbarque(); refreshEmbarquesCloud(); }
   if(id==="ultimo") renderUltimo();
@@ -1569,7 +1570,7 @@ function startCloudListener(){
 
 const showLocalBase=show;
 show=function(id){
-  const views=["usuario","inicio","tracking","embarque","alertas","clima","ultimo"];
+  const views=["usuario","inicio","tracking","embarque","alertas","clima","checklist","ultimo"];
   const buttons=["btn-login","btn-inicio","btn-tracking","btn-alertas","btn-clima","btn-usuario","btn-embarque","btn-ultimo"];
   views.forEach(v=>{const e=$(v); if(e){if(v===id)e.classList.remove("hidden"); else e.classList.add("hidden");}});
   buttons.forEach(b=>{const e=$(b); if(e)e.classList.remove("active");});
@@ -1578,6 +1579,7 @@ show=function(id){
   if(id==="tracking") renderTracking();
   if(id==="alertas") renderAlertas();
   if(id==="clima") renderClima();
+  if(id==="checklist") renderChecklist();
   if(id==="usuario") loadUserForm();
   if(id==="embarque"){ renderEmbarque(); refreshEmbarquesCloud(); }
   if(id==="ultimo") renderUltimo();
@@ -4034,7 +4036,7 @@ try{
 
 
 
-/* ===== v1.5.00 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.26 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4312,7 +4314,7 @@ try{
 
 
 
-/* ===== v1.5.01 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.26 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4674,7 +4676,7 @@ try{
 
 
 
-/* ===== v1.5.02 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.26 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -4998,7 +5000,7 @@ try{
 
 
 
-/* ===== v1.5.03 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.26 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5390,7 +5392,7 @@ try{
 
 
 
-/* ===== v1.5.04 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.26 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5755,7 +5757,7 @@ try{
 
 
 
-/* ===== v1.5.05 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.26 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5786,7 +5788,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.06 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.26 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -5905,7 +5907,7 @@ try{
 
 
 
-/* ===== v1.5.09 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.26 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6085,7 +6087,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.10 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.26 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6124,7 +6126,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.11 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.26 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6242,7 +6244,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.12 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.26 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6512,7 +6514,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.13 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.26 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6643,7 +6645,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.14 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.26 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -6894,7 +6896,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.15 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.26 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -6927,7 +6929,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.16 GPS ZARATE FIX ===== */
+/* ===== v1.5.26 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -6988,7 +6990,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.17 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.26 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7427,7 +7429,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.18 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.26 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7722,7 +7724,7 @@ try{
 
 
 
-/* ===== v1.5.19 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.26 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7749,7 +7751,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.20 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.26 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7802,7 +7804,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.21 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.26 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7861,7 +7863,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.22 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.26 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -7907,7 +7909,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.23 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.26 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8114,4 +8116,207 @@ setInterval(()=>{
   const sec=document.getElementById("embarque");
   if(sec&&(sec.classList.contains("active")||sec.style.display!=="none"))tpodActualizarLocalidadesVisibles1523();
 },5000);
+
+
+
+
+/* ===== V1.5.26 - Check List Firebase ===== */
+let checklistItemsActuales = [];
+let checklistRespuestas = {};
+
+function checklistMsg(txt,tipo){
+  const el=$("checklistMsg");
+  if(!el) return;
+  el.className="summary checklistMsg " + (tipo||"");
+  el.innerText=txt||"";
+}
+
+function checklistTransitData(){
+  const t=transit();
+  const u=user();
+  const route=(t && t.route) ? t.route : selectedRoute();
+  return {
+    tipo:$("checklistTipo") ? $("checklistTipo").value : "",
+    flota:(t && t.user && t.user.fleet) || u.fleet || "",
+    chofer:(t && t.user && t.user.driver) || u.driver || "",
+    tractor:u.tractor || (t && t.tractor) || "",
+    batea:u.batea || (t && t.batea) || "",
+    embarque:(t && t.embarque) || ($("embarqueInput") ? $("embarqueInput").value.trim() : ""),
+    lote:(t && t.lote) || ($("lote") ? $("lote").value.trim() : ""),
+    cliente:(route && route.cliente) || "",
+    origen:(route && route.origen) || "",
+    destino:(route && route.destino) || ""
+  };
+}
+
+function renderChecklistInfo(){
+  const d=checklistTransitData();
+  const el=$("checklistTransitInfo");
+  if(!el) return;
+  el.innerHTML =
+    `<div><b>Flota / Chofer:</b> ${escapeHtml(d.flota||"-")} - ${escapeHtml(d.chofer||"-")}</div>`+
+    `<div><b>Tractor / Batea:</b> ${escapeHtml(d.tractor||"-")} - ${escapeHtml(d.batea||"-")}</div>`+
+    `<div><b>Embarque:</b> ${escapeHtml(d.embarque||"-")} &nbsp; <b>Lote/Carga:</b> ${escapeHtml(d.lote||"-")}</div>`+
+    `<div><b>Cliente:</b> ${escapeHtml(d.cliente||"-")}</div>`+
+    `<div><b>Origen:</b> ${escapeHtml(d.origen||"-")}</div>`+
+    `<div><b>Destino:</b> ${escapeHtml(d.destino||"-")}</div>`;
+}
+
+async function leerChecklistItemsBase(){
+  if(!firebaseReady()){
+    throw new Error("Firebase no está disponible.");
+  }
+  const snap = await db.collection("checklist_oea_items").get();
+  return snap.docs.map(d=>({id:d.id,...d.data()}));
+}
+
+async function cargarTiposChecklist(){
+  const sel=$("checklistTipo");
+  if(!sel) return;
+
+  try{
+    const items=await leerChecklistItemsBase();
+    const tipos=[...new Set(items.filter(x=>x.activo!==false).map(x=>String(x.tipo||"").trim()).filter(Boolean))];
+    const finalTipos=tipos.length ? tipos : ["oea"];
+    sel.innerHTML=finalTipos.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t.toUpperCase())}</option>`).join("");
+    await cargarItemsChecklist();
+  }catch(e){
+    console.log("Checklist tipos error",e);
+    sel.innerHTML='<option value="oea">OEA</option>';
+    const box=$("checklistItemsBox");
+    if(box) box.innerHTML='<div class="checklistLoading">No se pudieron cargar ítems desde Firebase.</div>';
+  }
+}
+
+async function cargarItemsChecklist(){
+  const box=$("checklistItemsBox");
+  if(!box) return;
+  const tipo=($("checklistTipo") && $("checklistTipo").value) || "oea";
+  box.innerHTML='<div class="checklistLoading">Cargando ítems...</div>';
+  checklistRespuestas={};
+
+  try{
+    const all=await leerChecklistItemsBase();
+    const items=all
+      .filter(x=>x.activo!==false && String(x.tipo||"").toLowerCase()===String(tipo).toLowerCase())
+      .sort((a,b)=>Number(a.ordengrupo||0)-Number(b.ordengrupo||0) || Number(a.orden||0)-Number(b.orden||0));
+
+    checklistItemsActuales=items;
+
+    if(!items.length){
+      box.innerHTML='<div class="checklistLoading">No hay ítems activos para el tipo seleccionado.</div>';
+      return;
+    }
+
+    const grupos={};
+    items.forEach(it=>{
+      const g=it.grupo || "general";
+      if(!grupos[g]) grupos[g]=[];
+      grupos[g].push(it);
+    });
+
+    box.innerHTML=Object.entries(grupos).map(([grupo,arr])=>{
+      return `<div class="checklistGroup">
+        <div class="checklistGroupTitle">${escapeHtml(String(grupo).toUpperCase())}</div>
+        ${arr.map(renderChecklistItem).join("")}
+      </div>`;
+    }).join("");
+  }catch(e){
+    console.log("Checklist items error",e);
+    box.innerHTML='<div class="checklistLoading">Error al cargar checklist desde Firebase.</div>';
+  }
+}
+
+function renderChecklistItem(it){
+  const codigo=it.codigo || it.id || "";
+  return `<div class="checklistItem" data-codigo="${escapeHtml(codigo)}">
+    <div class="checklistItemText">${escapeHtml(it.texto || codigo)}</div>
+    <div class="checklistOptions">
+      <button type="button" class="apto" onclick="setChecklistRespuesta('${escapeHtml(codigo)}','apto')">✓ Apto</button>
+      <button type="button" class="no_apto" onclick="setChecklistRespuesta('${escapeHtml(codigo)}','no_apto')">✕ No apto</button>
+      <button type="button" class="no_aplica" onclick="setChecklistRespuesta('${escapeHtml(codigo)}','no_aplica')">— No aplica</button>
+    </div>
+    <div class="checklistObsItem" id="obs_${escapeHtml(codigo)}">
+      <textarea placeholder="Observación del ítem..."></textarea>
+    </div>
+  </div>`;
+}
+
+function setChecklistRespuesta(codigo,resultado){
+  checklistRespuestas[codigo]=resultado;
+  document.querySelectorAll(`.checklistItem[data-codigo="${CSS.escape(codigo)}"] .checklistOptions button`).forEach(b=>b.classList.remove("active"));
+  const btn=document.querySelector(`.checklistItem[data-codigo="${CSS.escape(codigo)}"] .checklistOptions button.${resultado}`);
+  if(btn) btn.classList.add("active");
+  const obs=$("obs_"+codigo);
+  if(obs) obs.style.display=resultado==="no_apto" ? "block" : "none";
+}
+
+async function guardarCheckListRuta(){
+  const btn=$("checklistGuardarBtn");
+  if(btn) btn.disabled=true;
+  checklistMsg("");
+
+  try{
+    const tipo=($("checklistTipo") && $("checklistTipo").value) || "";
+    if(!tipo) throw new Error("Seleccione un tipo.");
+    if(!checklistItemsActuales.length) throw new Error("No hay ítems para guardar.");
+
+    const faltantes=checklistItemsActuales.filter(it=>!checklistRespuestas[it.codigo||it.id]);
+    if(faltantes.length) throw new Error("Faltan responder ítems del checklist.");
+
+    const gps=await getGps();
+    const datos=checklistTransitData();
+
+    const respuestas=checklistItemsActuales.map(it=>{
+      const codigo=it.codigo || it.id || "";
+      const obsWrap=$("obs_"+codigo);
+      const obsEl=obsWrap ? obsWrap.querySelector("textarea") : null;
+      return {
+        codigo,
+        tipo:it.tipo || tipo,
+        grupo:it.grupo || "",
+        ordengrupo:Number(it.ordengrupo || 0),
+        orden:Number(it.orden || 0),
+        texto:it.texto || "",
+        resultado:checklistRespuestas[codigo],
+        observacion:obsEl ? obsEl.value.trim() : "",
+        foto:it.foto===true
+      };
+    });
+
+    const estadoGeneral=respuestas.some(r=>r.resultado==="no_apto") ? "no_apto" : "apto";
+    const nowIso=now();
+
+    const payload={
+      tipo,
+      estado:"guardado",
+      estadoGeneral,
+      ...datos,
+      gpsChecklist:gps,
+      respuestas,
+      observacionesGenerales:$("checklistObsGeneral") ? $("checklistObsGeneral").value.trim() : "",
+      creadoPor:datos.flota ? "flota"+datos.flota : datos.chofer,
+      creadoEn:nowIso,
+      fechaHoraGuardado:nowIso
+    };
+
+    if(!firebaseReady()) throw new Error("Firebase no está disponible.");
+
+    await db.collection("checklists_oea").add(payload);
+
+    checklistMsg("Check List guardado correctamente.","ok");
+    checklistRespuestas={};
+    if($("checklistObsGeneral")) $("checklistObsGeneral").value="";
+    await cargarItemsChecklist();
+  }catch(e){
+    checklistMsg(e.message || "No se pudo guardar el Check List.","err");
+  }finally{
+    if(btn) btn.disabled=false;
+  }
+}
+
+function renderChecklist(){
+  renderChecklistInfo();
+  cargarTiposChecklist();
+}
 

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.23</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.26</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Desconectado</div>
   <nav class="tabs">
@@ -18,6 +18,7 @@
     <button id="btn-embarque" onclick="show('embarque')">📦 Embarques</button>
     <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
     <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
+    <button id="btn-checklist" onclick="show('checklist')">✅ Check List</button>
     <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
   </nav>
   <main>
@@ -101,6 +102,34 @@
       <div id="embarqueDebug" class="embarqueDebug hiddenDebug"></div>
       <div id="embarqueList" class="embarqueList"><div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div></div>
     </div></section>
+
+
+    <section id="checklist" class="view hidden">
+      <div class="card checklistCard">
+        <h2 class="checklistTitle">📋 Check List</h2>
+        <div class="checklistSub">Seleccione el tipo y complete las verificaciones.</div>
+
+        <div id="checklistTransitInfo" class="checklistTransitInfo">
+          Datos del tránsito validados por usuario.
+        </div>
+
+        <label>Tipo</label>
+        <select id="checklistTipo" onchange="cargarItemsChecklist()">
+          <option value="">Cargando...</option>
+        </select>
+
+        <div id="checklistItemsBox" class="checklistItemsBox">
+          <div class="checklistLoading">Seleccione un tipo para cargar los ítems.</div>
+        </div>
+
+        <label>Observaciones generales</label>
+        <textarea id="checklistObsGeneral" placeholder="Observaciones generales si corresponde..."></textarea>
+
+        <button class="btn checklistSaveBtn" id="checklistGuardarBtn" onclick="guardarCheckListRuta()">Guardar Check List</button>
+        <div id="checklistMsg" class="summary checklistMsg"></div>
+      </div>
+    </section>
+
 
   <section id="ultimo" class="view hidden"><div class="card">
       <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar info</button>
