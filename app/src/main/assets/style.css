@@ -1861,11 +1861,11 @@ button.disabledView{pointer-events:none !important;}
 @media(max-width:520px){.checklistOptions{grid-template-columns:1fr}.checklistTitle{font-size:27px}}
 
 
-/* ===== V1.5.27 - Ajustes Check List / Alertas ===== */
+/* ===== V1.5.28 - Fix Check List y Alertas ===== */
 .tabs button.disabledTab,
 .tabs button:disabled{
-  opacity:.45 !important;
-  filter:grayscale(.65) !important;
+  opacity:.42 !important;
+  filter:grayscale(.7) !important;
   pointer-events:none !important;
 }
 
@@ -1885,6 +1885,14 @@ button.disabledView{pointer-events:none !important;}
 
 .checklistCard{
   padding-top:16px !important;
+}
+
+.checklistItemsBox{
+  max-height:46vh !important;
+  overflow-y:auto !important;
+  padding-right:4px !important;
+  border-radius:16px !important;
+  scroll-behavior:smooth !important;
 }
 
 .checklistMsg{
