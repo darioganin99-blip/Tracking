@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2.3 - Linea bajo logo, graficos tipo torta con porcentajes, dashboard con informacion visible y renglones mas compactos.

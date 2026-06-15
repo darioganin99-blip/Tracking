@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Track - Seguimiento GPS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+
+<style id="checklist-oea-v1524-css">
+#tab-checklist,#view-checklist{display:none}
+.checklist-wrap{padding:18px 26px 32px}
+.checklist-card{background:#fff;border-radius:28px;box-shadow:0 8px 22px rgba(0,0,0,.10);padding:22px;margin:18px auto;max-width:680px}
+.checklist-title{font-size:32px;font-weight:900;color:#1f2937;margin:0 0 6px}
+.checklist-sub{font-size:18px;color:#6b7280;margin-bottom:18px}
+.checklist-info{background:#dcfce7;border:2px solid #86efac;color:#166534;border-radius:18px;padding:16px;font-size:18px;font-weight:800;line-height:1.35;margin-bottom:18px}
+.checklist-field{margin:14px 0}
+.checklist-field label{display:block;font-size:22px;font-weight:900;color:#374151;margin-bottom:8px}
+.checklist-field select,.checklist-field textarea{width:100%;border:2px solid #d1d5db;border-radius:18px;background:#f9fafb;color:#111827;padding:14px 16px;font-size:22px;box-sizing:border-box}
+.checklist-field textarea{min-height:110px;resize:vertical}
+.checklist-group{border:1px solid #e5e7eb;border-radius:22px;overflow:hidden;background:#f9fafb;margin:16px 0}
+.checklist-group-head{background:#0b8f43;color:#fff;padding:14px 18px;font-size:22px;font-weight:1000}
+.checklist-item{background:#fff;border-top:1px solid #e5e7eb;padding:16px}
+.checklist-item-text{font-size:18px;font-weight:850;color:#1f2937;line-height:1.35;margin-bottom:12px}
+.checklist-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.checklist-options button{border:2px solid #d1d5db;border-radius:16px;background:#f3f4f6;color:#374151;padding:12px 6px;font-size:16px;font-weight:1000}
+.checklist-options button.active.apto{background:#0b8f43;color:#fff;border-color:#0b8f43}
+.checklist-options button.active.no_apto{background:#dc2626;color:#fff;border-color:#dc2626}
+.checklist-options button.active.no_aplica{background:#6b7280;color:#fff;border-color:#6b7280}
+.checklist-obs{display:none;margin-top:12px}
+.checklist-obs textarea{width:100%;min-height:74px;border:2px solid #d1d5db;border-radius:14px;padding:12px;font-size:16px;box-sizing:border-box}
+.checklist-save{width:100%;border:0;border-radius:20px;background:#008c45;color:#fff;padding:18px;font-size:24px;font-weight:1000;box-shadow:0 8px 18px rgba(0,140,69,.28);margin-top:16px}
+.checklist-save:disabled{background:#9ca3af;box-shadow:none}
+.checklist-msg{display:none;border-radius:16px;padding:14px;margin-top:14px;font-size:18px;font-weight:900}
+.checklist-msg.ok{display:block;background:#dcfce7;color:#166534}
+.checklist-msg.err{display:block;background:#fee2e2;color:#991b1b}
+.checklist-loading{padding:18px;color:#6b7280;font-size:18px;font-weight:800}
+@media(max-width:520px){
+  .checklist-wrap{padding:14px 20px 28px}
+  .checklist-card{padding:20px;border-radius:26px}
+  .checklist-title{font-size:30px}
+  .checklist-field label{font-size:21px}
+  .checklist-field select,.checklist-field textarea{font-size:21px}
+  .checklist-options{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.24</div></header>
+  <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
+  <div id="cloudStatus" class="cloudStatus">Desconectado</div>
+  <nav class="tabs">
+    <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
+    <button id="btn-inicio" onclick="show('inicio')">🚚 Inicio / Fin</button>
+    <button id="btn-tracking" onclick="show('tracking')">🛰️ Tracking</button>
+    <button id="btn-embarque" onclick="show('embarque')">📦 Embarques</button>
+    <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
+    <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
+    <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
+  </nav>
+  <main>
+    <section id="inicio" class="view"><div class="card">
+
+      <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
+      <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
+      <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
+      <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
+
+      <div class="loteEmbarqueStack">
+        <div>
+          <label>Lote / Carga</label>
+          <input id="lote" placeholder="Ej: 1234">
+        </div>
+        <div>
+          <label>Embarque</label>
+          <input id="embarqueInput" placeholder="Ej: 001">
+        </div>
+      </div>
+
+      <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
+      <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>
+    </div></section>
+    <section id="tracking" class="view hidden"><div class="card trackingCard">
+      <div id="realMap" class="realMap"></div>
+
+      <div class="mapLegend compactLegend">
+        <span><b class="dot origin"></b>Origen</span>
+        <span><b class="dot current"></b>GPS</span>
+        <span><b class="dot dest"></b>Destino</span>
+        <span><b class="dot alert"></b>Alertas</span>
+      </div>
+
+      <div id="trackingBox" class="trackingStats compactStats"></div>
+
+      <div class="trackingActions bottomActions">
+        <button class="btn compactBtn singleActionBtn" onclick="enviarActualizacion()">📤 Enviar actualización</button>
+      </div>
+    </div></section>
+    <section id="alertas" class="view hidden"><div class="card">
+      
+      <label>Tipo de alerta</label><select id="alertType"><option>Control de carga</option><option>Ingreso Aduana USP.</option><option>Salida Aduana USP.</option><option>Ingreso Aduana Los Andes</option><option>Salida Aduana Los Andes</option><option>Liberación Aduana</option><option>Accidente</option><option>Paso Cortado</option><option>Niebla</option><option>Rotura</option><option>Otros</option></select>
+      <button class="btn warning" onclick="registrarAlerta()">Registrar alerta con GPS</button>
+      <div id="alertList" class="summary"></div>
+    </div></section>
+    <section id="clima" class="view hidden"><div class="card climaCard climaCardNew">
+      <div id="weatherNow" class="weatherCardNew">
+        <div class="weatherIconBig">🌤️</div>
+        <div class="weatherMainNew">
+          <div class="weatherTempNew">--°</div>
+          <div class="weatherDescNew">Presioná actualizar</div>
+          <div id="weatherLocation" class="weatherLocNew">Según posición GPS</div>
+        </div>
+      </div>
+      <div class="forecastCardNew">
+        
+        <div id="weatherForecast" class="forecastListNew"></div>
+      </div>
+      <div class="passCardNew">
+        <div class="passTitleNew">🚛 Pasos Fronterizos</div>
+        <div id="passStatus" class="passStatusNew">Estado pendiente de actualizar.</div>
+      </div>
+      <div class="passAlertCardNew">
+        
+        <div id="passAlerts" class="passAlertsNew">Sin datos actualizados.</div>
+      </div>
+    </div></section>
+
+    <section id="usuario" class="view hidden"><div class="card">
+      
+      <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
+      <label>PASS</label><div class="passRow"><input id="userPass" type="password" placeholder="PASS flota"><button id="btnTogglePass" type="button" onclick="togglePass()">👁️</button></div>
+      <label>Nombre de chofer</label><input id="userDriver" readonly placeholder="Ej: Ganin">
+      <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
+      <button class="btn" onclick="saveUser()">Validar Flota</button>
+<button id="btnCerrarApp" class="btn btnCerrarApp" type="button" onclick="cerrarApp()">Cerrar App</button><div id="userMsg"></div>
+    </div></section>
+    <section id="embarque" class="view hidden"><div class="card embarqueCard">
+      <div class="embarqueHeader"><b>Número Embarque</b><span id="embarqueFiltro">Cargando...</span></div>
+      <div id="embarqueDebug" class="embarqueDebug hiddenDebug"></div>
+      <div id="embarqueList" class="embarqueList"><div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div></div>
+    </div></section>
+
+  <section id="ultimo" class="view hidden"><div class="card">
+      <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar info</button>
+    </div></section>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+
+<div id="view-checklist" class="view page pantalla" style="display:none">
+  <div class="checklist-wrap">
+    <div class="checklist-card">
+      <h2 class="checklist-title">📋 Check List</h2>
+      <div class="checklist-sub">Seleccione el tipo y complete las verificaciones.</div>
+
+      <div id="checklistTransitInfo" class="checklist-info">Datos del tránsito validados por usuario.</div>
+
+      <div class="checklist-field">
+        <label>Tipo</label>
+        <select id="checklistTipo"><option value="">Cargando tipos...</option></select>
+      </div>
+
+      <div id="checklistItemsBox">
+        <div class="checklist-loading">Seleccione un tipo para cargar los ítems.</div>
+      </div>
+
+      <div class="checklist-field">
+        <label>Observaciones generales</label>
+        <textarea id="checklistObsGeneral" placeholder="Observaciones generales si corresponde..."></textarea>
+      </div>
+
+      <button id="checklistGuardarBtn" class="checklist-save" onclick="guardarCheckListRuta()">Guardar Check List</button>
+      <div id="checklistMsg" class="checklist-msg"></div>
+    </div>
+  </div>
+</div>
+
+
+<script id="checklist-oea-v1524-js">
+window.checklistItemsActuales=[];
+window.checklistRespuestas={};
+
+function clQ(id){return document.getElementById(id);}
+function clEsc(v){return String(v??"").replace(/[&<>"']/g,function(s){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s];});}
+function clMsg(t,c){var e=clQ("checklistMsg");if(!e)return;e.textContent=t;e.className="checklist-msg "+(c||"ok");}
+
+function clDatosTransit(){
+  var u=window.userData||window.currentUser||window.usuarioActual||{};
+  var t=window.transitoActual||window.currentTransit||window.transito||{};
+  var e=window.embarqueActual||window.embarqueData||{};
+  var fl=(u.flota||t.flota||window.flota||"");
+  var ch=(u.user||u.nombre||u.chofer||t.chofer||window.chofer||"");
+  return {
+    flota:fl, chofer:ch,
+    tractor:u.tractor||t.tractor||window.tractor||"",
+    batea:u.batea||t.batea||window.batea||"",
+    embarque:t.embarque||e.id||e.embarque||window.embarque||"",
+    lote:t.lote||t.carga||e.lote||e.carga||window.lote||"",
+    cliente:t.cliente||e.cliente||window.cliente||"",
+    origen:t.origen||e.origen||window.origen||"",
+    destino:t.destino||e.destino||window.destino||""
+  };
+}
+
+function renderClInfo(){
+  var d=clDatosTransit(), el=clQ("checklistTransitInfo"); if(!el)return;
+  el.innerHTML =
+    "<div><b>Flota / Chofer:</b> "+clEsc(d.flota||"-")+" - "+clEsc(d.chofer||"-")+"</div>"+
+    "<div><b>Tractor / Batea:</b> "+clEsc(d.tractor||"-")+" - "+clEsc(d.batea||"-")+"</div>"+
+    "<div><b>Embarque:</b> "+clEsc(d.embarque||"-")+" &nbsp; <b>Lote/Carga:</b> "+clEsc(d.lote||"-")+"</div>"+
+    "<div><b>Cliente:</b> "+clEsc(d.cliente||"-")+"</div>"+
+    "<div><b>Origen:</b> "+clEsc(d.origen||"-")+"</div>"+
+    "<div><b>Destino:</b> "+clEsc(d.destino||"-")+"</div>";
+}
+
+async function clRead(col){
+  if(typeof read==="function") return await read(col);
+  if(window.db && typeof firebase!=="undefined" && firebase.firestore){
+    var s=await db.collection(col).get();
+    return s.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+  }
+  if(window.firestore && typeof firebase!=="undefined" && firebase.firestore){
+    var s2=await firestore.collection(col).get();
+    return s2.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+  }
+  throw new Error("No se encontró conexión Firebase.");
+}
+
+async function clAdd(col,data){
+  if(typeof add==="function") return await add(col,data);
+  if(typeof create==="function") return await create(col,data);
+  if(window.db && typeof firebase!=="undefined" && firebase.firestore) return await db.collection(col).add(data);
+  if(window.firestore && typeof firebase!=="undefined" && firebase.firestore) return await firestore.collection(col).add(data);
+  throw new Error("No se encontró función para guardar.");
+}
+
+async function cargarTiposChecklist(){
+  var sel=clQ("checklistTipo"); if(!sel)return;
+  try{
+    var items=await clRead("checklist_oea_items");
+    var tipos=[...new Set(items.filter(function(x){return x.activo!==false;}).map(function(x){return String(x.tipo||"").trim();}).filter(Boolean))];
+    if(!tipos.length) tipos=["oea"];
+    sel.innerHTML=tipos.map(function(t){return '<option value="'+clEsc(t)+'">'+clEsc(t.toUpperCase())+'</option>';}).join("");
+    sel.onchange=cargarItemsChecklist;
+    await cargarItemsChecklist();
+  }catch(err){
+    console.warn(err);
+    sel.innerHTML='<option value="oea">OEA</option>';
+    clQ("checklistItemsBox").innerHTML='<div class="checklist-loading">No se pudieron cargar ítems desde Firebase.</div>';
+  }
+}
+
+async function cargarItemsChecklist(){
+  var tipo=(clQ("checklistTipo")||{}).value||"oea";
+  var box=clQ("checklistItemsBox"); if(!box)return;
+  box.innerHTML='<div class="checklist-loading">Cargando ítems...</div>';
+  window.checklistRespuestas={};
+  try{
+    var all=await clRead("checklist_oea_items");
+    var items=all.filter(function(x){
+      return x.activo!==false && String(x.tipo||"").toLowerCase()===String(tipo).toLowerCase();
+    }).sort(function(a,b){
+      return Number(a.ordengrupo||0)-Number(b.ordengrupo||0) || Number(a.orden||0)-Number(b.orden||0);
+    });
+    window.checklistItemsActuales=items;
+    if(!items.length){box.innerHTML='<div class="checklist-loading">No hay ítems activos para el tipo seleccionado.</div>';return;}
+    var grupos={};
+    items.forEach(function(it){var g=it.grupo||"general";(grupos[g]=grupos[g]||[]).push(it);});
+    box.innerHTML=Object.entries(grupos).map(function(p){
+      return '<div class="checklist-group"><div class="checklist-group-head">'+clEsc(String(p[0]).toUpperCase())+'</div>'+p[1].map(renderClItem).join("")+'</div>';
+    }).join("");
+  }catch(err){
+    console.error(err);
+    box.innerHTML='<div class="checklist-loading">Error al cargar checklist.</div>';
+  }
+}
+
+function renderClItem(it){
+  var cod=it.codigo||it.id||"";
+  return '<div class="checklist-item" data-codigo="'+clEsc(cod)+'">'+
+    '<div class="checklist-item-text">'+clEsc(it.texto||cod)+'</div>'+
+    '<div class="checklist-options">'+
+      '<button type="button" class="apto" onclick="setClResp(\''+clEsc(cod)+'\',\'apto\')">✓ Apto</button>'+
+      '<button type="button" class="no_apto" onclick="setClResp(\''+clEsc(cod)+'\',\'no_apto\')">✕ No apto</button>'+
+      '<button type="button" class="no_aplica" onclick="setClResp(\''+clEsc(cod)+'\',\'no_aplica\')">— No aplica</button>'+
+    '</div>'+
+    '<div class="checklist-obs" id="obs_'+clEsc(cod)+'"><textarea placeholder="Observación del ítem..."></textarea></div>'+
+  '</div>';
+}
+
+function setClResp(codigo,res){
+  window.checklistRespuestas[codigo]=res;
+  document.querySelectorAll('.checklist-item[data-codigo="'+CSS.escape(codigo)+'"] .checklist-options button').forEach(function(b){b.classList.remove("active");});
+  var btn=document.querySelector('.checklist-item[data-codigo="'+CSS.escape(codigo)+'"] .checklist-options button.'+res);
+  if(btn)btn.classList.add("active");
+  var obs=clQ("obs_"+codigo); if(obs)obs.style.display=res==="no_apto"?"block":"none";
+}
+
+function clGps(){
+  return new Promise(function(resolve){
+    if(!navigator.geolocation){resolve({lat:null,lng:null,accuracy:null,error:"geolocation_not_supported"});return;}
+    navigator.geolocation.getCurrentPosition(function(p){
+      resolve({lat:p.coords.latitude,lng:p.coords.longitude,accuracy:p.coords.accuracy||null,timestamp:new Date().toISOString()});
+    },function(e){resolve({lat:null,lng:null,accuracy:null,error:e.message||"gps_error"});},{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  });
+}
+
+async function guardarCheckListRuta(){
+  var btn=clQ("checklistGuardarBtn"); if(btn)btn.disabled=true; clMsg("","");
+  try{
+    var tipo=(clQ("checklistTipo")||{}).value||"";
+    if(!tipo) throw new Error("Seleccione un tipo.");
+    var faltan=window.checklistItemsActuales.filter(function(it){return !window.checklistRespuestas[it.codigo||it.id];});
+    if(faltan.length) throw new Error("Faltan responder ítems.");
+    var gps=await clGps(), datos=clDatosTransit(), now=new Date().toISOString();
+    var respuestas=window.checklistItemsActuales.map(function(it){
+      var cod=it.codigo||it.id, obsWrap=clQ("obs_"+cod), obsEl=obsWrap?obsWrap.querySelector("textarea"):null;
+      return {codigo:cod,tipo:it.tipo||tipo,grupo:it.grupo||"",ordengrupo:Number(it.ordengrupo||0),orden:Number(it.orden||0),texto:it.texto||"",resultado:window.checklistRespuestas[cod],observacion:obsEl?obsEl.value.trim():"",foto:it.foto===true};
+    });
+    var estadoGeneral=respuestas.some(function(r){return r.resultado==="no_apto";})?"no_apto":"apto";
+    var payload=Object.assign({tipo:tipo,estado:"guardado",estadoGeneral:estadoGeneral},datos,{
+      gpsChecklist:gps,respuestas:respuestas,
+      observacionesGenerales:(clQ("checklistObsGeneral")||{}).value||"",
+      creadoPor:datos.flota?"flota"+datos.flota:(datos.chofer||""),
+      creadoEn:now,fechaHoraGuardado:now
+    });
+    await clAdd("checklists_oea",payload);
+    clMsg("Check List guardado correctamente.","ok");
+    window.checklistRespuestas={};
+    if(clQ("checklistObsGeneral")) clQ("checklistObsGeneral").value="";
+    await cargarItemsChecklist();
+  }catch(err){clMsg(err.message||"No se pudo guardar.","err");}
+  finally{if(btn)btn.disabled=false;}
+}
+
+function showChecklist(){
+  document.querySelectorAll(".view,.page,.pantalla,section").forEach(function(el){
+    if(el.id!=="view-checklist" && el.id!=="tab-checklist") el.style.display="none";
+  });
+  var v=clQ("view-checklist"); if(v){v.style.display="block";renderClInfo();cargarTiposChecklist();window.scrollTo(0,0);}
+}
+
+function installChecklistTab(){
+  if(clQ("tab-checklist")) return;
+  var refs=[].filter.call(document.querySelectorAll("button,a,.tab,.pill"),function(el){
+    return /Clima|Último|Ultimo|Alertas|Tracking|Inicio/i.test(el.textContent||"");
+  });
+  var ref=refs.find(function(el){return /Último|Ultimo/i.test(el.textContent||"");}) || refs[refs.length-1];
+  var parent=(ref&&ref.parentElement)||document.body;
+  var btn=document.createElement(ref&&ref.tagName?ref.tagName:"button");
+  btn.id="tab-checklist";
+  btn.type="button";
+  btn.className=(ref&&ref.className)||"";
+  btn.innerHTML="📋 Check List";
+  btn.onclick=showChecklist;
+  if(ref&&ref.parentElement) ref.parentElement.insertBefore(btn, ref);
+  else parent.appendChild(btn);
+}
+
+document.addEventListener("DOMContentLoaded",installChecklistTab);
+setTimeout(installChecklistTab,300);
+setTimeout(installChecklistTab,1000);
+</script>
+
+</body></html>

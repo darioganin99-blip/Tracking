@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ELTA Track Manager</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+
+<section id="login" class="view active loginPage">
+  <div class="bgPhoto"></div>
+  <div class="bgOverlay"></div>
+
+  <img class="cornerLogo" src="assets/logo-elta.png" alt="ELTA">
+
+  <div class="loginCard">
+    <img class="loginLogo" src="assets/logo-elta.png" alt="ELTA">
+    <h1>TRACK MANAGER</h1>
+    <p>Panel de tráfico y coordinación</p>
+    <div class="greenLine"></div>
+
+    <label>Usuario</label>
+    <div class="inputWrap">
+      <input id="user" autocomplete="username" placeholder="Ingresá tu usuario">
+    </div>
+
+    <label>Contraseña</label>
+    <div class="inputWrap">
+      <input id="pass" type="password" autocomplete="current-password" placeholder="Ingresá tu contraseña">
+      <button type="button" class="eyeBtn" onclick="togglePass()">👁</button>
+    </div>
+
+    <button class="loginButton" onclick="login()">INGRESAR</button>
+    <a class="forgot" href="javascript:void(0)">¿Olvidaste tu contraseña?</a>
+    <div id="msg"></div>
+  </div>
+
+  <footer class="loginFooter">
+    <span>🛡 Sistema seguro</span>
+    <span>© 2025 ELTA Tracking Solutions</span>
+    <span>Versión 1.2.8</span>
+  </footer>
+</section>
+
+<section id="app" class="view appPage">
+  <div class="appBgPhoto"></div>
+  <div class="appBgOverlay"></div>
+
+  <aside class="sidebar">
+    <div class="brandBox">
+      <img src="assets/logo-elta.png" alt="ELTA">
+      <div class="brandDivider"></div>
+    </div>
+
+    <nav class="sideNav">
+      <button onclick="tab('dash')" class="active">🏠 <span>Dashboard</span></button>
+      <button onclick="tab('transitos')">🚚 <span>Tránsitos</span></button>
+      <button onclick="tab('mapa')">📍 <span>Seguimiento</span></button>
+      <button onclick="tab('coordinacion')">👥 <span>Coordinación</span></button>
+      <button onclick="tab('unidades')">🚛 <span>Unidades</span></button>
+      <button onclick="tab('conductores')">👤 <span>Conductores</span></button>
+      <button onclick="tab('clientes')">🏢 <span>Clientes</span></button>
+      <button onclick="tab('reportes')">📊 <span>Reportes</span></button>
+      <button onclick="tab('alertas')">🔔 <span>Alertas</span></button>
+      <button onclick="tab('abm')">⚙️ <span>Configuración</span></button>
+    </nav>
+
+    <div class="adminBox">
+      <div class="adminAvatar">A</div>
+      <div>
+        <b>Administrador</b>
+        <small>admin@elta.com.ar</small>
+      </div>
+    </div>
+
+    <button onclick="salir()" class="logoutBtn">🚪 Cerrar sesión</button>
+  </aside>
+
+  <main class="dashboardShell">
+    <header class="managerHeader">
+      <button class="hamburger" type="button" onclick="toggleSidebar()">☰</button>
+
+      <div class="headerTitle">
+        <h1>Track Manager</h1>
+        <p>Panel tráfico / coordinación</p>
+        <span>Versión 1.2.8</span>
+      </div>
+
+      <div class="headerActions">
+        <button class="miniPill alertBell" onclick="tab(\'alertas\')" title="Ver alertas">🔔 <span id="headerAlertCount">0</span></button>
+      </div>
+    </header>
+
+    <section id="dash" class="panel active">
+      <div class="sectionTitle">
+        <h2>Dashboard</h2>
+        <p>Resumen general de la operación</p>
+      </div>
+
+      <div class="kpiGrid">
+        <div class="kpiCard green">
+          <div>
+            <h3>Tránsitos activos</h3>
+            <strong id="ka">0</strong>
+            <small>En circulación</small>
+          </div>
+          <span>🚚</span>
+        </div>
+        <div class="kpiCard blue">
+          <div>
+            <h3>Unidades activas</h3>
+            <strong id="kf">0</strong>
+            <small>Flotas registradas</small>
+          </div>
+          <span>🚛</span>
+        </div>
+        <div class="kpiCard yellow">
+          <div>
+            <h3>Alertas activas</h3>
+            <strong id="kal">0</strong>
+            <small>Requieren atención</small>
+          </div>
+          <span>⚠️</span>
+        </div>
+        <div class="kpiCard purple">
+          <div>
+            <h3>Finalizados</h3>
+            <strong id="kc">0</strong>
+            <small>Tránsitos cerrados</small>
+          </div>
+          <span>✅</span>
+        </div>
+      </div>
+
+      
+<div class="chartsGrid">
+        <div class="glassPanel chartPanel">
+          <div class="panelHead"><h3>Tránsitos por estado</h3></div>
+          <div id="chartEstado" class="compactChart"></div>
+        </div>
+
+        <div class="glassPanel chartPanel">
+          <div class="panelHead"><h3>Tránsitos por cliente</h3></div>
+          <div id="chartCliente" class="compactChart"></div>
+        </div>
+
+        <div class="glassPanel chartPanel">
+          <div class="panelHead"><h3>Tránsitos por origen</h3></div>
+          <div id="chartOrigen" class="compactChart"></div>
+        </div>
+
+        <div class="glassPanel chartPanel">
+          <div class="panelHead"><h3>Tránsitos por destino</h3></div>
+          <div id="chartDestino" class="compactChart"></div>
+        </div>
+      </div>
+
+      <div class="glassPanel tablePanel">
+        <div class="panelHead">
+          <h3>Últimos tránsitos</h3>
+          <button onclick="refresh()">Actualizar</button>
+        </div>
+        <div id="dashTable" class="darkTable"></div>
+      </div>
+
+      <div class="glassPanel alertStrip">
+        <div>
+          <h3>⚠️ Alertas activas</h3>
+          <div id="dashAlerts"></div>
+        </div>
+        <button onclick="tab('alertas')">Ver todas las alertas →</button>
+      </div>
+    </section>
+
+    <section id="transitos" class="panel">
+      <div class="sectionTitle"><h2>Tránsitos</h2><p>Consulta y filtros operativos</p></div>
+      <div class="glassPanel">
+        <div class="filters">
+          <input id="fEmb" placeholder="Embarque" oninput="renderTransitos()">
+          <select id="fFlo" onchange="renderTransitos()"><option value="">Todas las flotas</option></select>
+          <select id="fCli" onchange="renderTransitos()"><option value="">Todos los clientes</option></select>
+          <select id="fEst" onchange="renderTransitos()">
+            <option value="">Todos</option>
+            <option value="abierto">En tránsito</option>
+            <option value="cerrado">Finalizado</option>
+          </select>
+        </div>
+      </div>
+      <div class="glassPanel"><div id="transList" class="cardList"></div></div>
+    </section>
+
+    <section id="mapa" class="panel">
+      <div class="sectionTitle"><h2>Seguimiento</h2><p>Unidades activas y ubicación operativa</p></div>
+      <div class="glassPanel mapPanel wide">
+        <div class="mapVisual big">
+          <div class="routeLine"></div>
+          <span class="truckPoint p1">🚚</span>
+          <span class="truckPoint p2">🚛</span>
+          <span class="truckPoint p3">🚚</span>
+          <span class="city c1">Zárate</span>
+          <span class="city c2">Buenos Aires</span>
+          <span class="city c3">Rosario</span>
+        </div>
+      </div>
+      <div class="glassPanel"><div id="mapList" class="cardList"></div></div>
+    </section>
+
+    <section id="coordinacion" class="panel">
+      <div class="sectionTitle"><h2>Coordinación</h2><p>Vista para asignaciones y seguimiento operativo</p></div>
+      <div class="glassPanel emptyPanel">Módulo coordinación preparado para V1.2.</div>
+    </section>
+
+    <section id="unidades" class="panel">
+      <div class="sectionTitle"><h2>Unidades</h2><p>Estado de flotas y unidades</p></div>
+      <div class="glassPanel"><div id="unitList" class="cardList"></div></div>
+    </section>
+
+    <section id="conductores" class="panel">
+      <div class="sectionTitle"><h2>Conductores</h2><p>Usuarios flota y choferes</p></div>
+      <div class="glassPanel"><div id="driverList" class="cardList"></div></div>
+    </section>
+
+    <section id="clientes" class="panel">
+      <div class="sectionTitle"><h2>Clientes</h2><p>Clientes registrados</p></div>
+      <div class="glassPanel"><div id="clientList" class="cardList"></div></div>
+    </section>
+
+    <section id="alertas" class="panel">
+      <div class="sectionTitle"><h2>Alertas</h2><p>Eventos y novedades reportadas</p></div>
+      <div class="glassPanel"><div id="alertList" class="cardList"></div></div>
+    </section>
+
+    <section id="abm" class="panel">
+      <div class="sectionTitle"><h2>Configuración</h2><p>Altas, bajas y modificaciones</p></div>
+      <div class="glassPanel">
+        <div class="abmtabs">
+          <button onclick="abm('usuarios')">Usuarios/Flotas</button>
+          <button onclick="abm('clientes')">Clientes</button>
+          <button onclick="abm('origenes')">Orígenes</button>
+          <button onclick="abm('destinos')">Destinos</button>
+          <button onclick="abm('embarque')">Embarques</button>
+        </div>
+        <div id="abmForm" class="form"></div>
+        <div id="abmList" class="cardList"></div>
+      </div>
+    </section>
+
+    <section id="reportes" class="panel">
+      <div class="sectionTitle"><h2>Reportes</h2><p>Resumen operativo</p></div>
+      <div class="glassPanel">
+        <div id="rep" class="cardList"></div>
+        <button onclick="copyRep()">Copiar reporte</button>
+      </div>
+    </section>
+
+    <footer class="appFooter">
+      <span>🛡 Sistema seguro</span>
+      <span>© 2025 ELTA Tracking Solutions</span>
+      <span>Versión 1.2.8</span>
+    </footer>
+  </main>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>

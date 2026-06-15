@@ -1,0 +1,1 @@
+ELTA Track Manager Web V1.2.8 - Rollback visual a dashboard de captura: sidebar iconos, header centrado, KPI compactos, graficos de barras y tabla inferior.

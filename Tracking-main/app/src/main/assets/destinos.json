@@ -1,0 +1,968 @@
+[
+  {
+    "name": "AD SAnTO TOME",
+    "lat": 0.0,
+    "lng": 0.0,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ALBEnS S.A.",
+    "lat": -34.680751,
+    "lng": -58.341968,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ALIZZE S.A.",
+    "lat": -34.617527,
+    "lng": -58.395988,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AnCASTI S.R.L.",
+    "lat": -28.466762,
+    "lng": -65.775729,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AnDInA FRAnCE S.A.",
+    "lat": -29.399713,
+    "lng": -66.819262,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOCIEL S.A.",
+    "lat": -24.216622,
+    "lng": -65.279633,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOFRAnCE S.A.",
+    "lat": -34.450214,
+    "lng": -58.544094,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOMOBILES LYOn S.A.",
+    "lat": -34.639733,
+    "lng": -58.533955,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOMOTORES J. PESADO CASTRO S.A.",
+    "lat": -32.921991,
+    "lng": -60.677175,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOROUTE S.A. (CITROnoRTE)",
+    "lat": -34.534246,
+    "lng": -58.509439,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOSUR S.A.",
+    "lat": -33.052684,
+    "lng": -61.158119,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AVAnT S.A.",
+    "lat": -31.413839,
+    "lng": -64.269097,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AVEnUE S.A.",
+    "lat": -32.96965,
+    "lng": -60.642462,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AVEnUE S.A.",
+    "lat": -31.396226,
+    "lng": -64.24302,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AVIGnon AUTO S.A.",
+    "lat": -34.658249,
+    "lng": -58.661211,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "CHATELL S.A.",
+    "lat": -34.636025,
+    "lng": -58.791623,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "CI DAnE S.A.",
+    "lat": -34.502479,
+    "lng": -58.537437,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DAMVILLE S.A.",
+    "lat": -34.647613,
+    "lng": -58.606378,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "D'ARC LIBERTADOR S.A.",
+    "lat": -34.616773,
+    "lng": -58.52142,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DRAGO Y BERETTA Y CIA S.A.C.IF",
+    "lat": -34.63779,
+    "lng": -58.502495,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DS STORE QUILMES (STOCK Vn)",
+    "lat": -34.71492,
+    "lng": -58.266623,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DUMMY ARCAD",
+    "lat": 0.0,
+    "lng": 0.0,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ELYSEES S.A.",
+    "lat": -34.646625,
+    "lng": -58.497024,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ESPRIT POURTAU S.A.",
+    "lat": -35.159,
+    "lng": -58.215983,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ESSOR SRL",
+    "lat": -28.469076,
+    "lng": -65.771882,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "EURODYCAR S.R.L.",
+    "lat": -24.825508,
+    "lng": -65.429175,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "FORTUnATO FORTIno Y CIA S.R.L.",
+    "lat": -26.828296,
+    "lng": -65.21845,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GALIA S A",
+    "lat": -34.916108,
+    "lng": -57.952415,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GAULOIS AUTOMOTORES S.A.",
+    "lat": -34.457059,
+    "lng": -58.715251,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GERLI AUTOMOTORES S.A.",
+    "lat": -34.110961,
+    "lng": -59.020583,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GIAMA DEVOTO (ELYSEES S.A.)",
+    "lat": -34.611736,
+    "lng": -58.521102,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GM CARS S.A.",
+    "lat": -27.431098,
+    "lng": -58.930682,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GRAn BEnoIT S.A.",
+    "lat": -31.552339,
+    "lng": -68.509719,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "InDIAnA S.A.C.I.F.I.",
+    "lat": -26.808681,
+    "lng": -65.238181,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "IQSA S.A.",
+    "lat": -32.923198,
+    "lng": -60.722975,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "IQSA S.A.",
+    "lat": -31.396356,
+    "lng": -64.242661,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LA COnCORDE S.A.",
+    "lat": -27.377939,
+    "lng": -55.906673,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LE MAnS AUTOMOTORES S.A.",
+    "lat": -27.807689,
+    "lng": -64.275448,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LE MAnS AUTOMOTORES S.A.",
+    "lat": -34.718769,
+    "lng": -58.263782,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LE MERIDIEn S.A.",
+    "lat": -34.575393,
+    "lng": -58.548327,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LE PARC S.A.",
+    "lat": -32.426597,
+    "lng": -63.19921,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LE ROCHER S.A.",
+    "lat": -26.189341,
+    "lng": -58.185998,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "L'EXPRES S.A.",
+    "lat": -34.619041,
+    "lng": -58.423266,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LIBERTADOR AUTOMOVILES S.A.",
+    "lat": -34.493439,
+    "lng": -58.49836,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MARSEILLE S.A.",
+    "lat": -32.960524,
+    "lng": -60.646107,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "METZ S.A.",
+    "lat": -27.412817,
+    "lng": -58.958014,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MIGUEL ROBAYnA S.A.",
+    "lat": -34.111132,
+    "lng": -59.020667,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MOnTER S.A.",
+    "lat": -31.358573,
+    "lng": -64.203622,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "nATIOn LITORAL S.A.",
+    "lat": -32.94344,
+    "lng": -60.643205,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "nAVE MOTORS (STOCK Vn)",
+    "lat": -34.718707,
+    "lng": -58.263813,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "noRT FRAnCE S.A.",
+    "lat": -34.467252,
+    "lng": -58.534377,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "noRTHSTELLA S.A.",
+    "lat": -34.445682,
+    "lng": -58.886719,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PARIS AUTOS S.A.",
+    "lat": -33.296061,
+    "lng": -66.29803,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PARRA AUTOMOTORES S.A.",
+    "lat": -31.352917,
+    "lng": -64.198217,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PI InGEnIERIA S.A.",
+    "lat": -34.903135,
+    "lng": -57.979061,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PLAn DE AHORRO AnDInA FRAnCE S.A.",
+    "lat": -29.399713,
+    "lng": -66.819262,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ROUGE AUTOMOBILES S.A.",
+    "lat": -27.442364,
+    "lng": -58.996429,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SAnTIAGO GIODA AUTOMOTORES S.A.",
+    "lat": -33.124703,
+    "lng": -64.384439,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SEEWALD Y CIA. S.A.",
+    "lat": -27.385236,
+    "lng": -55.90004,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SVA SACIFI",
+    "lat": -34.599436,
+    "lng": -58.428114,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SVA SACIFI",
+    "lat": -27.385232,
+    "lng": -55.900045,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "TOULOn S.A.",
+    "lat": -34.628925,
+    "lng": -58.37218,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "TOURS AUTOMOTORES S.A.",
+    "lat": -34.439203,
+    "lng": -58.833067,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VERSALLES AUTOMOTORES S.A.",
+    "lat": -27.783082,
+    "lng": -64.26774,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VESUBIO S.A.",
+    "lat": -33.208344,
+    "lng": -62.602509,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "4STRADE S.A.",
+    "lat": -34.560377,
+    "lng": -58.470801,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "A. RUSSOnIELLO S.A",
+    "lat": -34.5023,
+    "lng": -58.517397,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ABInGTOn S.A.",
+    "lat": -34.717167,
+    "lng": -58.264951,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ACAnTILADOS S.A.",
+    "lat": -31.640777,
+    "lng": -60.701402,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AEROPUERTO DE SALTA",
+    "lat": -24.8437,
+    "lng": -65.478384,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ALCO ROSARIO S.A.",
+    "lat": -32.935908,
+    "lng": -60.696827,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ALFA MOnDO S.A.",
+    "lat": -34.630896,
+    "lng": -58.683114,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ASP BLInDAJES",
+    "lat": -34.502172,
+    "lng": -58.548257,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTO DAnTE S.A.",
+    "lat": -34.680717,
+    "lng": -58.341989,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTO DEL SOL S.A.",
+    "lat": -34.467252,
+    "lng": -58.534377,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTO ROAD S.A.",
+    "lat": -28.460887,
+    "lng": -65.764887,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOMEKAnIKA S.A.",
+    "lat": -29.428342,
+    "lng": -66.860378,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AUTOS ZAnET S.A.",
+    "lat": -34.755318,
+    "lng": -58.401503,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Auto Generali",
+    "lat": -34.575175,
+    "lng": -58.478389,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "AZZURRA AUTO S.A.",
+    "lat": -32.169973,
+    "lng": -64.134791,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "BETA S.A.",
+    "lat": -32.970392,
+    "lng": -60.629557,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "BROOK MOTORS S.A.",
+    "lat": -26.831633,
+    "lng": -65.179545,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "BROOK MOTORS S.A.",
+    "lat": -24.789772,
+    "lng": -65.361431,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "BUZZ nET S.A.",
+    "lat": -34.652638,
+    "lng": -58.50347,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "CAR GROUP S.A.",
+    "lat": -34.612035,
+    "lng": -58.399813,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "CHESTER S.A.",
+    "lat": -34.716985,
+    "lng": -58.265075,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DALLAS MOTORS S.A.",
+    "lat": -27.431249,
+    "lng": -58.930968,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DETROIT 1925 S.A.",
+    "lat": -34.622594,
+    "lng": -58.389656,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "FADUA S.A.",
+    "lat": -24.823472,
+    "lng": -65.428026,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "FADUA S.A.",
+    "lat": -24.19228,
+    "lng": -65.292566,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GUARnIEL S.A.",
+    "lat": -34.082322,
+    "lng": -59.055494,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GUInI S.A.",
+    "lat": -34.638439,
+    "lng": -58.380357,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "GUInI SERVICIOS.A.",
+    "lat": -34.634724,
+    "lng": -58.374157,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ITAL ROUEn S.A.",
+    "lat": -34.110786,
+    "lng": -59.020643,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "ITALA S.A",
+    "lat": -31.554556,
+    "lng": -68.52687,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "JACK CARS S.A.",
+    "lat": -34.677518,
+    "lng": -58.345359,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "JEA S.A.",
+    "lat": -31.418496,
+    "lng": -62.094875,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LAnDCAR S.A.",
+    "lat": -31.358551,
+    "lng": -64.2036,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LEDIAn S.A.",
+    "lat": -28.460648,
+    "lng": -65.764636,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LORWEST C.I. S.A.",
+    "lat": -31.558691,
+    "lng": -68.512331,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MAPIC S.A.",
+    "lat": -26.186617,
+    "lng": -58.173942,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MARCHEnA S.A.",
+    "lat": -27.393126,
+    "lng": -55.908762,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MARInARO E HIJO S.A.",
+    "lat": -34.688144,
+    "lng": -58.387775,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MEnDEZ AUTOMOTORES S.A",
+    "lat": -33.459563,
+    "lng": -61.488846,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MEnDEZ AUTOMOTORES S.A",
+    "lat": -33.282245,
+    "lng": -62.182404,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MOEnA S.A.",
+    "lat": -34.696818,
+    "lng": -58.354559,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MOTCOR S.A.",
+    "lat": -31.411852,
+    "lng": -64.269122,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MOTORVILLE S.A.",
+    "lat": -34.445614,
+    "lng": -58.886156,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "MOZZATESI AUTOMOTOR",
+    "lat": -32.935007,
+    "lng": -60.698785,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "nATIOn MOTORS S.A.",
+    "lat": -31.693892,
+    "lng": -60.796449,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "noRTHVILLE S.A.",
+    "lat": -34.520938,
+    "lng": -58.473994,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "noVARA AUTOMOTORES S",
+    "lat": -27.800144,
+    "lng": -64.252717,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "NOVO AUTO S.A",
+    "lat": -34.596793,
+    "lng": -60.954665,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PAnAMER S.A.",
+    "lat": -34.450096,
+    "lng": -58.532816,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PIAZZA S.A.",
+    "lat": -26.831709,
+    "lng": -65.246856,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PILARITALYAUTO S.A.",
+    "lat": -34.445616,
+    "lng": -58.886166,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "PInEROLO S.A.",
+    "lat": -31.35854,
+    "lng": -64.203592,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "RUBIC S.A.",
+    "lat": -31.412092,
+    "lng": -64.269103,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SAn MARCO AUT. SA",
+    "lat": -27.432914,
+    "lng": -59.008838,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SEEWALD Y CIA. S.A.",
+    "lat": -27.39347,
+    "lng": -55.90885,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SERGIO TREPAT AUTOMOVILES",
+    "lat": -34.530067,
+    "lng": -58.469928,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "SIDWAY S.A.",
+    "lat": -34.587448,
+    "lng": -58.440473,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "TARABORELLI AUTOMOBILE",
+    "lat": -34.626201,
+    "lng": -58.452154,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "TARABORELLI AUTOMOBILE",
+    "lat": -27.506542,
+    "lng": -64.932229,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "TURIn S.A.",
+    "lat": -31.3908,
+    "lng": -64.211082,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VEnEZIA AUTO S.A.",
+    "lat": -34.489918,
+    "lng": -58.623675,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VEROnA AUTOMOVILES S.A",
+    "lat": -34.68807,
+    "lng": -58.338736,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VESPASIAnI AUTOMOTORES",
+    "lat": -31.395514,
+    "lng": -64.234604,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "VOLAnT S.A.",
+    "lat": -32.970255,
+    "lng": -60.628944,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Andina Automotores S.A",
+    "lat": -29.437427,
+    "lng": -66.843882,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Autovia S.A",
+    "lat": -28.471317,
+    "lng": -65.800878,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "FÜRTH AUTOMOTORES S.A.",
+    "lat": -27.842496,
+    "lng": -64.243897,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "LOWE S.A.",
+    "lat": -26.404458,
+    "lng": -54.618858,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Iruña",
+    "lat": -38.961875,
+    "lng": -68.106479,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "BAHIAUT",
+    "lat": -38.687221,
+    "lng": -62.229229,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Arias Hnos S.A",
+    "lat": -38.733676,
+    "lng": -62.27505,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "DEL SUR EXCLUSIVOS S.A",
+    "lat": -38.680853,
+    "lng": -62.222479,
+    "calle": "",
+    "address": ""
+  },
+  {
+    "name": "Adiclz - BAIC Long",
+    "lat": -34.592774,
+    "lng": -58.50782,
+    "calle": "BAIC Long",
+    "address": "BAIC Long"
+  }
+]
