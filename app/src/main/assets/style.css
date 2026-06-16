@@ -2022,3 +2022,9 @@ nav.tabs #btn-checklist:disabled,
   pointer-events:none !important;
   z-index:650 !important;
 }
+
+
+/* ===== V1.5.38 - Ruta real azul Tracking ===== */
+.leaflet-overlay-pane svg path[stroke="#16a34a"]{
+  stroke:#2563eb !important;
+}
