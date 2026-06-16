@@ -487,7 +487,7 @@ function getGps(){
 
 
 
-/* ===== V1.5.35 - Guardar Cliente Origen Destino en tránsito ===== */
+/* ===== V1.5.36 - Guardar Cliente Origen Destino en tránsito ===== */
 function selectedTextFromSelectV1533(sel){
   if(!sel) return "";
   const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
@@ -626,7 +626,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.35 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.36 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -4145,7 +4145,7 @@ try{
 
 
 
-/* ===== v1.5.35 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.36 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4423,7 +4423,7 @@ try{
 
 
 
-/* ===== v1.5.35 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.36 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4785,7 +4785,7 @@ try{
 
 
 
-/* ===== v1.5.35 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.36 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5109,7 +5109,7 @@ try{
 
 
 
-/* ===== v1.5.35 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.36 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5501,7 +5501,7 @@ try{
 
 
 
-/* ===== v1.5.35 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.36 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5866,7 +5866,7 @@ try{
 
 
 
-/* ===== v1.5.35 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.36 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5897,7 +5897,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.35 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.36 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6016,7 +6016,7 @@ try{
 
 
 
-/* ===== v1.5.35 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.36 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6196,7 +6196,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.35 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.36 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6235,7 +6235,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.35 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.36 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6353,7 +6353,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.35 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.36 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6623,7 +6623,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.36 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6754,7 +6754,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.35 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.36 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7005,7 +7005,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.36 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7038,7 +7038,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.35 GPS ZARATE FIX ===== */
+/* ===== v1.5.36 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7099,7 +7099,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.35 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.36 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7538,7 +7538,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.36 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7833,7 +7833,7 @@ try{
 
 
 
-/* ===== v1.5.35 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.36 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7860,7 +7860,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.35 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.36 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7913,7 +7913,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.36 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7972,7 +7972,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.36 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8018,7 +8018,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.35 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.36 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8229,7 +8229,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.35 - Check List Firebase ===== */
+/* ===== V1.5.36 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8431,7 +8431,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.35 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.36 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8521,7 +8521,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.35 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.36 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8542,7 +8542,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.35 - Clientes desde Firebase ===== */
+/* ===== V1.5.36 - Clientes desde Firebase ===== */
 let clientesFirebaseV1531 = [];
 
 async function cargarClientesDesdeFirebaseV1531(){
@@ -8637,7 +8637,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshClientesFireb
 setTimeout(refreshClientesFirebaseV1531,1200);
 
 
-/* ===== V1.5.35 - Destinos desde Firebase ===== */
+/* ===== V1.5.36 - Destinos desde Firebase ===== */
 let destinosFirebaseV1532 = [];
 let origenesFirebaseV1532 = [];
 
@@ -8770,7 +8770,7 @@ selectedRoute = function(){
 };
 
 
-/* ===== V1.5.35 - Tracking ruta origen destino ===== */
+/* ===== V1.5.36 - Tracking ruta origen destino ===== */
 function parseCoordsV1534(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -8955,7 +8955,7 @@ function drawTrackingRouteV1534(t){
 }
 
 
-/* ===== V1.5.35 - Tracking metricas directas ===== */
+/* ===== V1.5.36 - Tracking metricas directas ===== */
 function parseCoordAnyV1535(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -9171,3 +9171,241 @@ if(_iniciarTransito_v1535){
     return r;
   };
 }
+
+
+/* ===== V1.5.36 - Tracking estable sin reset ===== */
+let lastRouteMetricsV1536 = null;
+let lastRouteCoordsV1536 = null;
+
+function parseCoordV1536(v){
+  if(!v) return null;
+  if(typeof v === "object"){
+    const lat = Number(v.lat ?? v.latitude);
+    const lng = Number(v.lng ?? v.lon ?? v.longitude);
+    if(Number.isFinite(lat) && Number.isFinite(lng)) return {lat,lng};
+  }
+  const nums = String(v).match(/-?\d+(?:\.\d+)?/g);
+  if(nums && nums.length >= 2){
+    const lat = Number(nums[0]);
+    const lng = Number(nums[1]);
+    if(Number.isFinite(lat) && Number.isFinite(lng)) return {lat,lng};
+  }
+  return null;
+}
+
+function kmV1536(a,b){
+  if(!a || !b) return null;
+  const lat1=Number(a.lat), lng1=Number(a.lng), lat2=Number(b.lat), lng2=Number(b.lng);
+  if(![lat1,lng1,lat2,lng2].every(Number.isFinite)) return null;
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const s1=Math.sin(dLat/2), s2=Math.sin(dLng/2);
+  const q=s1*s1 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*s2*s2;
+  return 2*R*Math.atan2(Math.sqrt(q),Math.sqrt(1-q));
+}
+
+function getValidGpsV1536(t){
+  const candidates = [t && t.last, t && t.gps, t && t.current, t && t.start].filter(Boolean);
+  for(const c of candidates){
+    const p = parseCoordV1536(c);
+    if(p) return p;
+  }
+  return null;
+}
+
+function getRouteCoordsV1536(t){
+  const r = (t && t.route) || {};
+  const origen = parseCoordV1536({lat:r.origenLat, lng:r.origenLng}) || parseCoordV1536(r.origenCoords) || (lastRouteCoordsV1536 && lastRouteCoordsV1536.origen);
+  const destino = parseCoordV1536({lat:r.destinoLat, lng:r.destinoLng}) || parseCoordV1536(r.destinoCoords) || (lastRouteCoordsV1536 && lastRouteCoordsV1536.destino);
+  if(origen && destino){
+    lastRouteCoordsV1536 = {origen, destino};
+  }
+  return {origen, destino};
+}
+
+function computeStableMetricsV1536(t){
+  const {origen, destino} = getRouteCoordsV1536(t);
+  const gps = getValidGpsV1536(t);
+  const total = kmV1536(origen, destino);
+
+  if(!total || total <= 0){
+    return lastRouteMetricsV1536;
+  }
+
+  let restan = gps ? kmV1536(gps, destino) : null;
+  if(restan === null || !Number.isFinite(restan)){
+    restan = lastRouteMetricsV1536 ? lastRouteMetricsV1536.restan : total;
+  }
+
+  restan = Math.max(0, Math.min(restan, total));
+  const recorrido = Math.max(0, total - restan);
+  const avance = Math.max(0, Math.min(100, Math.round((recorrido / total) * 100)));
+  const etaMin = Math.round((restan / 70) * 60);
+
+  const metrics = {total, restan, recorrido, avance, etaMin};
+  lastRouteMetricsV1536 = metrics;
+  return metrics;
+}
+
+function etaTxtV1536(min){
+  if(!min || min <= 0) return "0m";
+  if(min < 60) return min + "m";
+  return Math.floor(min/60) + "h " + (min % 60) + "m";
+}
+
+function setKpiDirectV1536(label, value){
+  const all = Array.from(document.querySelectorAll("body *"));
+  const labelEl = all.find(el => String(el.textContent||"").trim().toLowerCase() === label.toLowerCase());
+  if(!labelEl) return;
+  const card = labelEl.closest(".metric,.stat,.kpi") || labelEl.parentElement;
+  if(!card) return;
+  const children = Array.from(card.children);
+  let valEl = children.find(c => c !== labelEl && /^-?\d/.test(String(c.textContent||"").trim()));
+  if(!valEl){
+    valEl = Array.from(card.querySelectorAll("*")).find(c => c !== labelEl && /^-?\d/.test(String(c.textContent||"").trim()));
+  }
+  if(valEl) valEl.textContent = value;
+}
+
+function updateKpisStableV1536(metrics){
+  if(!metrics) return;
+  setKpiDirectV1536("Total", Math.round(metrics.total));
+  setKpiDirectV1536("Av.", (metrics.avance || 0) + "%");
+  setKpiDirectV1536("Restan", Math.round(metrics.restan));
+  setKpiDirectV1536("ETA", etaTxtV1536(metrics.etaMin));
+}
+
+function drawStableRouteV1536(t){
+  if(!t || typeof L === "undefined") return;
+  const map = window.map || window.trackingMap || window.leafletMap || window.trackMap;
+  if(!map) return;
+
+  const {origen, destino} = getRouteCoordsV1536(t);
+  const gps = getValidGpsV1536(t);
+  if(!origen || !destino) return;
+
+  try{
+    if(window.trackingRouteLayerV1536){
+      map.removeLayer(window.trackingRouteLayerV1536);
+    }
+    const group = L.layerGroup();
+
+    L.polyline([[origen.lat,origen.lng],[destino.lat,destino.lng]],{
+      color:"#16a34a",
+      weight:5,
+      opacity:.95
+    }).addTo(group);
+
+    L.circleMarker([origen.lat,origen.lng],{
+      radius:8,color:"#22c55e",fillColor:"#22c55e",fillOpacity:1
+    }).bindTooltip("Origen").addTo(group);
+
+    if(gps){
+      L.circleMarker([gps.lat,gps.lng],{
+        radius:8,color:"#3b82f6",fillColor:"#3b82f6",fillOpacity:1
+      }).bindTooltip("GPS").addTo(group);
+    }
+
+    L.circleMarker([destino.lat,destino.lng],{
+      radius:8,color:"#ef4444",fillColor:"#ef4444",fillOpacity:1
+    }).bindTooltip("Destino").addTo(group);
+
+    group.addTo(map);
+    window.trackingRouteLayerV1536 = group;
+
+    const pts = [[origen.lat,origen.lng],[destino.lat,destino.lng]];
+    if(gps) pts.push([gps.lat,gps.lng]);
+    map.fitBounds(L.latLngBounds(pts), {padding:[24,24]});
+  }catch(e){
+    console.log("draw stable route", e);
+  }
+}
+
+async function persistStableRouteV1536(t, metrics){
+  if(!t || !firebaseReady()) return;
+  try{
+    if(t.route && lastRouteCoordsV1536){
+      t.route.origenLat = lastRouteCoordsV1536.origen.lat;
+      t.route.origenLng = lastRouteCoordsV1536.origen.lng;
+      t.route.destinoLat = lastRouteCoordsV1536.destino.lat;
+      t.route.destinoLng = lastRouteCoordsV1536.destino.lng;
+    }
+    t.routeMetrics = metrics || lastRouteMetricsV1536 || t.routeMetrics || {};
+    save(LS.transit, t);
+    const id = t.id || t.docId;
+    if(id){
+      await db.collection("transitos").doc(String(id)).set({
+        route:t.route || {},
+        routeMetrics:t.routeMetrics,
+        actualizadoEn:now()
+      }, {merge:true});
+    }
+  }catch(e){
+    console.log("persist stable route", e);
+  }
+}
+
+async function refreshStableTrackingV1536(){
+  const t = transit();
+  if(!t) return;
+
+  // Si V1535 puede completar coordenadas desde Firebase, ejecutarlo primero.
+  try{
+    if(typeof ensureRouteCoordsV1535 === "function"){
+      await ensureRouteCoordsV1535(t);
+    }
+  }catch(e){}
+
+  const t2 = transit() || t;
+  const metrics = computeStableMetricsV1536(t2);
+
+  if(metrics){
+    updateKpisStableV1536(metrics);
+    drawStableRouteV1536(t2);
+    persistStableRouteV1536(t2, metrics);
+  }else if(lastRouteMetricsV1536){
+    updateKpisStableV1536(lastRouteMetricsV1536);
+    drawStableRouteV1536(t2);
+  }
+}
+
+// Despues de cada render de tracking, recalcular varias veces para pisar actualizaciones GPS que resetean a cero.
+const _renderTracking_v1536 = typeof renderTracking === "function" ? renderTracking : null;
+if(_renderTracking_v1536){
+  renderTracking = function(){
+    const r = _renderTracking_v1536.apply(this, arguments);
+    setTimeout(refreshStableTrackingV1536, 500);
+    setTimeout(refreshStableTrackingV1536, 1500);
+    setTimeout(refreshStableTrackingV1536, 3000);
+    return r;
+  };
+}
+
+const _show_v1536_tracking = show;
+show = function(id){
+  _show_v1536_tracking(id);
+  if(id === "tracking"){
+    setTimeout(refreshStableTrackingV1536, 500);
+    setTimeout(refreshStableTrackingV1536, 1500);
+    setTimeout(refreshStableTrackingV1536, 3000);
+  }
+};
+
+// Interceptar botones de envio/actualizacion para recalcular despues de GPS.
+document.addEventListener("click", function(ev){
+  const txt = String((ev.target && ev.target.textContent) || "");
+  if(/Enviar actualización|Enviar actualizacion|actualización|actualizacion/i.test(txt)){
+    setTimeout(refreshStableTrackingV1536, 800);
+    setTimeout(refreshStableTrackingV1536, 2000);
+    setTimeout(refreshStableTrackingV1536, 4000);
+  }
+}, true);
+
+// Watchdog solo cuando se esta en Tracking para evitar que los valores vuelvan a 0.
+setInterval(function(){
+  const tr = document.getElementById("tracking");
+  if(tr && !tr.classList.contains("hidden")){
+    refreshStableTrackingV1536();
+  }
+}, 5000);
