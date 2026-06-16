@@ -1,6 +1,6 @@
 
 
-/* ===== V1.5.38 - Exponer mapas Leaflet ===== */
+/* ===== V1.5.40 - Exponer mapas Leaflet ===== */
 window.__trackingMapsV1537 = window.__trackingMapsV1537 || [];
 if(typeof L !== "undefined" && L.map && !L.__eltaPatchedV1537){
   L.__eltaPatchedV1537 = true;
@@ -505,7 +505,7 @@ function getGps(){
 
 
 
-/* ===== V1.5.38 - Guardar Cliente Origen Destino en tránsito ===== */
+/* ===== V1.5.40 - Guardar Cliente Origen Destino en tránsito ===== */
 function selectedTextFromSelectV1533(sel){
   if(!sel) return "";
   const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
@@ -644,7 +644,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.38 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.40 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -4163,7 +4163,7 @@ try{
 
 
 
-/* ===== v1.5.38 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.40 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4441,7 +4441,7 @@ try{
 
 
 
-/* ===== v1.5.38 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.40 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4803,7 +4803,7 @@ try{
 
 
 
-/* ===== v1.5.38 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.40 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5127,7 +5127,7 @@ try{
 
 
 
-/* ===== v1.5.38 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.40 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5519,7 +5519,7 @@ try{
 
 
 
-/* ===== v1.5.38 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.40 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5884,7 +5884,7 @@ try{
 
 
 
-/* ===== v1.5.38 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.40 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5915,7 +5915,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.38 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.40 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6034,7 +6034,7 @@ try{
 
 
 
-/* ===== v1.5.38 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.40 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6214,7 +6214,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.38 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.40 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6253,7 +6253,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.38 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.40 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6371,7 +6371,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.38 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.40 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6641,7 +6641,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.40 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6772,7 +6772,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.38 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.40 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7023,7 +7023,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.40 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7056,7 +7056,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.38 GPS ZARATE FIX ===== */
+/* ===== v1.5.40 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7117,7 +7117,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.38 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.40 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7556,7 +7556,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.40 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7851,7 +7851,7 @@ try{
 
 
 
-/* ===== v1.5.38 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.40 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7878,7 +7878,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.38 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.40 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7931,7 +7931,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.40 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7990,7 +7990,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.40 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8036,7 +8036,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.38 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.40 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8247,7 +8247,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.38 - Check List Firebase ===== */
+/* ===== V1.5.40 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8449,7 +8449,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.38 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.40 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8539,7 +8539,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.38 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.40 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8560,7 +8560,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.38 - Clientes desde Firebase ===== */
+/* ===== V1.5.40 - Clientes desde Firebase ===== */
 let clientesFirebaseV1531 = [];
 
 async function cargarClientesDesdeFirebaseV1531(){
@@ -8655,7 +8655,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshClientesFireb
 setTimeout(refreshClientesFirebaseV1531,1200);
 
 
-/* ===== V1.5.38 - Destinos desde Firebase ===== */
+/* ===== V1.5.40 - Destinos desde Firebase ===== */
 let destinosFirebaseV1532 = [];
 let origenesFirebaseV1532 = [];
 
@@ -8788,7 +8788,7 @@ selectedRoute = function(){
 };
 
 
-/* ===== V1.5.38 - Tracking ruta origen destino ===== */
+/* ===== V1.5.40 - Tracking ruta origen destino ===== */
 function parseCoordsV1534(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -8973,7 +8973,7 @@ function drawTrackingRouteV1534(t){
 }
 
 
-/* ===== V1.5.38 - Tracking metricas directas ===== */
+/* ===== V1.5.40 - Tracking metricas directas ===== */
 function parseCoordAnyV1535(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -9191,7 +9191,7 @@ if(_iniciarTransito_v1535){
 }
 
 
-/* ===== V1.5.38 - Tracking estable sin reset ===== */
+/* ===== V1.5.40 - Tracking estable sin reset ===== */
 let lastRouteMetricsV1536 = null;
 let lastRouteCoordsV1536 = null;
 
@@ -9429,7 +9429,7 @@ setInterval(function(){
 }, 5000);
 
 
-/* ===== V1.5.38 - Dibujar ruta Tracking ===== */
+/* ===== V1.5.40 - Dibujar ruta Tracking ===== */
 function parseCoordV1537(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -9626,7 +9626,7 @@ setInterval(function(){
 }, 4000);
 
 
-/* ===== V1.5.38 - Ruta real camion por caminos OSRM ===== */
+/* ===== V1.5.40 - Ruta real camion por caminos OSRM ===== */
 let routeRealCacheV1538 = null;
 
 function coordV1538(v){

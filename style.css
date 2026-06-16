@@ -2028,3 +2028,6 @@ nav.tabs #btn-checklist:disabled,
 .leaflet-overlay-pane svg path[stroke="#16a34a"]{
   stroke:#2563eb !important;
 }
+
+/* ===== V1.5.40 - limpieza ruta ===== */
+#eltaRouteSvgV1537{display:none!important}
