@@ -2011,3 +2011,14 @@ nav.tabs #btn-checklist:disabled,
   opacity:.42 !important;
   filter:grayscale(.7) !important;
 }
+
+
+/* ===== V1.5.37 - Ruta overlay tracking ===== */
+#eltaRouteSvgV1537{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  pointer-events:none !important;
+  z-index:650 !important;
+}

@@ -1,3 +1,21 @@
+
+
+/* ===== V1.5.37 - Exponer mapas Leaflet ===== */
+window.__trackingMapsV1537 = window.__trackingMapsV1537 || [];
+if(typeof L !== "undefined" && L.map && !L.__eltaPatchedV1537){
+  L.__eltaPatchedV1537 = true;
+  const __originalLMapV1537 = L.map;
+  L.map = function(){
+    const m = __originalLMapV1537.apply(this, arguments);
+    try{
+      window.__trackingMapsV1537.push(m);
+      window.trackingMap = m;
+      window.map = m;
+    }catch(e){}
+    return m;
+  };
+}
+
 function nativeShareMessage(msg){
   const text=encodeURIComponent(String(msg||""));
   try{
@@ -487,7 +505,7 @@ function getGps(){
 
 
 
-/* ===== V1.5.36 - Guardar Cliente Origen Destino en tránsito ===== */
+/* ===== V1.5.37 - Guardar Cliente Origen Destino en tránsito ===== */
 function selectedTextFromSelectV1533(sel){
   if(!sel) return "";
   const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
@@ -626,7 +644,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.36 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.37 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -4145,7 +4163,7 @@ try{
 
 
 
-/* ===== v1.5.36 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.37 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4423,7 +4441,7 @@ try{
 
 
 
-/* ===== v1.5.36 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.37 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4785,7 +4803,7 @@ try{
 
 
 
-/* ===== v1.5.36 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.37 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5109,7 +5127,7 @@ try{
 
 
 
-/* ===== v1.5.36 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.37 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5501,7 +5519,7 @@ try{
 
 
 
-/* ===== v1.5.36 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.37 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5866,7 +5884,7 @@ try{
 
 
 
-/* ===== v1.5.36 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.37 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5897,7 +5915,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.36 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.37 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6016,7 +6034,7 @@ try{
 
 
 
-/* ===== v1.5.36 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.37 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6196,7 +6214,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.36 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.37 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6235,7 +6253,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.36 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.37 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6353,7 +6371,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.36 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.37 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6623,7 +6641,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.37 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6754,7 +6772,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.36 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.37 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7005,7 +7023,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.37 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7038,7 +7056,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.36 GPS ZARATE FIX ===== */
+/* ===== v1.5.37 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7099,7 +7117,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.36 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.37 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7538,7 +7556,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.37 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7833,7 +7851,7 @@ try{
 
 
 
-/* ===== v1.5.36 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.37 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7860,7 +7878,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.36 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.37 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7913,7 +7931,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.37 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7972,7 +7990,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.37 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8018,7 +8036,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.36 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.37 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8229,7 +8247,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.36 - Check List Firebase ===== */
+/* ===== V1.5.37 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8431,7 +8449,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.36 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.37 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8521,7 +8539,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.36 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.37 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8542,7 +8560,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.36 - Clientes desde Firebase ===== */
+/* ===== V1.5.37 - Clientes desde Firebase ===== */
 let clientesFirebaseV1531 = [];
 
 async function cargarClientesDesdeFirebaseV1531(){
@@ -8637,7 +8655,7 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshClientesFireb
 setTimeout(refreshClientesFirebaseV1531,1200);
 
 
-/* ===== V1.5.36 - Destinos desde Firebase ===== */
+/* ===== V1.5.37 - Destinos desde Firebase ===== */
 let destinosFirebaseV1532 = [];
 let origenesFirebaseV1532 = [];
 
@@ -8770,7 +8788,7 @@ selectedRoute = function(){
 };
 
 
-/* ===== V1.5.36 - Tracking ruta origen destino ===== */
+/* ===== V1.5.37 - Tracking ruta origen destino ===== */
 function parseCoordsV1534(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -8955,7 +8973,7 @@ function drawTrackingRouteV1534(t){
 }
 
 
-/* ===== V1.5.36 - Tracking metricas directas ===== */
+/* ===== V1.5.37 - Tracking metricas directas ===== */
 function parseCoordAnyV1535(v){
   if(!v) return null;
   if(typeof v === "object"){
@@ -9173,7 +9191,7 @@ if(_iniciarTransito_v1535){
 }
 
 
-/* ===== V1.5.36 - Tracking estable sin reset ===== */
+/* ===== V1.5.37 - Tracking estable sin reset ===== */
 let lastRouteMetricsV1536 = null;
 let lastRouteCoordsV1536 = null;
 
@@ -9409,3 +9427,200 @@ setInterval(function(){
     refreshStableTrackingV1536();
   }
 }, 5000);
+
+
+/* ===== V1.5.37 - Dibujar ruta Tracking ===== */
+function parseCoordV1537(v){
+  if(!v) return null;
+  if(typeof v === "object"){
+    const lat = Number(v.lat ?? v.latitude);
+    const lng = Number(v.lng ?? v.lon ?? v.longitude);
+    if(Number.isFinite(lat) && Number.isFinite(lng)) return {lat,lng};
+  }
+  const nums = String(v).match(/-?\d+(?:\.\d+)?/g);
+  if(nums && nums.length >= 2){
+    const lat = Number(nums[0]);
+    const lng = Number(nums[1]);
+    if(Number.isFinite(lat) && Number.isFinite(lng)) return {lat,lng};
+  }
+  return null;
+}
+
+function trackingCoordsV1537(){
+  const t = transit();
+  if(!t || !t.route) return null;
+  const r = t.route;
+  const origen = parseCoordV1537({lat:r.origenLat, lng:r.origenLng}) || parseCoordV1537(r.origenCoords);
+  const destino = parseCoordV1537({lat:r.destinoLat, lng:r.destinoLng}) || parseCoordV1537(r.destinoCoords);
+  const gps = parseCoordV1537(t.last) || parseCoordV1537(t.gps) || parseCoordV1537(t.start);
+  if(!origen || !destino) return null;
+  return {t, origen, destino, gps};
+}
+
+function getLeafletMapsV1537(){
+  const maps = [];
+  if(window.map) maps.push(window.map);
+  if(window.trackingMap) maps.push(window.trackingMap);
+  if(window.leafletMap) maps.push(window.leafletMap);
+  if(window.trackMap) maps.push(window.trackMap);
+  if(Array.isArray(window.__trackingMapsV1537)) maps.push(...window.__trackingMapsV1537);
+  return [...new Set(maps)].filter(m => m && typeof m.latLngToLayerPoint === "function");
+}
+
+function clearRouteLayersV1537(){
+  const maps = getLeafletMapsV1537();
+  maps.forEach(m=>{
+    if(m.__eltaRouteLayerV1537){
+      try{ m.removeLayer(m.__eltaRouteLayerV1537); }catch(e){}
+      m.__eltaRouteLayerV1537 = null;
+    }
+  });
+}
+
+function drawRouteLeafletV1537(){
+  const data = trackingCoordsV1537();
+  if(!data || typeof L === "undefined") return false;
+  const maps = getLeafletMapsV1537();
+  if(!maps.length) return false;
+
+  maps.forEach(map=>{
+    try{
+      if(map.__eltaRouteLayerV1537){
+        map.removeLayer(map.__eltaRouteLayerV1537);
+      }
+      const g = L.layerGroup();
+      const o = [data.origen.lat, data.origen.lng];
+      const d = [data.destino.lat, data.destino.lng];
+
+      L.polyline([o,d], {color:"#16a34a", weight:6, opacity:.95}).addTo(g);
+      L.circleMarker(o, {radius:8, color:"#22c55e", fillColor:"#22c55e", fillOpacity:1, weight:2}).addTo(g);
+      L.circleMarker(d, {radius:8, color:"#ef4444", fillColor:"#ef4444", fillOpacity:1, weight:2}).addTo(g);
+
+      if(data.gps){
+        L.circleMarker([data.gps.lat,data.gps.lng], {radius:8, color:"#3b82f6", fillColor:"#3b82f6", fillOpacity:1, weight:2}).addTo(g);
+      }
+
+      g.addTo(map);
+      map.__eltaRouteLayerV1537 = g;
+
+      const pts = [o,d];
+      if(data.gps) pts.push([data.gps.lat,data.gps.lng]);
+      map.fitBounds(L.latLngBounds(pts), {padding:[24,24]});
+    }catch(e){
+      console.log("Leaflet ruta v1537", e);
+    }
+  });
+  return true;
+}
+
+/* Fallback visual: si no se consigue el objeto Leaflet, dibuja una linea SVG dentro del contenedor del mapa */
+function drawRouteSvgFallbackV1537(){
+  const data = trackingCoordsV1537();
+  if(!data) return false;
+
+  const mapEl = document.querySelector("#map,#trackingMap,.leaflet-container");
+  if(!mapEl) return false;
+
+  if(getComputedStyle(mapEl).position === "static"){
+    mapEl.style.position = "relative";
+  }
+
+  let svg = mapEl.querySelector("#eltaRouteSvgV1537");
+  if(!svg){
+    svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("id","eltaRouteSvgV1537");
+    svg.style.position = "absolute";
+    svg.style.left = "0";
+    svg.style.top = "0";
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    svg.style.pointerEvents = "none";
+    svg.style.zIndex = "650";
+    mapEl.appendChild(svg);
+  }
+
+  const w = mapEl.clientWidth || 300;
+  const h = mapEl.clientHeight || 300;
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.innerHTML = "";
+
+  // Proyección simple relativa al bounding box origen/destino/GPS
+  const pts = [data.origen, data.destino];
+  if(data.gps) pts.push(data.gps);
+  const minLat = Math.min(...pts.map(p=>p.lat));
+  const maxLat = Math.max(...pts.map(p=>p.lat));
+  const minLng = Math.min(...pts.map(p=>p.lng));
+  const maxLng = Math.max(...pts.map(p=>p.lng));
+  const pad = 34;
+  const dx = Math.max(0.000001, maxLng-minLng);
+  const dy = Math.max(0.000001, maxLat-minLat);
+
+  function xy(p){
+    const x = pad + ((p.lng-minLng)/dx)*(w-pad*2);
+    const y = pad + ((maxLat-p.lat)/dy)*(h-pad*2);
+    return {x,y};
+  }
+
+  const o = xy(data.origen);
+  const d = xy(data.destino);
+  const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+  line.setAttribute("x1",o.x); line.setAttribute("y1",o.y);
+  line.setAttribute("x2",d.x); line.setAttribute("y2",d.y);
+  line.setAttribute("stroke","#16a34a");
+  line.setAttribute("stroke-width","6");
+  line.setAttribute("stroke-linecap","round");
+  svg.appendChild(line);
+
+  function dot(p,color){
+    const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",p.x); c.setAttribute("cy",p.y); c.setAttribute("r","8");
+    c.setAttribute("fill",color); c.setAttribute("stroke","#fff"); c.setAttribute("stroke-width","3");
+    svg.appendChild(c);
+  }
+
+  dot(o,"#22c55e");
+  dot(d,"#ef4444");
+  if(data.gps) dot(xy(data.gps),"#3b82f6");
+
+  return true;
+}
+
+function drawTrackingRouteNowV1537(){
+  const ok = drawRouteLeafletV1537();
+  if(!ok) drawRouteSvgFallbackV1537();
+}
+
+function scheduleDrawTrackingRouteV1537(){
+  setTimeout(drawTrackingRouteNowV1537, 400);
+  setTimeout(drawTrackingRouteNowV1537, 1200);
+  setTimeout(drawTrackingRouteNowV1537, 2500);
+}
+
+const _renderTracking_v1537 = typeof renderTracking === "function" ? renderTracking : null;
+if(_renderTracking_v1537){
+  renderTracking = function(){
+    const r = _renderTracking_v1537.apply(this, arguments);
+    scheduleDrawTrackingRouteV1537();
+    return r;
+  };
+}
+
+const _show_v1537_route = show;
+show = function(id){
+  _show_v1537_route(id);
+  if(id === "tracking") scheduleDrawTrackingRouteV1537();
+};
+
+document.addEventListener("click", function(ev){
+  const txt = String((ev.target && ev.target.textContent) || "");
+  if(/Tracking|Enviar actualización|Enviar actualizacion|actualización|actualizacion/i.test(txt)){
+    scheduleDrawTrackingRouteV1537();
+  }
+}, true);
+
+setInterval(function(){
+  const tr = document.getElementById("tracking");
+  if(tr && !tr.classList.contains("hidden")){
+    drawTrackingRouteNowV1537();
+  }
+}, 4000);
