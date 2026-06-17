@@ -2037,3 +2037,11 @@ nav.tabs #btn-checklist:disabled,
 
 /* ===== V1.5.42 - tracking sin overlays viejos ===== */
 #eltaRouteSvgV1537{display:none!important}
+
+/* ===== V1.5.44 - orden Inicio/Fin ===== */
+.row.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  align-items:end;
+}
