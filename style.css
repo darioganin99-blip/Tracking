@@ -2065,3 +2065,15 @@ nav.tabs #btn-checklist:disabled,
 .inicioFieldV1546 label{
   display:block!important;
 }
+
+/* ===== V1.5.47 - Inicio/Fin orden real ===== */
+.inicioRowLoteEmbarqueV1547{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:14px!important;
+  align-items:end!important;
+  width:100%!important;
+}
+.inicioCardV1547 label{
+  display:block!important;
+}
