@@ -2077,3 +2077,8 @@ nav.tabs #btn-checklist:disabled,
 .inicioCardV1547 label{
   display:block!important;
 }
+
+/* ===== V1.5.56 - placeholders visibles en selects ===== */
+select option[value=""]{
+  color:#6b7280;
+}
