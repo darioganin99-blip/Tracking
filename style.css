@@ -2050,3 +2050,18 @@ nav.tabs #btn-checklist:disabled,
 .rowTwoV1545{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
 .fieldWrapV1545{width:100%;}
 .fieldWrapV1545 label{display:block;}
+
+/* ===== V1.5.46 - orden visible Inicio/Fin ===== */
+.inicioRowLoteEmbarqueV1546{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:14px!important;
+  align-items:end!important;
+  width:100%!important;
+}
+.inicioFieldV1546{
+  width:100%!important;
+}
+.inicioFieldV1546 label{
+  display:block!important;
+}
