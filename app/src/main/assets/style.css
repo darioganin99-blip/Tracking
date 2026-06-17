@@ -2083,3 +2083,34 @@ nav.tabs #btn-checklist:disabled,
 .embarqueItem{padding:14px;border-radius:16px;margin:10px 0;background:#f8fafc;border:1px solid #e5e7eb;font-size:18px;}
 .embTop{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;}
 .embTop span{font-weight:800;color:#087f3f;}
+
+/* ===== V1.5.60 ===== */
+.e60EmbCard{
+  margin-top:0;
+}
+.emptyBox{
+  padding:18px;
+  color:#6b7280;
+  font-weight:800;
+}
+.embarqueItem{
+  padding:14px;
+  border-radius:16px;
+  margin:10px 0;
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  font-size:18px;
+}
+.embTop{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.embTop span{
+  font-weight:800;
+  color:#087f3f;
+}
+select option[value=""]{
+  color:#6b7280;
+}
