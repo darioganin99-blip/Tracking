@@ -2045,3 +2045,8 @@ nav.tabs #btn-checklist:disabled,
   gap:14px;
   align-items:end;
 }
+
+/* ===== V1.5.45 - orden fijo Inicio/Fin ===== */
+.rowTwoV1545{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
+.fieldWrapV1545{width:100%;}
+.fieldWrapV1545 label{display:block;}
