@@ -2011,28 +2011,3 @@ nav.tabs #btn-checklist:disabled,
   opacity:.42 !important;
   filter:grayscale(.7) !important;
 }
-
-/* ===== V1.5.61 ===== */
-.e61EmbCard{ margin-top:0; }
-.embarqueItem{
-  padding:14px;
-  border-radius:16px;
-  margin:10px 0;
-  background:#f8fafc;
-  border:1px solid #e5e7eb;
-  font-size:18px;
-}
-.embarqueItem.open{
-  border-color:#16a34a;
-  background:#ecfdf5;
-}
-.embTop{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:8px;
-}
-.embTop span{
-  font-weight:800;
-  color:#087f3f;
-}
