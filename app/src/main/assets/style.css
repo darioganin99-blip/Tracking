@@ -2029,8 +2029,3 @@ nav.tabs #btn-checklist:disabled,
   min-height: auto;
 }
 
-/* ===== V1.5.65 ===== */
-#tracking svg path.leaflet-interactive{
-  display:none !important;
-  stroke:transparent !important;
-}
