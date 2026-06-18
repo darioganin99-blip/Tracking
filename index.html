@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.60</div></header>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.30</div></header>
   <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
   <div id="cloudStatus" class="cloudStatus">Desconectado</div>
   <nav class="tabs">
@@ -22,37 +22,26 @@
     <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
   </nav>
   <main>
-    <section id="inicio" class="view"><div class="card inicioCardV1547">
+    <section id="inicio" class="view"><div class="card">
 
-      <label>Flota - Chofer</label>
-      <input id="inicioUser" readonly placeholder="Cargar usuario">
+      <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
+      <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
+      <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
+      <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
 
-      <div class="inicioRowLoteEmbarqueV1547">
+      <div class="loteEmbarqueStack">
         <div>
           <label>Lote / Carga</label>
           <input id="lote" placeholder="Ej: 1234">
         </div>
         <div>
           <label>Embarque</label>
-          <input id="embarqueInput" placeholder="Ej: 001" oninput="validarEmbarqueInicioV1547()" onchange="validarEmbarqueInicioV1547()">
+          <input id="embarqueInput" placeholder="Ej: 001">
         </div>
       </div>
 
-      <label>Cliente</label>
-      <select id="clienteSelect" onchange="validarEmbarqueInicioV1547()"></select>
-
-      <label>Origen</label>
-      <select id="origenSelect" onchange="validarEmbarqueInicioV1547()"></select>
-
-      <label>Destino</label>
-      <select id="destinoSelect" onchange="validarEmbarqueInicioV1547()"></select>
-
-      <div id="rutaInfo" class="infoBox compactRouteInfo"><b>Distancia:</b> -<br><b>Destino:</b> -</div>
-
-      <div class="inicioActions">
-        <button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button>
-        <button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button>
-      </div>
+      <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
+      <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>
     </div></section>
     <section id="tracking" class="view hidden"><div class="card trackingCard">
       <div id="realMap" class="realMap"></div>
