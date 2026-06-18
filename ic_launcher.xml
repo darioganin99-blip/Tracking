@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Track - Seguimiento GPS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar"><div class="brand">ELTA</div><div class="version">Versión 1.5.71</div></header>
+  <section class="hero"><img src="elta-logo.png" class="logo" alt="ELTA"><h1>Track - Seguimiento GPS</h1></section>
+  <div id="cloudStatus" class="cloudStatus">Desconectado</div>
+  <nav class="tabs">
+    <button id="btn-usuario" onclick="show('usuario')">👤 Usuario</button>
+    <button id="btn-inicio" onclick="show('inicio')">🚚 Inicio / Fin</button>
+    <button id="btn-tracking" onclick="show('tracking')">🛰️ Tracking</button>
+    <button id="btn-embarque" onclick="show('embarque')">📦 Embarques</button>
+    <button id="btn-alertas" onclick="show('alertas')">⚠️ Alertas</button>
+    <button id="btn-clima" onclick="show('clima')">🌦️ Clima</button>
+    <button id="btn-checklist" class="tab-checklist-fix" onclick="show('checklist')">✅ Check List</button>
+    <button id="btn-ultimo" onclick="show('ultimo')">📋 Último</button>
+  </nav>
+  <main>
+    <section id="inicio" class="view"><div class="card">
+
+      <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
+
+      <div class="loteEmbarqueStack">
+        <div>
+          <label>Lote / Carga</label>
+          <input id="lote" placeholder="Ej: 1234">
+        </div>
+        <div>
+          <label>Embarque</label>
+          <input id="embarqueInput" placeholder="Ej: 001">
+        </div>
+      </div>
+
+      <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
+      <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
+      <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
+
+      <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
+      <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>
+    </div></section>
+    <section id="tracking" class="view hidden"><div class="card trackingCard">
+      <div id="realMap" class="realMap"></div>
+
+      <div class="mapLegend compactLegend">
+        <span><b class="dot origin"></b>Origen</span>
+        <span><b class="dot current"></b>GPS</span>
+        <span><b class="dot dest"></b>Destino</span>
+        <span><b class="dot alert"></b>Alertas</span>
+      </div>
+
+      <div id="trackingBox" class="trackingStats compactStats"></div>
+
+      <div class="trackingActions bottomActions">
+        <button class="btn compactBtn singleActionBtn" onclick="enviarActualizacion()">📤 Enviar actualización</button>
+      </div>
+    </div></section>
+    <section id="alertas" class="view hidden"><div class="card">
+      
+      <label>Tipo de alerta</label><select id="alertType"><option>Control de carga</option><option>Ingreso Aduana USP.</option><option>Salida Aduana USP.</option><option>Ingreso Aduana Los Andes</option><option>Salida Aduana Los Andes</option><option>Liberación Aduana</option><option>Accidente</option><option>Paso Cortado</option><option>Niebla</option><option>Rotura</option><option>Otros</option></select>
+      <button class="btn warning" onclick="registrarAlerta()">Registrar alerta con GPS</button>
+      <div id="alertList" class="summary"></div>
+    </div></section>
+    <section id="clima" class="view hidden"><div class="card climaCard climaCardNew">
+      <div id="weatherNow" class="weatherCardNew">
+        <div class="weatherIconBig">🌤️</div>
+        <div class="weatherMainNew">
+          <div class="weatherTempNew">--°</div>
+          <div class="weatherDescNew">Presioná actualizar</div>
+          <div id="weatherLocation" class="weatherLocNew">Según posición GPS</div>
+        </div>
+      </div>
+      <div class="forecastCardNew">
+        
+        <div id="weatherForecast" class="forecastListNew"></div>
+      </div>
+      <div class="passCardNew">
+        <div class="passTitleNew">🚛 Pasos Fronterizos</div>
+        <div id="passStatus" class="passStatusNew">Estado pendiente de actualizar.</div>
+      </div>
+      <div class="passAlertCardNew">
+        
+        <div id="passAlerts" class="passAlertsNew">Sin datos actualizados.</div>
+      </div>
+    </div></section>
+
+    <section id="usuario" class="view hidden"><div class="card">
+      
+      <label>Número de Flota</label><input id="userFleet" placeholder="Ej: 105">
+      <label>PASS</label><div class="passRow"><input id="userPass" type="password" placeholder="PASS flota"><button id="btnTogglePass" type="button" onclick="togglePass()">👁️</button></div>
+      <label>Nombre de chofer</label><input id="userDriver" readonly placeholder="Ej: Ganin">
+      <label>Teléfono WhatsApp</label><textarea id="userPhones" placeholder="Ej: 54911..."></textarea>
+      <button class="btn" onclick="saveUser()">Validar Flota</button>
+<button id="btnCerrarApp" class="btn btnCerrarApp" type="button" onclick="cerrarApp()">Cerrar App</button><div id="userMsg"></div>
+    </div></section>
+    <section id="embarque" class="view hidden"><div class="card embarqueCard">
+      <div class="embarqueHeader"><b>Número Embarque</b><span id="embarqueFiltro">Cargando...</span></div>
+      <div id="embarqueDebug" class="embarqueDebug hiddenDebug"></div>
+      <div id="embarqueList" class="embarqueList"><div class="emptyBox">Ingrese en Acceso y toque Actualizar embarques.</div></div>
+    </div></section>
+
+
+    <section id="checklist" class="view hidden">
+      <div class="card checklistCard">
+        <h2 class="checklistTitle">📋 Check List</h2>
+        <div class="checklistSub">Tipo de Check List</div>
+<label>Tipo</label>
+        <select id="checklistTipo" onchange="cargarItemsChecklist()">
+          <option value="">Cargando...</option>
+        </select>
+
+        <div id="checklistItemsBox" class="checklistItemsBox">
+          <div class="checklistLoading">Seleccione un tipo para cargar los ítems.</div>
+        </div>
+
+        <label>Observaciones generales</label>
+        <textarea id="checklistObsGeneral" placeholder="Observaciones generales si corresponde..."></textarea>
+
+        <button class="btn checklistSaveBtn" id="checklistGuardarBtn" onclick="guardarCheckListRuta()">Guardar Check List</button>
+        <div id="checklistMsg" class="summary checklistMsg"></div>
+      </div>
+    </section>
+
+
+  <section id="ultimo" class="view hidden"><div class="card">
+      <div id="lastBox" class="summary"></div><button class="btn" onclick="reenviarUltimo()">Reenviar info</button>
+    </div></section>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+</body></html>
