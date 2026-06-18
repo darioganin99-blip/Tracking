@@ -2011,3 +2011,20 @@ nav.tabs #btn-checklist:disabled,
   opacity:.42 !important;
   filter:grayscale(.7) !important;
 }
+
+/* ===== V1.5.63 ===== */
+#trackingBox{
+  display:none !important;
+}
+#map.trackingMapLarge,
+#trackingMap.trackingMapLarge,
+#leafletMap.trackingMapLarge{
+  height: 620px !important;
+  min-height: 620px !important;
+}
+#tracking .card{
+  padding-bottom: 18px;
+}
+#rutaInfo{
+  min-height: auto;
+}
