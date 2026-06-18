@@ -545,7 +545,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.66 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.67 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -835,6 +835,7 @@ function ensureRoadRouteLayer(origin,dest){
 
 
 
+
 function renderTrackingMap(t){
   const mapDiv = document.getElementById("map");
   if(!mapDiv) return;
@@ -881,13 +882,9 @@ function renderTrackingMap(t){
     }).addTo(trackingMap).bindTooltip(label || "");
   }
 
-  // Origen verde
   addPoint(r.origen_lat ?? r.origenLat, r.origen_lng ?? r.origenLng, "#22c55e", "Origen");
-
-  // Destino rojo
   addPoint(r.destino_lat ?? r.destinoLat, r.destino_lng ?? r.destinoLng, "#ef4444", "Destino");
 
-  // GPS azul
   let gps = null;
   try{
     if(t.updates && t.updates.length) gps = t.updates[t.updates.length - 1].gps;
@@ -897,7 +894,6 @@ function renderTrackingMap(t){
     addPoint(gps.lat ?? gps.latitude, gps.lng ?? gps.lon ?? gps.longitude, "#3b82f6", "GPS");
   }
 
-  // Alertas naranja
   try{
     (t.alerts || []).forEach(a=>{
       const g = a.gps || a;
@@ -905,7 +901,6 @@ function renderTrackingMap(t){
     });
   }catch(e){}
 
-  // No dibujar L.polyline: ruta azul eliminada.
   if(points.length){
     try{
       trackingMap.fitBounds(points, {padding:[35,35], maxZoom:15});
@@ -918,6 +913,7 @@ function renderTrackingMap(t){
 
   setTimeout(()=>trackingMap.invalidateSize(), 200);
 }
+
 
 
 
@@ -4083,7 +4079,7 @@ try{
 
 
 
-/* ===== v1.5.66 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.67 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4361,7 +4357,7 @@ try{
 
 
 
-/* ===== v1.5.66 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.67 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4723,7 +4719,7 @@ try{
 
 
 
-/* ===== v1.5.66 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.67 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5047,7 +5043,7 @@ try{
 
 
 
-/* ===== v1.5.66 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.67 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5439,7 +5435,7 @@ try{
 
 
 
-/* ===== v1.5.66 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.67 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5804,7 +5800,7 @@ try{
 
 
 
-/* ===== v1.5.66 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.67 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5835,7 +5831,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.66 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.67 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -5954,7 +5950,7 @@ try{
 
 
 
-/* ===== v1.5.66 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.67 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6134,7 +6130,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.66 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.67 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6173,7 +6169,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.66 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.67 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6291,7 +6287,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.66 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.67 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6561,7 +6557,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.67 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6692,7 +6688,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.66 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.67 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -6943,7 +6939,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.67 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -6976,7 +6972,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.66 GPS ZARATE FIX ===== */
+/* ===== v1.5.67 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7037,7 +7033,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.66 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.67 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7476,7 +7472,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.67 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7771,7 +7767,7 @@ try{
 
 
 
-/* ===== v1.5.66 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.67 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7798,7 +7794,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.66 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.67 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7851,7 +7847,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.67 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7910,7 +7906,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.67 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -7956,7 +7952,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.66 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.67 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8167,7 +8163,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.66 - Check List Firebase ===== */
+/* ===== V1.5.67 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8370,7 +8366,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.66 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.67 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8460,7 +8456,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.66 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.67 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8481,7 +8477,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.66 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.67 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -8799,9 +8795,9 @@ if(__e61IniciarTransito){
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-  setTimeout(initSelectors, 300);
   const emb = e61("embarqueInput");
   if(emb){
+    emb.addEventListener("focus", ()=>{ if(!window.__e61CombosLoaded){ window.__e61CombosLoaded=true; initSelectors(); } });
     emb.addEventListener("input", e61DebounceValidar);
     emb.addEventListener("change", ()=>e61ValidarEmbarqueInicio());
     emb.addEventListener("blur", ()=>e61ValidarEmbarqueInicio());
@@ -8809,7 +8805,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.66 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.67 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9036,7 +9032,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.66 - UI sin distancias/tarjetas =====
+/* ===== V1.5.67 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9201,7 +9197,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.66 - Tracking sin línea azul de ruta =====
+/* ===== V1.5.67 - Tracking sin línea azul de ruta =====
    No dibuja ruta/recorrido en línea azul.
    Mantiene mapa, GPS, Origen, Destino y Alertas.
 */
@@ -9305,7 +9301,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.66 - limpieza final sin línea azul ===== */
+/* ===== V1.5.67 - limpieza final sin línea azul ===== */
 function e65RemoveRoutePaths(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9344,7 +9340,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.66 - Tracking sin ruta azul, con puntos visibles =====
+/* ===== V1.5.67 - Tracking sin ruta azul, con puntos visibles =====
    Mantiene GPS azul, Origen verde, Destino rojo y Alertas naranja.
    Sólo elimina polilíneas si algún código viejo las vuelve a crear.
 */
@@ -9383,3 +9379,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
   }, 1000);
 });
+
+
+/* ===== V1.5.67 - optimización apertura =====
+   Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
+*/
+const __e67Show = typeof show === "function" ? show : null;
+if(__e67Show){
+  show = function(id){
+    const r = __e67Show.apply(this, arguments);
+    if(id === "inicio" && typeof initSelectors === "function" && !window.__e61CombosLoaded){
+      window.__e61CombosLoaded = true;
+      setTimeout(initSelectors, 150);
+    }
+    return r;
+  };
+}
