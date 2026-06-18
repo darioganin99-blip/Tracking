@@ -25,9 +25,6 @@
     <section id="inicio" class="view"><div class="card">
 
       <label>Flota - Chofer</label><input id="inicioUser" readonly placeholder="Cargar usuario">
-      <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
-      <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
-      <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
 
       <div class="loteEmbarqueStack">
         <div>
@@ -39,6 +36,10 @@
           <input id="embarqueInput" placeholder="Ej: 001">
         </div>
       </div>
+
+      <label>Cliente</label><select id="clienteSelect" onchange="onClienteChange()"></select>
+      <label>Origen</label><select id="origenSelect" onchange="onOrigenDestinoChange()"></select>
+      <label>Destino</label><select id="destinoSelect" onchange="onOrigenDestinoChange()"></select>
 
       <div id="rutaInfo" class="infoBox compactRouteInfo"></div>
       <div class="inicioActions"><button class="btn compactBtn" onclick="iniciarTransito()">Iniciar tránsito</button><button class="btn danger compactBtn" onclick="cerrarTransito()">Cierre tránsito</button></div>

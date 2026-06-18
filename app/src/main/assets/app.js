@@ -8459,3 +8459,331 @@ show = function(id){
 
 document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530(""));
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
+
+
+/* ===== V1.5.61 - Inicio/Fin: Firebase combos + validar embarque =====
+   Alcance: sólo vista Inicio / Fin.
+   - Lote/Carga y Embarque quedan arriba por HTML.
+   - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
+   - Al validar Embarque, Cliente/Origen/Destino se toman del documento de Firebase collection("embarque").
+   - No modifica vistas Tracking, Embarques, Alertas, Último, Clima ni Check List.
+*/
+let E61_ROUTE_LOCK = null;
+let E61_VALIDATE_TIMER = null;
+
+function e61(id){ return document.getElementById(id); }
+
+function e61Ready(){
+  try{
+    if(typeof tpodInitFirebase === "function") return tpodInitFirebase();
+  }catch(e){}
+  try{
+    if(typeof firebase !== "undefined"){
+      if(typeof FIREBASE_CONFIG !== "undefined" && !firebase.apps.length){
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      db = firebase.firestore();
+      cloudReady = true;
+      return true;
+    }
+  }catch(e){}
+  try{ return typeof firebaseReady === "function" ? firebaseReady() : false; }catch(e){}
+  return false;
+}
+
+function e61Text(v){ return String(v ?? "").trim(); }
+
+function e61NameFromDoc(id,x,type){
+  x = x || {};
+  if(type === "clientes") return e61Text(x.cliente || x.nombre || x.name || x.razon_social || x.razonSocial || id);
+  if(type === "origenes") return e61Text(x.origen || x.nombre || x.name || x.descripcion || id);
+  if(type === "destinos") return e61Text(x.destino || x.nombre || x.name || x.descripcion || id);
+  return e61Text(x.nombre || x.name || id);
+}
+
+function e61CoordObj(x){
+  x = x || {};
+  const raw = x.ubicacion || x.coords || x.coordenadas || x.location || x;
+  if(raw && typeof raw === "object"){
+    const lat = Number(raw.lat ?? raw.latitude);
+    const lng = Number(raw.lng ?? raw.lon ?? raw.longitude);
+    if(Number.isFinite(lat) && Number.isFinite(lng)) return {lat,lng};
+  }
+  return null;
+}
+
+function e61FillSelect(id, rows, placeholder){
+  const sel = e61(id);
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = `<option value="">${escapeHtml(placeholder)}</option>` + rows.map((r,i)=>{
+    return `<option value="${escapeHtml(r.value)}">${escapeHtml(r.text)}</option>`;
+  }).join("");
+  if(current && Array.from(sel.options).some(o=>o.value===current)) sel.value = current;
+}
+
+async function e61LoadCollectionSelect(col, selectId, placeholder, type){
+  if(!e61Ready()) return false;
+  try{
+    const snap = await db.collection(col).get();
+    const rows = [];
+    snap.docs.forEach((d,idx)=>{
+      const x = d.data() || {};
+      const text = e61NameFromDoc(d.id,x,type);
+      if(!text) return;
+      const c = e61CoordObj(x);
+      rows.push({
+        value: "fb:"+col+":"+d.id,
+        text,
+        data: x,
+        lat: c ? c.lat : "",
+        lng: c ? c.lng : ""
+      });
+    });
+    rows.sort((a,b)=>a.text.localeCompare(b.text));
+    e61FillSelect(selectId, rows, placeholder);
+    const sel = e61(selectId);
+    if(sel){
+      rows.forEach(r=>{
+        const opt = Array.from(sel.options).find(o=>o.value===r.value);
+        if(opt){
+          opt.dataset.text = r.text;
+          opt.dataset.lat = r.lat;
+          opt.dataset.lng = r.lng;
+        }
+      });
+    }
+    return true;
+  }catch(e){
+    console.log("No se pudo cargar", col, e);
+    return false;
+  }
+}
+
+async function e61LoadInicioCombosFirebase(){
+  await Promise.all([
+    e61LoadCollectionSelect("clientes","clienteSelect","Ej: seleccione cliente...","clientes"),
+    e61LoadCollectionSelect("origenes","origenSelect","Ej: seleccione origen...","origenes"),
+    e61LoadCollectionSelect("destinos","destinoSelect","Ej: seleccione destino...","destinos")
+  ]);
+}
+
+async function e61BuscarEmbarque(numero){
+  if(!e61Ready()) return null;
+  const emb = e61Text(numero);
+  if(!emb) return null;
+  const col = db.collection("embarque");
+
+  for(const id of [emb, "emb"+emb, "embarque"+emb]){
+    try{
+      const d = await col.doc(id).get();
+      if(d.exists) return {id:d.id, data:d.data() || {}};
+    }catch(e){}
+  }
+
+  for(const field of ["embarque","numero"]){
+    try{
+      const snap = await col.where(field,"==",emb).limit(1).get();
+      if(!snap.empty){
+        const d = snap.docs[0];
+        return {id:d.id, data:d.data() || {}};
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+function e61SetSelectText(id,text){
+  const sel = e61(id);
+  if(!sel || !text) return false;
+  const target = e61Text(text).toLowerCase();
+  for(let i=0;i<sel.options.length;i++){
+    const t = e61Text(sel.options[i].textContent || sel.options[i].innerText || sel.options[i].dataset.text || sel.options[i].value).toLowerCase();
+    if(t === target){
+      sel.selectedIndex = i;
+      return true;
+    }
+  }
+  const opt = document.createElement("option");
+  opt.value = "fb:embarque:"+String(text);
+  opt.textContent = String(text);
+  opt.dataset.text = String(text);
+  sel.appendChild(opt);
+  sel.value = opt.value;
+  return true;
+}
+
+function e61SelectedText(id){
+  const sel = e61(id);
+  if(!sel) return "";
+  const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+  return e61Text((opt && (opt.dataset.text || opt.textContent || opt.innerText)) || sel.value);
+}
+
+function e61SelectedCoord(id){
+  const sel = e61(id);
+  if(!sel) return {};
+  const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+  if(!opt) return {};
+  const lat = Number(opt.dataset.lat || "");
+  const lng = Number(opt.dataset.lng || "");
+  return {
+    lat: Number.isFinite(lat) ? lat : "",
+    lng: Number.isFinite(lng) ? lng : ""
+  };
+}
+
+function e61RouteFromSelects(){
+  const oc = e61SelectedCoord("origenSelect");
+  const dc = e61SelectedCoord("destinoSelect");
+  return {
+    cliente: e61SelectedText("clienteSelect"),
+    origen: e61SelectedText("origenSelect"),
+    origen_lat: oc.lat,
+    origen_lng: oc.lng,
+    origen_pais: "",
+    destino: e61SelectedText("destinoSelect"),
+    destino_lat: dc.lat,
+    destino_lng: dc.lng,
+    destino_pais: ""
+  };
+}
+
+function e61PaintRutaInfo(route){
+  const box = e61("rutaInfo");
+  if(!box) return;
+  let km = 0;
+  try{ km = typeof distanciaRuta === "function" ? distanciaRuta(route) : 0; }catch(e){}
+  box.innerHTML =
+    `<b>Distancia:</b> ${km && Number.isFinite(km) ? km.toFixed(1)+" km" : "-"}<br>`+
+    `<b>Destino:</b> ${escapeHtml(route.destino || "-")}`;
+  if(typeof aplicarColorResumenInicio === "function") aplicarColorResumenInicio();
+}
+
+async function e61ValidarEmbarqueInicio(){
+  const emb = e61("embarqueInput") ? e61("embarqueInput").value.trim() : "";
+  if(!emb){
+    E61_ROUTE_LOCK = null;
+    return null;
+  }
+
+  const found = await e61BuscarEmbarque(emb);
+  if(!found || !found.data || found.data.activo === false){
+    E61_ROUTE_LOCK = null;
+    return null;
+  }
+
+  const x = found.data;
+  const route = {
+    cliente: e61Text(x.cliente || x.cliente_nombre || x.customer || ""),
+    origen: e61Text(x.origen || x.origen_nombre || x.origin || ""),
+    origen_lat: "",
+    origen_lng: "",
+    origen_pais: "",
+    destino: e61Text(x.destino || x.destino_nombre || x.destination || ""),
+    destino_lat: "",
+    destino_lng: "",
+    destino_pais: "",
+    embarque: e61Text(x.embarque || x.numero || emb)
+  };
+
+  e61SetSelectText("clienteSelect", route.cliente);
+  e61SetSelectText("origenSelect", route.origen);
+  e61SetSelectText("destinoSelect", route.destino);
+
+  const oc = e61SelectedCoord("origenSelect");
+  const dc = e61SelectedCoord("destinoSelect");
+  route.origen_lat = oc.lat;
+  route.origen_lng = oc.lng;
+  route.destino_lat = dc.lat;
+  route.destino_lng = dc.lng;
+
+  E61_ROUTE_LOCK = route;
+  e61PaintRutaInfo(route);
+  return route;
+}
+
+function e61DebounceValidar(){
+  clearTimeout(E61_VALIDATE_TIMER);
+  E61_VALIDATE_TIMER = setTimeout(()=>e61ValidarEmbarqueInicio(), 450);
+}
+
+/* Overrides sólo de Inicio/Fin */
+initSelectors = function(){
+  e61LoadInicioCombosFirebase().then(()=>{
+    const t = transit();
+    if(t && !t.closed && t.route){
+      e61SetSelectText("clienteSelect", t.route.cliente);
+      e61SetSelectText("origenSelect", t.route.origen);
+      e61SetSelectText("destinoSelect", t.route.destino);
+    }else{
+      const emb = e61("embarqueInput");
+      if(emb && emb.value.trim()) e61ValidarEmbarqueInicio();
+    }
+  });
+};
+
+onClienteChange = function(){
+  E61_ROUTE_LOCK = null;
+  e61PaintRutaInfo(e61RouteFromSelects());
+};
+
+onOrigenDestinoChange = function(){
+  E61_ROUTE_LOCK = null;
+  e61PaintRutaInfo(e61RouteFromSelects());
+};
+
+selectedRoute = function(){
+  if(E61_ROUTE_LOCK) return {...E61_ROUTE_LOCK};
+  return e61RouteFromSelects();
+};
+
+bloquearFormularioTransito = function(){
+  const t = transit();
+  const bloqueado = !!(t && !t.closed);
+  ["clienteSelect","origenSelect","destinoSelect","lote","embarqueInput"].forEach(id=>{
+    const el = e61(id);
+    if(el) el.disabled = bloqueado;
+  });
+};
+
+const __e61RenderInicio = typeof renderInicio === "function" ? renderInicio : null;
+renderInicio = function(){
+  if(__e61RenderInicio) __e61RenderInicio();
+  const t = transit();
+  if(t && !t.closed && t.route){
+    E61_ROUTE_LOCK = {...t.route};
+    e61SetSelectText("clienteSelect", t.route.cliente);
+    e61SetSelectText("origenSelect", t.route.origen);
+    e61SetSelectText("destinoSelect", t.route.destino);
+    e61PaintRutaInfo(t.route);
+  }
+  bloquearFormularioTransito();
+};
+
+const __e61IniciarTransito = typeof iniciarTransito === "function" ? iniciarTransito : null;
+if(__e61IniciarTransito){
+  iniciarTransito = async function(){
+    const emb = e61("embarqueInput") ? e61("embarqueInput").value.trim() : "";
+    if(!emb){
+      window.alert("Ingresá número de embarque.");
+      return;
+    }
+    const route = await e61ValidarEmbarqueInicio();
+    if(!route){
+      window.alert("El embarque no existe o no está activo en Firebase.");
+      return;
+    }
+    return __e61IniciarTransito.apply(this, arguments);
+  };
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  setTimeout(initSelectors, 300);
+  const emb = e61("embarqueInput");
+  if(emb){
+    emb.addEventListener("input", e61DebounceValidar);
+    emb.addEventListener("change", ()=>e61ValidarEmbarqueInicio());
+    emb.addEventListener("blur", ()=>e61ValidarEmbarqueInicio());
+  }
+});
