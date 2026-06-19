@@ -545,7 +545,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.72 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.73 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -837,67 +837,165 @@ function ensureRoadRouteLayer(origin,dest){
 
 
 
+
 function renderTrackingMap(t){
-  const mapDiv=document.getElementById("map");
+  const mapDiv = document.getElementById("map");
   if(!mapDiv) return;
+
   if(!trackingMap){
-    trackingMap=L.map("map",{zoomControl:true});
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:""}).addTo(trackingMap);
-    window.__tmMarkers={origen:null,destino:null,gps:null,alertas:[]};
-    window.__tmDidFit=false;
-    window.__tmUserMoved=false;
-    try{trackingMap.on("dragstart zoomstart",()=>{window.__tmUserMoved=true;});}catch(e){}
+    trackingMap = L.map("map", { zoomControl:true });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: ""
+    }).addTo(trackingMap);
+
+    window.__trackingMarkersNoRoute = {
+      origen: null,
+      destino: null,
+      gps: null,
+      alertas: []
+    };
+    window.__trackingMapFitNoRoute = false;
+    window.__trackingUserMovedNoRoute = false;
+
+    try{
+      trackingMap.on("dragstart zoomstart", function(){
+        window.__trackingUserMovedNoRoute = true;
+      });
+    }catch(e){}
   }
-  const M=window.__tmMarkers||(window.__tmMarkers={origen:null,destino:null,gps:null,alertas:[]});
-  function pt(lat,lng){
-    lat=Number(lat); lng=Number(lng);
-    return Number.isFinite(lat)&&Number.isFinite(lng)?[lat,lng]:null;
+
+  const markers = window.__trackingMarkersNoRoute || {
+    origen: null,
+    destino: null,
+    gps: null,
+    alertas: []
+  };
+  window.__trackingMarkersNoRoute = markers;
+
+  function point(lat,lng){
+    lat = Number(lat);
+    lng = Number(lng);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? [lat,lng] : null;
   }
-  function setMarker(k,lat,lng,color,label){
-    const p=pt(lat,lng);
+
+  function markerIcon(color){
+    return L.divIcon({
+      className: "tpod-ref-marker",
+      html: '<span style="background:'+color+'"></span>',
+      iconSize: [26,26],
+      iconAnchor: [13,13]
+    });
+  }
+
+  function setMarker(key, lat, lng, color, label){
+    const p = point(lat,lng);
+
     if(!p){
-      if(M[k]){try{trackingMap.removeLayer(M[k]);}catch(e){} M[k]=null;}
+      if(markers[key]){
+        try{ trackingMap.removeLayer(markers[key]); }catch(e){}
+        markers[key] = null;
+      }
       return null;
     }
-    if(M[k]){
-      try{M[k].setLatLng(p);}catch(e){}
+
+    if(markers[key]){
+      markers[key].setLatLng(p);
+      markers[key].setIcon(markerIcon(color));
     }else{
-      M[k]=L.circleMarker(p,{radius:10,color:"#ffffff",weight:3,fillColor:color,fillOpacity:1,opacity:1})
-        .addTo(trackingMap).bindTooltip(label||"");
+      markers[key] = L.marker(p, { icon: markerIcon(color), keyboard:false })
+        .addTo(trackingMap)
+        .bindTooltip(label || "");
     }
+
     return p;
   }
+
   function clearAlerts(){
-    try{(M.alertas||[]).forEach(x=>trackingMap.removeLayer(x));}catch(e){}
-    M.alertas=[];
+    try{
+      (markers.alertas || []).forEach(function(m){
+        trackingMap.removeLayer(m);
+      });
+    }catch(e){}
+    markers.alertas = [];
   }
+
   function addAlert(lat,lng){
-    const p=pt(lat,lng); if(!p) return null;
-    const mk=L.circleMarker(p,{radius:10,color:"#ffffff",weight:3,fillColor:"#f59e0b",fillOpacity:1,opacity:1})
-      .addTo(trackingMap).bindTooltip("Alerta");
-    M.alertas.push(mk); return p;
+    const p = point(lat,lng);
+    if(!p) return null;
+
+    const m = L.marker(p, { icon: markerIcon("#f59e0b"), keyboard:false })
+      .addTo(trackingMap)
+      .bindTooltip("Alerta");
+
+    markers.alertas.push(m);
+    return p;
   }
-  if(!t||!t.route){
-    if(!window.__tmDidFit){trackingMap.setView([-34.6037,-58.3816],12); window.__tmDidFit=true;}
-    setTimeout(()=>trackingMap.invalidateSize(),200);
+
+  if(!t || !t.route){
+    if(!window.__trackingMapFitNoRoute){
+      trackingMap.setView([-34.6037,-58.3816], 12);
+      window.__trackingMapFitNoRoute = true;
+    }
+    setTimeout(function(){ trackingMap.invalidateSize(); }, 200);
     return;
   }
-  const r=t.route||{};
-  const points=[];
-  const o=setMarker("origen",r.origen_lat??r.origenLat,r.origen_lng??r.origenLng,"#22c55e","Origen"); if(o) points.push(o);
-  const d=setMarker("destino",r.destino_lat??r.destinoLat,r.destino_lng??r.destinoLng,"#ef4444","Destino"); if(d) points.push(d);
-  let gps=null; try{gps=(t.updates&&t.updates.length)?t.updates[t.updates.length-1].gps:t.start;}catch(e){}
-  const g=gps?setMarker("gps",gps.lat??gps.latitude,gps.lng??gps.lon??gps.longitude,"#3b82f6","GPS"):null; if(g) points.push(g);
-  clearAlerts();
-  try{(t.alerts||[]).forEach(a=>{const x=a.gps||a; const p=addAlert(x.lat??x.latitude,x.lng??x.lon??x.longitude); if(p) points.push(p);});}catch(e){}
-  if(points.length&&!window.__tmDidFit){
-    try{trackingMap.fitBounds(points,{padding:[35,35],maxZoom:15});}catch(e){trackingMap.setView(points[points.length-1],12);}
-    window.__tmDidFit=true;
-  }else if(g&&!window.__tmUserMoved){
-    try{trackingMap.panTo(g,{animate:false});}catch(e){}
+
+  const r = t.route || {};
+  const points = [];
+
+  const pOrigen = setMarker("origen", r.origen_lat ?? r.origenLat, r.origen_lng ?? r.origenLng, "#22c55e", "Origen");
+  if(pOrigen) points.push(pOrigen);
+
+  const pDestino = setMarker("destino", r.destino_lat ?? r.destinoLat, r.destino_lng ?? r.destinoLng, "#ef4444", "Destino");
+  if(pDestino) points.push(pDestino);
+
+  let gps = null;
+  try{
+    gps = t.ultimaPosicion || null;
+    if(!gps && t.updates && t.updates.length) gps = t.updates[t.updates.length - 1].gps;
+    if(!gps) gps = t.start;
+  }catch(e){}
+
+  if(gps){
+    const pGps = setMarker("gps", gps.lat ?? gps.latitude, gps.lng ?? gps.lon ?? gps.longitude, "#3b82f6", "GPS");
+    if(pGps) points.push(pGps);
   }
-  setTimeout(()=>trackingMap.invalidateSize(),200);
+
+  clearAlerts();
+  try{
+    (t.alerts || []).forEach(function(a){
+      const g = a.gps || a;
+      const p = addAlert(g.lat ?? g.latitude, g.lng ?? g.lon ?? g.longitude);
+      if(p) points.push(p);
+    });
+
+    if(t.ultimaAlerta && t.ultimaAlerta.gps){
+      const g = t.ultimaAlerta.gps;
+      const p = addAlert(g.lat ?? g.latitude, g.lng ?? g.lon ?? g.longitude);
+      if(p) points.push(p);
+    }
+  }catch(e){}
+
+  // Decisión final: no mostrar ruta/línea azul nunca.
+
+  if(points.length && !window.__trackingMapFitNoRoute){
+    try{
+      trackingMap.fitBounds(points, { padding:[35,35], maxZoom:15 });
+    }catch(e){
+      trackingMap.setView(points[points.length - 1], 12);
+    }
+    window.__trackingMapFitNoRoute = true;
+  }else if(gps && !window.__trackingUserMovedNoRoute){
+    const pg = point(gps.lat ?? gps.latitude, gps.lng ?? gps.lon ?? gps.longitude);
+    if(pg){
+      try{ trackingMap.panTo(pg, { animate:false }); }catch(e){}
+    }
+  }
+
+  setTimeout(function(){ trackingMap.invalidateSize(); }, 200);
 }
+
 
 
 
@@ -4065,7 +4163,7 @@ try{
 
 
 
-/* ===== v1.5.72 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.73 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4343,7 +4441,7 @@ try{
 
 
 
-/* ===== v1.5.72 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.73 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4705,7 +4803,7 @@ try{
 
 
 
-/* ===== v1.5.72 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.73 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5029,7 +5127,7 @@ try{
 
 
 
-/* ===== v1.5.72 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.73 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5421,7 +5519,7 @@ try{
 
 
 
-/* ===== v1.5.72 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.73 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5786,7 +5884,7 @@ try{
 
 
 
-/* ===== v1.5.72 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.73 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -5817,7 +5915,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.72 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.73 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -5936,7 +6034,7 @@ try{
 
 
 
-/* ===== v1.5.72 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.73 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6116,7 +6214,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.72 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.73 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6155,7 +6253,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.72 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.73 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6273,7 +6371,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.72 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.73 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6543,7 +6641,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.73 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6674,7 +6772,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.72 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.73 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -6925,7 +7023,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.73 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -6958,7 +7056,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.72 GPS ZARATE FIX ===== */
+/* ===== v1.5.73 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7019,7 +7117,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.72 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.73 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7458,7 +7556,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.73 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7753,7 +7851,7 @@ try{
 
 
 
-/* ===== v1.5.72 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.73 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7780,7 +7878,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.72 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.73 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -7833,7 +7931,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.73 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -7892,7 +7990,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.73 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -7938,7 +8036,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.72 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.73 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8149,7 +8247,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.72 - Check List Firebase ===== */
+/* ===== V1.5.73 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8352,7 +8450,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.72 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.73 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8442,7 +8540,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.72 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.73 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8463,7 +8561,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.72 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.73 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -8791,7 +8889,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.72 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.73 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9018,7 +9116,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.72 - UI sin distancias/tarjetas =====
+/* ===== V1.5.73 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9183,154 +9281,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.72 - Tracking sin línea azul de ruta =====
-   No dibuja ruta/recorrido en línea azul.
-   Mantiene mapa, GPS, Origen, Destino y Alertas.
-*/
-function e64RemoveRouteLines(){
-  try{
-    if(typeof trackingMap !== "undefined" && trackingMap){
-      trackingMap.eachLayer(layer=>{
-        try{
-          if(layer instanceof L.Polyline && !(layer instanceof L.Polygon)){
-            trackingMap.removeLayer(layer);
-          }
-        }catch(e){}
-      });
-    }
-  }catch(e){}
-
-  try{
-    if(typeof map !== "undefined" && map && map.eachLayer){
-      map.eachLayer(layer=>{
-        try{
-          if(layer instanceof L.Polyline && !(layer instanceof L.Polygon)){
-            map.removeLayer(layer);
-          }
-        }catch(e){}
-      });
-    }
-  }catch(e){}
-
-  [
-    "routeLine","routePath","routePolyline","trackingRouteLine","trackingPolyline",
-    "polylineRoute","rutaPolyline","lineaRuta","trackingRoutePolyline"
-  ].forEach(v=>{
-    try{
-      if(typeof window[v] !== "undefined" && window[v]){
-        try{
-          if(typeof trackingMap !== "undefined" && trackingMap && trackingMap.removeLayer) trackingMap.removeLayer(window[v]);
-        }catch(e){}
-        try{
-          if(typeof map !== "undefined" && map && map.removeLayer) map.removeLayer(window[v]);
-        }catch(e){}
-        window[v] = null;
-      }
-    }catch(e){}
-  });
-}
-
-let E64_RENDERING_TRACKING_MAP = false;
-let E64_ORIGINAL_POLYLINE = null;
-
-function e64InstallPolylineGuard(){
-  try{
-    if(typeof L === "undefined" || !L.polyline || E64_ORIGINAL_POLYLINE) return;
-    E64_ORIGINAL_POLYLINE = L.polyline;
-    L.polyline = function(latlngs, options){
-      if(E64_RENDERING_TRACKING_MAP){
-        return {
-          addTo:function(){ return this; },
-          remove:function(){ return this; },
-          setLatLngs:function(){ return this; },
-          getBounds:function(){ try{ return L.latLngBounds([]); }catch(e){ return null; } }
-        };
-      }
-      return E64_ORIGINAL_POLYLINE.apply(this, arguments);
-    };
-  }catch(e){}
-}
-
-const __e64RenderTrackingMap = typeof renderTrackingMap === "function" ? renderTrackingMap : null;
-if(__e64RenderTrackingMap){
-  renderTrackingMap = function(){
-    e64InstallPolylineGuard();
-    E64_RENDERING_TRACKING_MAP = true;
-    try{
-      const r = __e64RenderTrackingMap.apply(this, arguments);
-      setTimeout(e64RemoveRouteLines, 80);
-      return r;
-    }finally{
-      E64_RENDERING_TRACKING_MAP = false;
-      setTimeout(e64RemoveRouteLines, 160);
-    }
-  };
-}
-
-const __e64RenderTracking = typeof renderTracking === "function" ? renderTracking : null;
-if(__e64RenderTracking){
-  renderTracking = function(){
-    const r = __e64RenderTracking.apply(this, arguments);
-    setTimeout(e64RemoveRouteLines, 120);
-    return r;
-  };
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  e64InstallPolylineGuard();
-  setInterval(()=>{
-    const tracking = document.getElementById("tracking");
-    if(tracking && !tracking.classList.contains("hidden")){
-      e64RemoveRouteLines();
-    }
-  }, 700);
-});
 
 
-
-/* V1.5.72: bloque e65RemoveRoutePaths eliminado porque borraba marcadores del mapa. */
-/* ===== V1.5.72 - Tracking sin ruta azul, con puntos visibles =====
-   Mantiene GPS azul, Origen verde, Destino rojo y Alertas naranja.
-   Sólo elimina polilíneas si algún código viejo las vuelve a crear.
-*/
-function e66RemoveOnlyPolylines(){
-  try{
-    if(typeof trackingMap !== "undefined" && trackingMap){
-      trackingMap.eachLayer(layer=>{
-        try{
-          const isCircle = layer instanceof L.CircleMarker || layer instanceof L.Circle;
-          const isMarker = layer instanceof L.Marker;
-          const isPolygon = layer instanceof L.Polygon;
-          const isPolyline = layer instanceof L.Polyline;
-          if(isPolyline && !isCircle && !isMarker && !isPolygon){
-            trackingMap.removeLayer(layer);
-          }
-        }catch(e){}
-      });
-    }
-  }catch(e){}
-}
-
-const __e66RenderTracking = typeof renderTracking === "function" ? renderTracking : null;
-if(__e66RenderTracking){
-  renderTracking = function(){
-    const r = __e66RenderTracking.apply(this, arguments);
-    setTimeout(e66RemoveOnlyPolylines, 120);
-    return r;
-  };
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  setInterval(()=>{
-    const tracking = document.getElementById("tracking");
-    if(tracking && !tracking.classList.contains("hidden")){
-      e66RemoveOnlyPolylines();
-    }
-  }, 1000);
-});
-
-
-/* ===== V1.5.72 - optimización apertura =====
+/* ===== V1.5.73 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9346,38 +9299,21 @@ if(__e67Show){
 }
 
 
-/* ===== V1.5.72 - estabilidad mapa Tracking ===== */
-let __tmLastTransitIdV1568=null;
-const __renderTrackingV1568=typeof renderTracking==="function"?renderTracking:null;
-if(__renderTrackingV1568){
-  renderTracking=function(){
-    try{
-      const t=transit();
-      const id=t&&t.id?String(t.id):"";
-      if(id!==__tmLastTransitIdV1568){
-        __tmLastTransitIdV1568=id;
-        window.__tmDidFit=false;
-        window.__tmUserMoved=false;
-      }
-    }catch(e){}
-    return __renderTrackingV1568.apply(this,arguments);
-  };
-}
 
 
-/* ===== V1.5.72 - Limpieza segura de ruta azul, conserva marcadores ===== */
-function e72RemoveOnlyRoutePolyline(){
+
+/* ===== V1.5.73 - Tracking: nunca mostrar ruta, sí referencias ===== */
+function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
-      trackingMap.eachLayer(layer=>{
+      trackingMap.eachLayer(function(layer){
         try{
-          const isCircleMarker = layer instanceof L.CircleMarker;
-          const isCircle = layer instanceof L.Circle;
+          const isPolyline = layer instanceof L.Polyline;
+          const isCircle = layer instanceof L.Circle || layer instanceof L.CircleMarker;
           const isMarker = layer instanceof L.Marker;
           const isPolygon = layer instanceof L.Polygon;
-          const isPolyline = layer instanceof L.Polyline;
 
-          if(isPolyline && !isCircleMarker && !isCircle && !isMarker && !isPolygon){
+          if(isPolyline && !isCircle && !isMarker && !isPolygon){
             trackingMap.removeLayer(layer);
           }
         }catch(e){}
@@ -9386,11 +9322,24 @@ function e72RemoveOnlyRoutePolyline(){
   }catch(e){}
 }
 
-const __renderTracking_e72 = typeof renderTracking === "function" ? renderTracking : null;
-if(__renderTracking_e72){
+const __renderTrackingV1573 = typeof renderTracking === "function" ? renderTracking : null;
+if(__renderTrackingV1573){
   renderTracking = function(){
-    const r = __renderTracking_e72.apply(this, arguments);
-    setTimeout(e72RemoveOnlyRoutePolyline, 120);
+    const t = transit();
+    const id = t && t.id ? String(t.id) : "";
+    if(id !== window.__trackingTransitIdNoRoute){
+      window.__trackingTransitIdNoRoute = id;
+      window.__trackingMapFitNoRoute = false;
+      window.__trackingUserMovedNoRoute = false;
+    }
+
+    const r = __renderTrackingV1573.apply(this, arguments);
+
+    setTimeout(function(){
+      tpodRemoveOnlyRouteLinesV1573();
+      try{ renderTrackingMap(transit()); }catch(e){}
+    }, 80);
+
     return r;
   };
 }

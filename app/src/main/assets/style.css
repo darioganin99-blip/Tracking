@@ -2029,3 +2029,17 @@ nav.tabs #btn-checklist:disabled,
   min-height: auto;
 }
 
+
+/* ===== V1.5.73 - referencias HTML mapa Tracking ===== */
+.tpod-ref-marker{
+  background: transparent !important;
+  border: 0 !important;
+}
+.tpod-ref-marker span{
+  display:block !important;
+  width:20px !important;
+  height:20px !important;
+  border-radius:50% !important;
+  border:3px solid #ffffff !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+}
