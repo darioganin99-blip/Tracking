@@ -545,7 +545,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.76 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.77 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -774,7 +774,7 @@ async function getRoadRoute(origin,dest){
 }
 
 function drawFallbackLine(origin,cur,dest){
-  // V1.5.76: sin línea fallback.
+  // V1.5.77: sin línea fallback.
   return;
 }
 
@@ -806,10 +806,12 @@ function setRouteLayer(layer,key){
 
 
 
+
 function ensureRoadRouteLayer(origin,dest){
   removeRouteLayer();
   return;
 }
+
 
 
 
@@ -899,7 +901,7 @@ function renderTrackingMap(t){
     return p;
   }
   async function firebaseReadyForMap(){
-    // V1.5.76: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
+    // V1.5.77: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
     // No usar su return como boolean; validar realmente que exista db.
     try{
       if(typeof tpodInitFirebase === "function") tpodInitFirebase();
@@ -4249,7 +4251,7 @@ try{
 
 
 
-/* ===== v1.5.76 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.77 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4527,7 +4529,7 @@ try{
 
 
 
-/* ===== v1.5.76 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.77 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4889,7 +4891,7 @@ try{
 
 
 
-/* ===== v1.5.76 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.77 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5213,7 +5215,7 @@ try{
 
 
 
-/* ===== v1.5.76 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.77 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5605,7 +5607,7 @@ try{
 
 
 
-/* ===== v1.5.76 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.77 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5970,7 +5972,7 @@ try{
 
 
 
-/* ===== v1.5.76 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.77 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -6001,7 +6003,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.76 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.77 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6120,7 +6122,7 @@ try{
 
 
 
-/* ===== v1.5.76 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.77 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6300,7 +6302,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.76 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.77 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6339,7 +6341,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.76 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.77 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6457,7 +6459,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.76 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.77 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6727,7 +6729,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.77 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6858,7 +6860,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.76 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.77 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7109,7 +7111,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.77 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7142,7 +7144,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.76 GPS ZARATE FIX ===== */
+/* ===== v1.5.77 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7203,7 +7205,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.76 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.77 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7642,7 +7644,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.77 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7937,7 +7939,7 @@ try{
 
 
 
-/* ===== v1.5.76 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.77 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7964,7 +7966,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.76 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.77 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -8017,7 +8019,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.77 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -8076,7 +8078,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.77 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8122,7 +8124,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.76 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.77 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8333,7 +8335,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.76 - Check List Firebase ===== */
+/* ===== V1.5.77 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8536,7 +8538,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.76 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.77 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8626,7 +8628,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.76 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.77 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8647,7 +8649,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.76 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.77 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -8811,11 +8813,14 @@ function e61SelectedCoord(id){
   if(!sel) return {};
   const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
   if(!opt) return {};
-  const lat = Number(opt.dataset.lat || "");
-  const lng = Number(opt.dataset.lng || "");
+  const rawLat = opt.dataset.lat;
+  const rawLng = opt.dataset.lng;
+  if(rawLat === undefined || rawLat === "" || rawLng === undefined || rawLng === "") return {};
+  const lat = Number(rawLat);
+  const lng = Number(rawLng);
   return {
-    lat: Number.isFinite(lat) ? lat : "",
-    lng: Number.isFinite(lng) ? lng : ""
+    lat: Number.isFinite(lat) && Math.abs(lat) > 0.000001 ? lat : "",
+    lng: Number.isFinite(lng) && Math.abs(lng) > 0.000001 ? lng : ""
   };
 }
 
@@ -8975,7 +8980,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.76 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.77 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9202,7 +9207,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.76 - UI sin distancias/tarjetas =====
+/* ===== V1.5.77 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9369,7 +9374,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
 
-/* ===== V1.5.76 - optimización apertura =====
+/* ===== V1.5.77 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9388,7 +9393,7 @@ if(__e67Show){
 
 
 
-/* ===== V1.5.76 - Tracking: nunca mostrar ruta, sí referencias ===== */
+/* ===== V1.5.77 - Tracking: nunca mostrar ruta, sí referencias ===== */
 function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9431,7 +9436,7 @@ if(__renderTrackingV1573){
 }
 
 
-/* ===== V1.5.76 - Tracking sin ruta azul definitivo ===== */
+/* ===== V1.5.77 - Tracking sin ruta azul definitivo ===== */
 function removeOnlyRoutePolylinesV1574(){
   try{
     const maps = [];
@@ -9462,4 +9467,281 @@ if(__renderTrackingMapV1574){
     setTimeout(removeOnlyRoutePolylinesV1574, 250);
     return r;
   };
+}
+
+
+/* ===== V1.5.77 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
+function tpodCoordValidV1577(v){
+  const n = Number(v);
+  return Number.isFinite(n) && Math.abs(n) > 0.000001 ? n : null;
+}
+
+function tpodParseCoordV1577(v){
+  if(!v) return null;
+  if(typeof v === "object"){
+    const lat = tpodCoordValidV1577(v.lat ?? v.latitude);
+    const lng = tpodCoordValidV1577(v.lng ?? v.lon ?? v.longitude);
+    if(lat !== null && lng !== null) return {lat,lng};
+  }
+  const nums = String(v).match(/-?\d+(?:\.\d+)?/g);
+  if(nums && nums.length >= 2){
+    const lat = tpodCoordValidV1577(nums[0]);
+    const lng = tpodCoordValidV1577(nums[1]);
+    if(lat !== null && lng !== null) return {lat,lng};
+  }
+  return null;
+}
+
+function tpodHasCoordV1577(lat,lng){
+  return tpodCoordValidV1577(lat) !== null && tpodCoordValidV1577(lng) !== null;
+}
+
+function tpodDocCoordV1577(x){
+  x = x || {};
+  return tpodParseCoordV1577(x.ubicacion) ||
+         tpodParseCoordV1577(x.location) ||
+         tpodParseCoordV1577(x.coords) ||
+         tpodParseCoordV1577(x.coordenadas) ||
+         tpodParseCoordV1577(x.gps) ||
+         tpodParseCoordV1577(x);
+}
+
+function tpodNamesV1577(id,x){
+  x = x || {};
+  return [id,x.nombre,x.name,x.origen,x.destino,x.descripcion,x.cliente]
+    .map(v => String(v || "").trim().toLowerCase().replace(/\s+/g," "))
+    .filter(Boolean);
+}
+
+function tpodNormNameV1577(v){
+  return String(v || "").trim().toLowerCase().replace(/\s+/g," ");
+}
+
+async function tpodEnsureDbV1577(){
+  try{ if(typeof tpodInitFirebase === "function") tpodInitFirebase(); }catch(e){}
+  try{ if(typeof firebaseReady === "function") firebaseReady(); }catch(e){}
+  try{ if(typeof e61Ready === "function") e61Ready(); }catch(e){}
+  try{ if(typeof initFirebaseCloud === "function") initFirebaseCloud(); }catch(e){}
+  try{
+    if(typeof db !== "undefined" && db) return true;
+  }catch(e){}
+  try{
+    if(typeof firebase !== "undefined"){
+      if(firebase.apps && !firebase.apps.length && typeof FIREBASE_CONFIG !== "undefined"){
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      if(firebase.apps && firebase.apps.length){
+        db = firebase.firestore();
+        return !!db;
+      }
+    }
+  }catch(e){
+    console.log("tpodEnsureDbV1577", e);
+  }
+  return false;
+}
+
+async function tpodFindCoordV1577(collectionName, wantedName){
+  const targetRaw = String(wantedName || "").trim();
+  if(!targetRaw) return null;
+
+  if(!window.__tpodCoordCacheV1577) window.__tpodCoordCacheV1577 = {};
+  const key = collectionName + "|" + tpodNormNameV1577(targetRaw);
+  if(window.__tpodCoordCacheV1577[key]) return window.__tpodCoordCacheV1577[key];
+
+  const ready = await tpodEnsureDbV1577();
+  if(!ready || typeof db === "undefined" || !db){
+    console.log("No hay db para coordenadas", collectionName, targetRaw);
+    return null;
+  }
+
+  try{
+    const direct = await db.collection(collectionName).doc(targetRaw).get();
+    if(direct.exists){
+      const c = tpodDocCoordV1577(direct.data() || {});
+      if(c){ window.__tpodCoordCacheV1577[key] = c; return c; }
+    }
+  }catch(e){}
+
+  try{
+    const snap = await db.collection(collectionName).get();
+    const target = tpodNormNameV1577(targetRaw);
+
+    for(const d of snap.docs){
+      const x = d.data() || {};
+      const names = tpodNamesV1577(d.id,x);
+      if(names.includes(target)){
+        const c = tpodDocCoordV1577(x);
+        if(c){ window.__tpodCoordCacheV1577[key] = c; return c; }
+      }
+    }
+
+    for(const d of snap.docs){
+      const x = d.data() || {};
+      const names = tpodNamesV1577(d.id,x);
+      if(names.some(n => n.includes(target) || target.includes(n))){
+        const c = tpodDocCoordV1577(x);
+        if(c){ window.__tpodCoordCacheV1577[key] = c; return c; }
+      }
+    }
+  }catch(e){
+    console.log("tpodFindCoordV1577", collectionName, targetRaw, e);
+  }
+
+  return null;
+}
+
+// Evita convertir dataset vacío en 0.
+try{
+  e61SelectedCoord = function(id){
+    const sel = e61(id);
+    if(!sel) return {};
+    const opt = sel.options && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+    if(!opt) return {};
+    const rawLat = opt.dataset.lat;
+    const rawLng = opt.dataset.lng;
+    if(rawLat === undefined || rawLat === "" || rawLng === undefined || rawLng === "") return {};
+    const lat = tpodCoordValidV1577(rawLat);
+    const lng = tpodCoordValidV1577(rawLng);
+    return {
+      lat: lat !== null ? lat : "",
+      lng: lng !== null ? lng : ""
+    };
+  };
+}catch(e){}
+
+async function tpodEnrichRouteCoordsV1577(route){
+  if(!route) return route;
+  route = {...route};
+
+  const hasOrigen = tpodHasCoordV1577(route.origen_lat ?? route.origenLat, route.origen_lng ?? route.origenLng);
+  const hasDestino = tpodHasCoordV1577(route.destino_lat ?? route.destinoLat, route.destino_lng ?? route.destinoLng);
+
+  if(!hasOrigen && route.origen){
+    const c = await tpodFindCoordV1577("origenes", route.origen);
+    if(c){
+      route.origen_lat = c.lat;
+      route.origen_lng = c.lng;
+    }
+  }
+
+  if(!hasDestino && route.destino){
+    const c = await tpodFindCoordV1577("destinos", route.destino);
+    if(c){
+      route.destino_lat = c.lat;
+      route.destino_lng = c.lng;
+    }
+  }
+
+  return route;
+}
+
+// Al validar embarque, devolver route con coordenadas reales.
+try{
+  if(typeof e61ValidarEmbarqueInicio === "function" && !window.__origE61ValidarV1577){
+    window.__origE61ValidarV1577 = e61ValidarEmbarqueInicio;
+    e61ValidarEmbarqueInicio = async function(){
+      const route = await window.__origE61ValidarV1577.apply(this, arguments);
+      if(route){
+        const enriched = await tpodEnrichRouteCoordsV1577(route);
+        try{
+          E61_ROUTE_LOCK = enriched;
+          if(typeof e61PaintRutaInfo === "function") e61PaintRutaInfo(enriched);
+        }catch(e){}
+        return enriched;
+      }
+      return route;
+    };
+  }
+}catch(e){
+  console.log("patch validar embarque coords", e);
+}
+
+// Antes de iniciar, asegurar que selectedRoute tenga coordenadas.
+try{
+  if(typeof iniciarTransito === "function" && !window.__origIniciarTransitoV1577){
+    window.__origIniciarTransitoV1577 = iniciarTransito;
+    iniciarTransito = async function(){
+      try{
+        const embEl = document.getElementById("embarqueInput");
+        if(embEl && embEl.value.trim() && typeof e61ValidarEmbarqueInicio === "function"){
+          const route = await e61ValidarEmbarqueInicio();
+          if(route){
+            try{ E61_ROUTE_LOCK = route; }catch(e){}
+          }
+        }
+      }catch(e){
+        console.log("pre iniciar coords", e);
+      }
+      return window.__origIniciarTransitoV1577.apply(this, arguments);
+    };
+  }
+}catch(e){}
+
+// selectedRoute nunca debe devolver 0 como coordenada válida.
+try{
+  if(typeof selectedRoute === "function" && !window.__origSelectedRouteV1577){
+    window.__origSelectedRouteV1577 = selectedRoute;
+    selectedRoute = function(){
+      const r = window.__origSelectedRouteV1577.apply(this, arguments) || {};
+      if(!tpodHasCoordV1577(r.origen_lat ?? r.origenLat, r.origen_lng ?? r.origenLng)){
+        r.origen_lat = "";
+        r.origen_lng = "";
+      }
+      if(!tpodHasCoordV1577(r.destino_lat ?? r.destinoLat, r.destino_lng ?? r.destinoLng)){
+        r.destino_lat = "";
+        r.destino_lng = "";
+      }
+      return r;
+    };
+  }
+}catch(e){}
+
+// Tracking: si el tránsito actual tiene 0, completar desde Firebase y actualizar LocalStorage/Firestore.
+async function tpodFixTransitRouteCoordsV1577(t){
+  if(!t || !t.route) return t;
+  const before = JSON.stringify(t.route);
+  const enriched = await tpodEnrichRouteCoordsV1577(t.route);
+  t.route = enriched;
+
+  if(JSON.stringify(enriched) !== before){
+    try{ save(LS.transit, t); }catch(e){}
+    try{
+      if(t.id && await tpodEnsureDbV1577()){
+        await db.collection("transitos").doc(t.id).set({
+          route: {
+            origen_lat: enriched.origen_lat || "",
+            origen_lng: enriched.origen_lng || "",
+            destino_lat: enriched.destino_lat || "",
+            destino_lng: enriched.destino_lng || ""
+          }
+        }, {merge:true});
+      }
+    }catch(e){
+      console.log("No se pudo actualizar coords transito", e);
+    }
+  }
+  return t;
+}
+
+try{
+  if(typeof renderTrackingMap === "function" && !window.__origRenderTrackingMapV1577){
+    window.__origRenderTrackingMapV1577 = renderTrackingMap;
+    renderTrackingMap = function(t){
+      const current = t || (typeof transit === "function" ? transit() : null);
+      if(current && current.route){
+        const hasOrigen = tpodHasCoordV1577(current.route.origen_lat ?? current.route.origenLat, current.route.origen_lng ?? current.route.origenLng);
+        const hasDestino = tpodHasCoordV1577(current.route.destino_lat ?? current.route.destinoLat, current.route.destino_lng ?? current.route.destinoLng);
+        if(!hasOrigen || !hasDestino){
+          tpodFixTransitRouteCoordsV1577(current).then(fixed=>{
+            window.__origRenderTrackingMapV1577(fixed);
+          });
+          return;
+        }
+      }
+      return window.__origRenderTrackingMapV1577.apply(this, arguments);
+    };
+  }
+}catch(e){
+  console.log("patch renderTrackingMap coords", e);
 }
