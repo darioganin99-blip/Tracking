@@ -545,7 +545,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.77 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.78 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -774,7 +774,7 @@ async function getRoadRoute(origin,dest){
 }
 
 function drawFallbackLine(origin,cur,dest){
-  // V1.5.77: sin línea fallback.
+  // V1.5.78: sin línea fallback.
   return;
 }
 
@@ -901,7 +901,7 @@ function renderTrackingMap(t){
     return p;
   }
   async function firebaseReadyForMap(){
-    // V1.5.77: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
+    // V1.5.78: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
     // No usar su return como boolean; validar realmente que exista db.
     try{
       if(typeof tpodInitFirebase === "function") tpodInitFirebase();
@@ -4251,7 +4251,7 @@ try{
 
 
 
-/* ===== v1.5.77 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.78 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4529,7 +4529,7 @@ try{
 
 
 
-/* ===== v1.5.77 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.78 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4891,7 +4891,7 @@ try{
 
 
 
-/* ===== v1.5.77 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.78 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5215,7 +5215,7 @@ try{
 
 
 
-/* ===== v1.5.77 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.78 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5607,7 +5607,7 @@ try{
 
 
 
-/* ===== v1.5.77 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.78 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5972,7 +5972,7 @@ try{
 
 
 
-/* ===== v1.5.77 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.78 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -6003,7 +6003,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.77 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.78 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6122,7 +6122,7 @@ try{
 
 
 
-/* ===== v1.5.77 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.78 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6302,7 +6302,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.77 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.78 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6341,7 +6341,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.77 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.78 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6459,7 +6459,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.77 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.78 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6729,7 +6729,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.78 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6860,7 +6860,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.77 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.78 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7111,7 +7111,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.78 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7144,7 +7144,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.77 GPS ZARATE FIX ===== */
+/* ===== v1.5.78 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7205,7 +7205,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.77 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.78 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7644,7 +7644,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.78 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7939,7 +7939,7 @@ try{
 
 
 
-/* ===== v1.5.77 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.78 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7966,7 +7966,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.77 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.78 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -8019,7 +8019,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.78 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -8078,7 +8078,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.78 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8124,7 +8124,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.77 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.78 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8335,7 +8335,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.77 - Check List Firebase ===== */
+/* ===== V1.5.78 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8538,7 +8538,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.77 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.78 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8628,7 +8628,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.77 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.78 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8649,7 +8649,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.77 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.78 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -8980,7 +8980,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.77 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.78 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9207,7 +9207,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.77 - UI sin distancias/tarjetas =====
+/* ===== V1.5.78 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9374,7 +9374,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
 
-/* ===== V1.5.77 - optimización apertura =====
+/* ===== V1.5.78 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9393,7 +9393,7 @@ if(__e67Show){
 
 
 
-/* ===== V1.5.77 - Tracking: nunca mostrar ruta, sí referencias ===== */
+/* ===== V1.5.78 - Tracking: nunca mostrar ruta, sí referencias ===== */
 function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9436,7 +9436,7 @@ if(__renderTrackingV1573){
 }
 
 
-/* ===== V1.5.77 - Tracking sin ruta azul definitivo ===== */
+/* ===== V1.5.78 - Tracking sin ruta azul definitivo ===== */
 function removeOnlyRoutePolylinesV1574(){
   try{
     const maps = [];
@@ -9470,7 +9470,7 @@ if(__renderTrackingMapV1574){
 }
 
 
-/* ===== V1.5.77 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
+/* ===== V1.5.78 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
 function tpodCoordValidV1577(v){
   const n = Number(v);
   return Number.isFinite(n) && Math.abs(n) > 0.000001 ? n : null;
@@ -9744,4 +9744,296 @@ try{
   }
 }catch(e){
   console.log("patch renderTrackingMap coords", e);
+}
+
+
+/* ===== V1.5.78 - Inicio de tránsito con espera visible y control duplicado =====
+   Alcance: sólo botón Iniciar tránsito.
+   - Muestra cartel "Iniciando tránsito..." mientras trabaja.
+   - Deshabilita el botón para evitar doble click.
+   - Valida que la misma flota no tenga otro tránsito abierto para el mismo embarque.
+   - Guarda en Firebase antes de informar "Tránsito iniciado correctamente".
+*/
+let TPOD_STARTING_TRANSIT_1578 = false;
+
+function tpodStartBusy1578(show,msg){
+  let box = document.getElementById("tpodStartBusy1578");
+  if(show){
+    if(!box){
+      box = document.createElement("div");
+      box.id = "tpodStartBusy1578";
+      box.innerHTML = '<div class="tpodStartBusyCard1578"><div class="tpodStartBusySpinner1578"></div><div id="tpodStartBusyText1578"></div></div>';
+      document.body.appendChild(box);
+    }
+    const txt = document.getElementById("tpodStartBusyText1578");
+    if(txt) txt.textContent = msg || "Iniciando tránsito...";
+    box.style.display = "flex";
+  }else if(box){
+    box.style.display = "none";
+  }
+
+  try{
+    const btns = Array.from(document.querySelectorAll("button,input[type='button']"));
+    btns.forEach(b=>{
+      const text = String(b.textContent || b.value || "").toLowerCase();
+      if(text.includes("iniciar tránsito") || text.includes("iniciar transito")){
+        b.disabled = !!show;
+        b.classList.toggle("tpodBtnBusy1578", !!show);
+      }
+    });
+  }catch(e){}
+}
+
+async function tpodDbReady1578(){
+  try{ if(typeof firebaseReady === "function" && firebaseReady()) return true; }catch(e){}
+  try{ if(typeof initFirebaseCloud === "function" && initFirebaseCloud()) return true; }catch(e){}
+  try{ if(typeof tpodInitFirebase === "function") tpodInitFirebase(); }catch(e){}
+  try{
+    if(typeof db !== "undefined" && db) return true;
+  }catch(e){}
+  try{
+    if(typeof firebase !== "undefined"){
+      if(firebase.apps && !firebase.apps.length && typeof FIREBASE_CONFIG !== "undefined"){
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      if(firebase.apps && firebase.apps.length){
+        db = firebase.firestore();
+        return !!db;
+      }
+    }
+  }catch(e){
+    console.log("tpodDbReady1578", e);
+  }
+  return false;
+}
+
+function tpodFleetOf1578(t){
+  return String((t && t.user && t.user.fleet) || (t && t.flota) || "").trim();
+}
+
+function tpodEmbOf1578(t){
+  return String((t && t.embarque) || "").trim();
+}
+
+function tpodIsOpen1578(t){
+  if(!t) return false;
+  if(t.closed || t.cierre) return false;
+  const estado = String(t.estado || "").toLowerCase();
+  if(estado === "cerrado" || estado === "closed" || estado === "finalizado") return false;
+  return true;
+}
+
+function tpodFleetInTransit1578(t, flota){
+  flota = String(flota || "").trim();
+  if(!flota || !t) return false;
+  if(tpodFleetOf1578(t) === flota) return true;
+  const parts = (t.participantes || []).map(x=>String(x).trim());
+  return parts.includes(flota);
+}
+
+function tpodNormalizeTransit1578(id,x){
+  x = x || {};
+  const route = x.route || {};
+  const userObj = x.user || {fleet:x.flota || "", driver:x.chofer || ""};
+  return {
+    id: x.id || id || "",
+    user: userObj,
+    route: route,
+    flota: x.flota || (userObj && userObj.fleet) || "",
+    chofer: x.chofer || (userObj && userObj.driver) || "",
+    lote: x.lote || x.carga || "",
+    embarque: x.embarque || "",
+    start: x.start || x.inicio || null,
+    closed: x.closed || x.cierre || null,
+    estado: x.estado || "",
+    participantes: x.participantes || [],
+    updates: x.updates || [],
+    alerts: x.alerts || []
+  };
+}
+
+async function tpodExisteFlotaEmbarqueAbierto1578(embarque, flota){
+  embarque = String(embarque || "").trim();
+  flota = String(flota || "").trim();
+  if(!embarque || !flota) return false;
+
+  // Primero validar tránsito local.
+  try{
+    const local = typeof transit === "function" ? transit() : null;
+    if(local && tpodIsOpen1578(local) && tpodEmbOf1578(local) === embarque && tpodFleetInTransit1578(local, flota)){
+      return true;
+    }
+  }catch(e){}
+
+  // Luego validar Firebase.
+  const ok = await tpodDbReady1578();
+  if(!ok || typeof db === "undefined" || !db){
+    throw new Error("Firebase no está disponible para validar duplicados.");
+  }
+
+  try{
+    const snap = await db.collection("transitos").where("embarque","==",embarque).get();
+    for(const d of snap.docs){
+      const t = tpodNormalizeTransit1578(d.id, d.data() || {});
+      if(tpodIsOpen1578(t) && tpodFleetInTransit1578(t, flota)){
+        return true;
+      }
+    }
+  }catch(e){
+    // Si el índice/where falla, hacemos lectura general como respaldo.
+    const snap = await db.collection("transitos").get();
+    for(const d of snap.docs){
+      const t = tpodNormalizeTransit1578(d.id, d.data() || {});
+      if(tpodEmbOf1578(t) === embarque && tpodIsOpen1578(t) && tpodFleetInTransit1578(t, flota)){
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function tpodCloudDoc1578(t){
+  const u = t.user || {};
+  const parts = Array.from(new Set([String(u.fleet || ""), ...((t.participantes || []).map(String))].filter(Boolean)));
+  const current = (t.updates && t.updates.length) ? t.updates[t.updates.length - 1].gps : (t.closed || t.start || null);
+  return {
+    ...t,
+    id: t.id || "",
+    user: u,
+    route: t.route || {},
+    flota: u.fleet || "",
+    chofer: u.driver || "",
+    lote: t.lote || "",
+    embarque: t.embarque || "",
+    estado: t.closed ? "cerrado" : "abierto",
+    start: t.start || null,
+    closed: t.closed || null,
+    updates: t.updates || [],
+    alerts: t.alerts || [],
+    ultimaPosicion: current,
+    ultimaAlerta: (t.alerts && t.alerts.length) ? t.alerts[t.alerts.length - 1] : null,
+    participantes: parts,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+async function tpodGuardarTransitoInicio1578(t){
+  const ok = await tpodDbReady1578();
+  if(!ok || typeof db === "undefined" || !db){
+    throw new Error("Firebase no está disponible para guardar el tránsito.");
+  }
+  const id = t.id || (typeof regId === "function" ? regId() : ("TPOD-" + Date.now()));
+  t.id = id;
+  await db.collection("transitos").doc(String(id)).set(tpodCloudDoc1578(t), {merge:true});
+}
+
+async function tpodRouteInicio1578(){
+  let route = null;
+  try{
+    if(typeof e61ValidarEmbarqueInicio === "function"){
+      route = await e61ValidarEmbarqueInicio();
+    }
+  }catch(e){
+    console.log("validar embarque inicio", e);
+  }
+
+  if(!route){
+    try{ route = typeof selectedRoute === "function" ? selectedRoute() : {}; }catch(e){ route = {}; }
+  }
+
+  try{
+    if(route && typeof tpodEnrichRouteCoordsV1577 === "function"){
+      route = await tpodEnrichRouteCoordsV1577(route);
+    }
+  }catch(e){}
+
+  return route || {};
+}
+
+async function iniciarTransito(){
+  if(TPOD_STARTING_TRANSIT_1578) return;
+
+  const abierto = typeof transit === "function" ? transit() : null;
+  if(abierto && !abierto.closed){
+    window.alert("Ya hay un tránsito iniciado sin cerrar. Primero debe cerrar el tránsito actual.");
+    show("tracking");
+    return;
+  }
+
+  const u = typeof user === "function" ? user() : {};
+  const flota = String((u && u.fleet) || "").trim();
+  if(!flota){
+    window.alert("Cargá la flota en Usuario.");
+    show("usuario");
+    return;
+  }
+
+  const loteEl = $("lote");
+  const lote = loteEl ? loteEl.value.trim() : "";
+  if(!lote){
+    window.alert("Ingresá número de lote/carga.");
+    return;
+  }
+
+  const embEl = $("embarqueInput");
+  const embarque = embEl ? embEl.value.trim() : "";
+  if(!embarque){
+    window.alert("Ingresá número de embarque.");
+    return;
+  }
+
+  TPOD_STARTING_TRANSIT_1578 = true;
+  tpodStartBusy1578(true, "Iniciando tránsito...");
+
+  try{
+    tpodStartBusy1578(true, "Validando embarque y flota...");
+    const route = await tpodRouteInicio1578();
+    if(!route || (typeof e61ValidarEmbarqueInicio === "function" && !route.embarque && !route.cliente && !route.origen && !route.destino)){
+      throw new Error("El embarque no existe o no está activo en Firebase.");
+    }
+
+    const duplicado = await tpodExisteFlotaEmbarqueAbierto1578(embarque, flota);
+    if(duplicado){
+      throw new Error("La flota " + flota + " ya tiene un tránsito abierto para el embarque " + embarque + ".");
+    }
+
+    tpodStartBusy1578(true, "Tomando GPS de inicio...");
+    const gps = await getGps();
+
+    const t = {
+      id: typeof regId === "function" ? regId() : ("TPOD-" + Date.now()),
+      user: u,
+      route: route,
+      lote: lote,
+      embarque: embarque,
+      start: gps,
+      updates: [],
+      alerts: [],
+      participantes: [flota],
+      closed: null,
+      estado: "abierto"
+    };
+
+    tpodStartBusy1578(true, "Guardando tránsito en la base...");
+    await tpodGuardarTransitoInicio1578(t);
+
+    save(LS.transit, t);
+    if(typeof saveTransitHistory === "function") saveTransitHistory(t);
+    if(typeof bloquearFormularioTransito === "function") bloquearFormularioTransito();
+    if(typeof renderTransitStatus === "function") renderTransitStatus();
+    if(typeof aplicarColorResumenInicio === "function") aplicarColorResumenInicio();
+
+    tpodStartBusy1578(false);
+    window.alert("Tránsito iniciado correctamente.");
+    show("tracking");
+    if(typeof startAutoGps === "function") startAutoGps();
+
+  }catch(e){
+    tpodStartBusy1578(false);
+    window.alert(e.message || String(e));
+  }finally{
+    TPOD_STARTING_TRANSIT_1578 = false;
+    tpodStartBusy1578(false);
+  }
 }

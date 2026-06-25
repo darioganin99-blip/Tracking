@@ -2043,3 +2043,40 @@ nav.tabs #btn-checklist:disabled,
   border:3px solid #ffffff !important;
   box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
 }
+
+
+/* ===== V1.5.78 - cartel iniciando tránsito ===== */
+#tpodStartBusy1578{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.35);
+  z-index:999999;
+}
+.tpodStartBusyCard1578{
+  min-width:260px;
+  max-width:86vw;
+  padding:24px 26px;
+  border-radius:18px;
+  background:#fff;
+  color:#0f172a;
+  box-shadow:0 18px 45px rgba(0,0,0,.25);
+  text-align:center;
+  font-size:24px;
+  font-weight:800;
+}
+.tpodStartBusySpinner1578{
+  width:42px;
+  height:42px;
+  margin:0 auto 14px auto;
+  border:5px solid #d1fae5;
+  border-top-color:#00843d;
+  border-radius:50%;
+  animation:tpodSpin1578 .8s linear infinite;
+}
+@keyframes tpodSpin1578{to{transform:rotate(360deg)}}
+.tpodBtnBusy1578{
+  opacity:.65 !important;
+}
