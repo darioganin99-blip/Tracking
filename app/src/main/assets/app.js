@@ -486,13 +486,17 @@ function getGps(){
 }
 
 
+
 async function iniciarTransito(){
   if(TPOD_STARTING_TRANSIT_1578) return;
 
-  // V1.5.79: cartel inmediato al presionar el botón, antes de cualquier validación.
   TPOD_STARTING_TRANSIT_1578 = true;
   tpodStartBusy1578(true, "Iniciando tránsito...");
-  await new Promise(resolve => setTimeout(resolve, 40));
+
+  await new Promise(resolve=>{
+    try{ requestAnimationFrame(()=>setTimeout(resolve,0)); }
+    catch(e){ setTimeout(resolve,0); }
+  });
 
   try{
     const abierto = typeof transit === "function" ? transit() : null;
@@ -528,8 +532,11 @@ async function iniciarTransito(){
       return;
     }
 
-    tpodStartBusy1578(true, "Validando embarque y flota...");
-    await new Promise(resolve => setTimeout(resolve, 40));
+    tpodStartBusy1578(true, "Validando...");
+    await new Promise(resolve=>{
+      try{ requestAnimationFrame(()=>setTimeout(resolve,0)); }
+      catch(e){ setTimeout(resolve,0); }
+    });
 
     const route = await tpodRouteInicio1578();
     if(!route || (typeof e61ValidarEmbarqueInicio === "function" && !route.embarque && !route.cliente && !route.origen && !route.destino)){
@@ -541,8 +548,12 @@ async function iniciarTransito(){
       throw new Error("La flota " + flota + " ya tiene un tránsito abierto para el embarque " + embarque + ".");
     }
 
-    tpodStartBusy1578(true, "Tomando GPS de inicio...");
-    await new Promise(resolve => setTimeout(resolve, 40));
+    tpodStartBusy1578(true, "Tomando GPS...");
+    await new Promise(resolve=>{
+      try{ requestAnimationFrame(()=>setTimeout(resolve,0)); }
+      catch(e){ setTimeout(resolve,0); }
+    });
+
     const gps = await getGps();
 
     const t = {
@@ -559,8 +570,12 @@ async function iniciarTransito(){
       estado: "abierto"
     };
 
-    tpodStartBusy1578(true, "Guardando tránsito en la base...");
-    await new Promise(resolve => setTimeout(resolve, 40));
+    tpodStartBusy1578(true, "Guardando...");
+    await new Promise(resolve=>{
+      try{ requestAnimationFrame(()=>setTimeout(resolve,0)); }
+      catch(e){ setTimeout(resolve,0); }
+    });
+
     await tpodGuardarTransitoInicio1578(t);
 
     save(LS.transit, t);
@@ -586,7 +601,8 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.79 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+
+/* ===== V1.5.80 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -815,7 +831,7 @@ async function getRoadRoute(origin,dest){
 }
 
 function drawFallbackLine(origin,cur,dest){
-  // V1.5.79: sin línea fallback.
+  // V1.5.80: sin línea fallback.
   return;
 }
 
@@ -942,7 +958,7 @@ function renderTrackingMap(t){
     return p;
   }
   async function firebaseReadyForMap(){
-    // V1.5.79: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
+    // V1.5.80: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
     // No usar su return como boolean; validar realmente que exista db.
     try{
       if(typeof tpodInitFirebase === "function") tpodInitFirebase();
@@ -4292,7 +4308,7 @@ try{
 
 
 
-/* ===== v1.5.79 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.80 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4570,7 +4586,7 @@ try{
 
 
 
-/* ===== v1.5.79 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.80 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4932,7 +4948,7 @@ try{
 
 
 
-/* ===== v1.5.79 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.80 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5256,7 +5272,7 @@ try{
 
 
 
-/* ===== v1.5.79 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.80 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5648,7 +5664,7 @@ try{
 
 
 
-/* ===== v1.5.79 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.80 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -6013,7 +6029,7 @@ try{
 
 
 
-/* ===== v1.5.79 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.80 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -6044,7 +6060,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.79 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.80 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6163,7 +6179,7 @@ try{
 
 
 
-/* ===== v1.5.79 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.80 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6343,7 +6359,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.79 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.80 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6382,7 +6398,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.79 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.80 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6500,7 +6516,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.79 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.80 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6770,7 +6786,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.80 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6901,7 +6917,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.79 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.80 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7152,7 +7168,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.80 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7185,7 +7201,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.79 GPS ZARATE FIX ===== */
+/* ===== v1.5.80 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7246,7 +7262,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.79 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.80 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7685,7 +7701,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.80 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7980,7 +7996,7 @@ try{
 
 
 
-/* ===== v1.5.79 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.80 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -8007,7 +8023,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.79 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.80 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -8060,7 +8076,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.80 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -8119,7 +8135,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.80 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8165,7 +8181,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.79 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.80 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8376,7 +8392,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.79 - Check List Firebase ===== */
+/* ===== V1.5.80 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8579,7 +8595,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.79 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.80 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8669,7 +8685,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.79 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.80 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8690,7 +8706,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.79 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.80 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -9021,7 +9037,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.79 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.80 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9248,7 +9264,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.79 - UI sin distancias/tarjetas =====
+/* ===== V1.5.80 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9415,7 +9431,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
 
-/* ===== V1.5.79 - optimización apertura =====
+/* ===== V1.5.80 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9434,7 +9450,7 @@ if(__e67Show){
 
 
 
-/* ===== V1.5.79 - Tracking: nunca mostrar ruta, sí referencias ===== */
+/* ===== V1.5.80 - Tracking: nunca mostrar ruta, sí referencias ===== */
 function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9477,7 +9493,7 @@ if(__renderTrackingV1573){
 }
 
 
-/* ===== V1.5.79 - Tracking sin ruta azul definitivo ===== */
+/* ===== V1.5.80 - Tracking sin ruta azul definitivo ===== */
 function removeOnlyRoutePolylinesV1574(){
   try{
     const maps = [];
@@ -9511,7 +9527,7 @@ if(__renderTrackingMapV1574){
 }
 
 
-/* ===== V1.5.79 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
+/* ===== V1.5.80 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
 function tpodCoordValidV1577(v){
   const n = Number(v);
   return Number.isFinite(n) && Math.abs(n) > 0.000001 ? n : null;
@@ -9788,7 +9804,7 @@ try{
 }
 
 
-/* ===== V1.5.79 - Inicio de tránsito con espera visible y control duplicado =====
+/* ===== V1.5.80 - Inicio de tránsito con espera visible y control duplicado =====
    Alcance: sólo botón Iniciar tránsito.
    - Muestra cartel "Iniciando tránsito..." mientras trabaja.
    - Deshabilita el botón para evitar doble click.
@@ -9796,6 +9812,7 @@ try{
    - Guarda en Firebase antes de informar "Tránsito iniciado correctamente".
 */
 let TPOD_STARTING_TRANSIT_1578 = false;
+
 
 function tpodStartBusy1578(show,msg){
   let box = document.getElementById("tpodStartBusy1578");
@@ -9809,13 +9826,14 @@ function tpodStartBusy1578(show,msg){
     const txt = document.getElementById("tpodStartBusyText1578");
     if(txt) txt.textContent = msg || "Iniciando tránsito...";
     box.style.display = "flex";
+    box.style.visibility = "visible";
+    box.style.opacity = "1";
   }else if(box){
     box.style.display = "none";
   }
 
   try{
-    const btns = Array.from(document.querySelectorAll("button,input[type='button']"));
-    btns.forEach(b=>{
+    Array.from(document.querySelectorAll("button,input[type='button']")).forEach(b=>{
       const text = String(b.textContent || b.value || "").toLowerCase();
       if(text.includes("iniciar tránsito") || text.includes("iniciar transito")){
         b.disabled = !!show;
@@ -9824,6 +9842,7 @@ function tpodStartBusy1578(show,msg){
     });
   }catch(e){}
 }
+
 
 async function tpodDbReady1578(){
   try{ if(typeof firebaseReady === "function" && firebaseReady()) return true; }catch(e){}
@@ -10077,4 +10096,49 @@ async function iniciarTransito(){
     TPOD_STARTING_TRANSIT_1578 = false;
     tpodStartBusy1578(false);
   }
+}
+
+
+/* ===== V1.5.80 - cartel inmediato real y guardado único ===== */
+function tpodIsStartButton1580(el){
+  const b = el && el.closest ? el.closest("button,input[type='button']") : null;
+  if(!b) return false;
+  const txt = String(b.textContent || b.value || "").toLowerCase();
+  const on = String((b.getAttribute && b.getAttribute("onclick")) || "").toLowerCase();
+  return txt.includes("iniciar tránsito") || txt.includes("iniciar transito") || on.includes("iniciartransito");
+}
+
+function tpodShowStartBusyEarly1580(ev){
+  try{
+    if(TPOD_STARTING_TRANSIT_1578) return;
+    if(tpodIsStartButton1580(ev && ev.target)){
+      tpodStartBusy1578(true, "Iniciando tránsito...");
+    }
+  }catch(e){}
+}
+
+try{
+  document.addEventListener("pointerdown", tpodShowStartBusyEarly1580, true);
+  document.addEventListener("touchstart", tpodShowStartBusyEarly1580, true);
+  document.addEventListener("mousedown", tpodShowStartBusyEarly1580, true);
+}catch(e){}
+
+const __tpodGuardarTransitoInicio1578_v1580 = typeof tpodGuardarTransitoInicio1578 === "function" ? tpodGuardarTransitoInicio1578 : null;
+if(__tpodGuardarTransitoInicio1578_v1580){
+  tpodGuardarTransitoInicio1578 = async function(t){
+    if(!t) return;
+    if(t.__inicioGuardadoFirebase1580) return;
+    await __tpodGuardarTransitoInicio1578_v1580(t);
+    t.__inicioGuardadoFirebase1580 = true;
+  };
+}
+
+const __cloudSaveTransitV1580 = typeof cloudSaveTransit === "function" ? cloudSaveTransit : null;
+if(__cloudSaveTransitV1580){
+  cloudSaveTransit = async function(t){
+    if(t && t.__inicioGuardadoFirebase1580 && !t.closed && String(t.estado || "abierto").toLowerCase() === "abierto"){
+      return;
+    }
+    return __cloudSaveTransitV1580.apply(this, arguments);
+  };
 }

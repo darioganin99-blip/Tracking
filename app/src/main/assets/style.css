@@ -2080,3 +2080,39 @@ nav.tabs #btn-checklist:disabled,
 .tpodBtnBusy1578{
   opacity:.65 !important;
 }
+
+
+/* ===== V1.5.80 - cartel compacto inicio tránsito ===== */
+#tpodStartBusy1578{
+  position:fixed !important;
+  inset:0 !important;
+  display:none;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(0,0,0,.22) !important;
+  z-index:999999 !important;
+}
+.tpodStartBusyCard1578{
+  min-width:190px !important;
+  max-width:78vw !important;
+  padding:14px 16px !important;
+  border-radius:14px !important;
+  background:#fff !important;
+  color:#0f172a !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22) !important;
+  text-align:center !important;
+  font-size:17px !important;
+  line-height:1.2 !important;
+  font-weight:800 !important;
+}
+.tpodStartBusySpinner1578{
+  width:28px !important;
+  height:28px !important;
+  margin:0 auto 8px auto !important;
+  border:4px solid #d1fae5 !important;
+  border-top-color:#00843d !important;
+  border-radius:50% !important;
+  animation:tpodSpin1578 .8s linear infinite !important;
+}
+@keyframes tpodSpin1578{to{transform:rotate(360deg)}}
+.tpodBtnBusy1578{opacity:.65 !important;}
