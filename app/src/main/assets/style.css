@@ -2044,7 +2044,34 @@ nav.tabs #btn-checklist:disabled,
   box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
 }
 
-#startBusyMini{display:none;position:fixed;inset:0;background:rgba(0,0,0,.18);align-items:center;justify-content:center;z-index:999999}
-.startBusyCard{background:#fff;padding:10px 14px;border-radius:10px;display:flex;align-items:center;gap:10px;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.25)}
-.startBusySpin{width:18px;height:18px;border:3px solid #cfe;border-top-color:#0a4;border-radius:50%;animation:sbm .8s linear infinite}
+
+#startBusyMini{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.18);
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+  pointer-events:none;
+}
+.startBusyCard{
+  background:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+.startBusySpin{
+  width:18px;
+  height:18px;
+  border:3px solid #cfe;
+  border-top-color:#0a4;
+  border-radius:50%;
+  animation:sbm .8s linear infinite;
+}
 @keyframes sbm{to{transform:rotate(360deg)}}
