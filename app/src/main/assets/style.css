@@ -2389,3 +2389,32 @@ button#btn-aduanas.aduanasActive{
   border-radius:9px !important;
   font-weight:800 !important;
 }
+
+
+/* ===== V1.5.97 - Aduanas tamaño final compacto ===== */
+.aduanaName{
+  font-size:18px !important;
+  line-height:1.08 !important;
+  margin-bottom:5px !important;
+  font-weight:900 !important;
+  text-transform:none !important;
+}
+.aduanaItem{
+  padding:8px 10px !important;
+  border-radius:11px !important;
+}
+.aduanaBtn{
+  font-size:14px !important;
+  padding:6px 9px !important;
+  min-height:34px !important;
+  line-height:1.05 !important;
+  border-radius:9px !important;
+  font-weight:800 !important;
+}
+.aduanaRegistroDato1592,
+.aduanaRegistroDato1591,
+.aduanaRegistroDato1589,
+.aduanaRegistroDato1596{
+  font-size:12px !important;
+  padding:4px 8px !important;
+}
