@@ -547,7 +547,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.80 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.82 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -776,7 +776,7 @@ async function getRoadRoute(origin,dest){
 }
 
 function drawFallbackLine(origin,cur,dest){
-  // V1.5.80: sin línea fallback.
+  // V1.5.82: sin línea fallback.
   return;
 }
 
@@ -903,7 +903,7 @@ function renderTrackingMap(t){
     return p;
   }
   async function firebaseReadyForMap(){
-    // V1.5.80: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
+    // V1.5.82: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
     // No usar su return como boolean; validar realmente que exista db.
     try{
       if(typeof tpodInitFirebase === "function") tpodInitFirebase();
@@ -4254,7 +4254,7 @@ try{
 
 
 
-/* ===== v1.5.80 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.82 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4532,7 +4532,7 @@ try{
 
 
 
-/* ===== v1.5.80 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.82 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4894,7 +4894,7 @@ try{
 
 
 
-/* ===== v1.5.80 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.82 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5218,7 +5218,7 @@ try{
 
 
 
-/* ===== v1.5.80 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.82 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5610,7 +5610,7 @@ try{
 
 
 
-/* ===== v1.5.80 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.82 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -5975,7 +5975,7 @@ try{
 
 
 
-/* ===== v1.5.80 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.82 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -6006,7 +6006,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.80 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.82 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6125,7 +6125,7 @@ try{
 
 
 
-/* ===== v1.5.80 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.82 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6305,7 +6305,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.80 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.82 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6344,7 +6344,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.80 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.82 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6462,7 +6462,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.80 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.82 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6732,7 +6732,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.82 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6863,7 +6863,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.80 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.82 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7114,7 +7114,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.82 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7147,7 +7147,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.80 GPS ZARATE FIX ===== */
+/* ===== v1.5.82 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7208,7 +7208,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.80 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.82 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7647,7 +7647,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.82 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -7942,7 +7942,7 @@ try{
 
 
 
-/* ===== v1.5.80 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.82 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -7969,7 +7969,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.80 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.82 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -8022,7 +8022,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.82 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -8081,7 +8081,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.82 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8127,7 +8127,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.80 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.82 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8338,7 +8338,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.80 - Check List Firebase ===== */
+/* ===== V1.5.82 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8541,7 +8541,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.80 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.82 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8631,7 +8631,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.80 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.82 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8652,7 +8652,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.80 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.82 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -8983,7 +8983,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.80 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.82 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9210,7 +9210,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.80 - UI sin distancias/tarjetas =====
+/* ===== V1.5.82 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9377,7 +9377,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
 
-/* ===== V1.5.80 - optimización apertura =====
+/* ===== V1.5.82 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9396,7 +9396,7 @@ if(__e67Show){
 
 
 
-/* ===== V1.5.80 - Tracking: nunca mostrar ruta, sí referencias ===== */
+/* ===== V1.5.82 - Tracking: nunca mostrar ruta, sí referencias ===== */
 function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9439,7 +9439,7 @@ if(__renderTrackingV1573){
 }
 
 
-/* ===== V1.5.80 - Tracking sin ruta azul definitivo ===== */
+/* ===== V1.5.82 - Tracking sin ruta azul definitivo ===== */
 function removeOnlyRoutePolylinesV1574(){
   try{
     const maps = [];
@@ -9473,7 +9473,7 @@ if(__renderTrackingMapV1574){
 }
 
 
-/* ===== V1.5.80 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
+/* ===== V1.5.82 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
 function tpodCoordValidV1577(v){
   const n = Number(v);
   return Number.isFinite(n) && Math.abs(n) > 0.000001 ? n : null;
@@ -9820,7 +9820,10 @@ try{
 
 
 
-/* ===== V1.5.80 - Vista Aduanas país destino y orden ===== */
+
+
+
+/* ===== V1.5.82 - Vista Aduanas compacta confirmar orden ===== */
 const ADUANA_ALERTAS_REMOVIDAS = [
   "Ingreso Aduana USP.",
   "Salida Aduana USP.",
@@ -9886,6 +9889,10 @@ function updateAduanasTabState(){
   btn.disabled=!enabled;
   btn.classList.toggle("tabDisabled",!enabled);
   btn.title=enabled ? "" : "Disponible con tránsito iniciado";
+
+  // Estado visual correcto: sólo verde si la vista activa es Aduanas.
+  const active = document.querySelector("section#aduanas") && !document.querySelector("section#aduanas").classList.contains("hidden");
+  btn.classList.toggle("aduanasActive", !!active && enabled);
 }
 
 function filtrarAlertasAduana(){
@@ -9899,10 +9906,16 @@ function filtrarAlertasAduana(){
 }
 
 function aduanaOrdenValue(a){
-  const raw = a.orden ?? a.order ?? a.ordengrupo ?? 999999;
+  const raw = a.orden ?? a.order ?? a.ordengrupo ?? null;
   const n = Number(raw);
   return Number.isFinite(n) ? n : 999999;
 }
+
+function aduanaDisplayOrden(a, idx){
+  const n = aduanaOrdenValue(a);
+  return n === 999999 ? (idx + 1) : n;
+}
+
 
 async function cargarAduanasPais(pais){
   if(!pais) return [];
@@ -9914,8 +9927,11 @@ async function cargarAduanasPais(pais){
     return snap.docs.map(d=>({id:d.id,...(d.data()||{})}))
       .filter(a=>a.activo!==false)
       .filter(a=>{
-        const p=normalizePaisAduana(a.pais || a.pasi || a.paisDestino || "");
-        return p===target || p.includes(target) || target.includes(p);
+        // CORRECCION 1.5.82:
+        // La relacion correcta es destinos.pais/pasi -> aduana.destino.
+        // No filtrar por aduana.pais, porque en aduana.pais puede venir el pais donde esta fisicamente la aduana.
+        const destinoAduana=normalizePaisAduana(a.destino || a.destinoPais || a.paisDestino || "");
+        return destinoAduana===target || destinoAduana.includes(target) || target.includes(destinoAduana);
       })
       .sort((a,b)=>{
         const oa = aduanaOrdenValue(a);
@@ -9929,6 +9945,28 @@ async function cargarAduanasPais(pais){
   }
 }
 
+
+function aduanaBusy(show,msg){
+  let box=document.getElementById("aduanaBusyBox");
+  if(show){
+    if(!box){
+      box=document.createElement("div");
+      box.id="aduanaBusyBox";
+      box.innerHTML='<div class="aduanaBusyCard"><div class="aduanaBusySpin"></div><div id="aduanaBusyText"></div></div>';
+      document.body.appendChild(box);
+    }
+    const txt=document.getElementById("aduanaBusyText");
+    if(txt) txt.textContent=msg||"Registrando ingreso...";
+    box.style.display="flex";
+  }else if(box){
+    box.style.display="none";
+  }
+}
+
+function aduanaConfirmarIngreso(nombre){
+  return window.confirm("¿Confirmar registrar ingreso a " + nombre + "?");
+}
+
 async function registrarAduana(id,nombre){
   const t=transit();
   if(!t || t.closed){
@@ -9936,7 +9974,14 @@ async function registrarAduana(id,nombre){
     return;
   }
 
+  if(!aduanaConfirmarIngreso(nombre)){
+    return;
+  }
+
+  aduanaBusy(true,"Registrando ingreso...");
+
   try{
+    await new Promise(resolve=>setTimeout(resolve,0));
     const paisDestino = await aduanaPaisDesdeDestino(t);
     const gps=await getGps();
     const evento={
@@ -9973,9 +10018,11 @@ async function registrarAduana(id,nombre){
       }
     }
 
+    aduanaBusy(false);
     renderAduanas();
     window.alert("Ingreso a aduana registrado correctamente.");
   }catch(e){
+    aduanaBusy(false);
     window.alert("No se pudo registrar aduana: "+(e.message||e));
   }
 }
@@ -9991,34 +10038,34 @@ async function renderAduanas(){
   const t=transit();
   if(!t || t.closed){
     if(estado) estado.innerText="Vista habilitada cuando hay tránsito iniciado.";
-    list.innerHTML='<div class="emptyBox">Sin tránsito activo.</div>';
+    list.innerHTML='<div class="emptyBox aduanaEmpty">Sin tránsito activo.</div>';
     return;
   }
 
   const destino=aduanaDestinoNombre(t);
-  if(estado) estado.innerText= destino ? `Destino del embarque: ${destino}` : "Destino del embarque no informado.";
+  if(estado) estado.innerText= destino ? `Destino: ${destino}` : "Destino no informado.";
 
-  list.innerHTML='<div class="emptyBox">Cargando aduanas...</div>';
+  list.innerHTML='<div class="emptyBox aduanaEmpty">Cargando aduanas...</div>';
 
   const pais=await aduanaPaisDesdeDestino(t);
-  if(estado) estado.innerText = pais ? `Destino: ${destino} / País: ${pais}` : `Destino: ${destino} / País no informado en destinos.`;
+  if(estado) estado.innerText = pais ? `Destino: ${destino} / País: ${pais}` : `Destino: ${destino} / País no informado.`;
 
   const aduanas=await cargarAduanasPais(pais);
 
   if(!aduanas.length){
-    list.innerHTML='<div class="emptyBox">No hay aduanas activas para el país del destino.</div>';
+    list.innerHTML='<div class="emptyBox aduanaEmpty">No hay aduanas activas para el país del destino.</div>';
     return;
   }
 
   const regs=t.aduanas||[];
-  list.innerHTML=aduanas.map(a=>{
+  list.innerHTML=aduanas.map((a,idx)=>{
     const rawId=String(a.id || a.nombre || a.aduana || "");
     const nombre=escapeHtml(rawId);
-    const orden = aduanaOrdenValue(a);
+    const orden = aduanaDisplayOrden(a, idx);
     const ultimo=regs.filter(r=>String(r.aduanaId||r.aduana)===rawId).slice(-1)[0];
-    const estadoHtml=ultimo ? `<div class="aduanaUltimo">Último registro: ${fmtDate(ultimo.time)}</div>` : "";
+    const estadoHtml=ultimo ? `<div class="aduanaUltimo">Último: ${fmtDate(ultimo.time)}</div>` : "";
     return `<div class="aduanaItem">
-      <div class="aduanaName">${orden !== 999999 ? orden + ". " : ""}${nombre}</div>
+      <div class="aduanaName">${orden}. ${nombre}</div>
       ${estadoHtml}
       <button class="btn aduanaBtn" onclick="registrarAduana('${escapeHtml(rawId).replace(/'/g,"&#039;")}','${nombre.replace(/'/g,"&#039;")}')">Registrar ingreso</button>
     </div>`;
@@ -10027,9 +10074,20 @@ async function renderAduanas(){
 
 (function initAduanasVista(){
   filtrarAlertasAduana();
+
+  const oldShow=typeof show==="function" ? show : null;
+  if(oldShow && !window.__aduanasShowWrappedCompacto){
+    window.__aduanasShowWrappedCompacto=true;
+    show=function(id){
+      const r=oldShow.apply(this,arguments);
+      setTimeout(updateAduanasTabState,0);
+      return r;
+    };
+  }
+
   const oldRenderInicio=typeof renderInicio==="function" ? renderInicio : null;
-  if(oldRenderInicio && !window.__aduanasRenderInicioWrappedPaisOrden){
-    window.__aduanasRenderInicioWrappedPaisOrden=true;
+  if(oldRenderInicio && !window.__aduanasRenderInicioWrappedCompacto){
+    window.__aduanasRenderInicioWrappedCompacto=true;
     renderInicio=function(){
       const r=oldRenderInicio.apply(this,arguments);
       updateAduanasTabState();
@@ -10038,8 +10096,8 @@ async function renderAduanas(){
   }
 
   const oldCerrar=typeof cerrarTransito==="function" ? cerrarTransito : null;
-  if(oldCerrar && !window.__aduanasCerrarWrappedPaisOrden){
-    window.__aduanasCerrarWrappedPaisOrden=true;
+  if(oldCerrar && !window.__aduanasCerrarWrappedCompacto){
+    window.__aduanasCerrarWrappedCompacto=true;
     cerrarTransito=async function(){
       const r=await oldCerrar.apply(this,arguments);
       updateAduanasTabState();

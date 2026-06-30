@@ -2077,11 +2077,18 @@ nav.tabs #btn-checklist:disabled,
 @keyframes sbm{to{transform:rotate(360deg)}}
 
 
-/* ===== V1.5.80 - Vista Aduanas país destino y orden ===== */
+
+/* ===== V1.5.81 - Vista Aduanas compacta confirmar orden ===== */
+#btn-aduanas{
+  background:#fff !important;
+  color:#000 !important;
+}
+#btn-aduanas:not(.aduanasActive),
 #btn-aduanas:not(.active){
   background:#fff !important;
   color:#000 !important;
 }
+#btn-aduanas.aduanasActive,
 #btn-aduanas.active{
   background:#00843d !important;
   color:#fff !important;
@@ -2096,46 +2103,87 @@ nav.tabs #btn-checklist:disabled,
 .aduanasCard{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:9px;
+  padding:14px !important;
 }
 .aduanasTitle{
   margin:0;
-  font-size:24px;
+  font-size:20px;
   color:#111827;
 }
 .aduanasEstado{
   background:#f3f4f6;
   border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:10px 12px;
-  font-weight:700;
+  border-radius:10px;
+  padding:8px 10px;
+  font-weight:800;
   color:#374151;
+  font-size:15px;
+  line-height:1.2;
 }
 .aduanasList{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:8px;
 }
 .aduanaItem{
   background:#fff;
   border:1px solid #e5e7eb;
-  border-radius:14px;
-  padding:12px;
-  box-shadow:0 6px 14px rgba(0,0,0,.06);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 5px 12px rgba(0,0,0,.05);
 }
 .aduanaName{
-  font-size:18px;
-  font-weight:800;
+  font-size:20px;
+  font-weight:900;
   color:#111827;
   margin-bottom:8px;
+  line-height:1.15;
 }
 .aduanaUltimo{
-  font-size:13px;
+  font-size:12px;
   color:#047857;
   font-weight:700;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 .aduanaBtn{
   width:100%;
-  margin-top:6px;
+  margin-top:2px;
+  padding:10px 12px !important;
+  font-size:19px !important;
+  border-radius:12px !important;
 }
+.aduanaEmpty{
+  font-size:14px;
+  padding:8px;
+}
+#aduanaBusyBox{
+  display:none;
+  position:fixed;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.22);
+  z-index:999999;
+}
+.aduanaBusyCard{
+  background:#fff;
+  color:#111827;
+  border-radius:12px;
+  padding:12px 16px;
+  box-shadow:0 10px 26px rgba(0,0,0,.22);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:17px;
+}
+.aduanaBusySpin{
+  width:22px;
+  height:22px;
+  border:4px solid #d1fae5;
+  border-top-color:#00843d;
+  border-radius:50%;
+  animation:aduanaSpin .8s linear infinite;
+}
+@keyframes aduanaSpin{to{transform:rotate(360deg)}}
