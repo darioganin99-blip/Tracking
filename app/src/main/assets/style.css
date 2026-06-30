@@ -2075,3 +2075,56 @@ nav.tabs #btn-checklist:disabled,
   animation:sbm .8s linear infinite;
 }
 @keyframes sbm{to{transform:rotate(360deg)}}
+
+/* ===== V1.5.79 - Vista Aduanas visible ===== */
+.tabs button.tabDisabled,
+.tabs button:disabled{
+  opacity:.48;
+  filter:grayscale(.35);
+}
+.aduanasCard{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.aduanasTitle{
+  margin:0;
+  font-size:24px;
+  color:#111827;
+}
+.aduanasEstado{
+  background:#f3f4f6;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px 12px;
+  font-weight:700;
+  color:#374151;
+}
+.aduanasList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.aduanaItem{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.06);
+}
+.aduanaName{
+  font-size:18px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:8px;
+}
+.aduanaUltimo{
+  font-size:13px;
+  color:#047857;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.aduanaBtn{
+  width:100%;
+  margin-top:6px;
+}
