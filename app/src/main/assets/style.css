@@ -2076,11 +2076,22 @@ nav.tabs #btn-checklist:disabled,
 }
 @keyframes sbm{to{transform:rotate(360deg)}}
 
-/* ===== V1.5.79 - Vista Aduanas visible ===== */
-.tabs button.tabDisabled,
-.tabs button:disabled{
-  opacity:.48;
-  filter:grayscale(.35);
+
+/* ===== V1.5.80 - Vista Aduanas país destino y orden ===== */
+#btn-aduanas:not(.active){
+  background:#fff !important;
+  color:#000 !important;
+}
+#btn-aduanas.active{
+  background:#00843d !important;
+  color:#fff !important;
+}
+#btn-aduanas.tabDisabled,
+#btn-aduanas:disabled{
+  background:#fff !important;
+  color:#000 !important;
+  opacity:.55;
+  filter:grayscale(.25);
 }
 .aduanasCard{
   display:flex;
