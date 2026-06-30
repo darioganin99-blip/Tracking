@@ -2246,3 +2246,23 @@ button#btn-aduanas.aduanasActive{
   padding:6px 8px !important;
   border-radius:9px !important;
 }
+
+
+/* ===== V1.5.89 - Aduanas registro compacto unificado ===== */
+.aduanaRegistroDato1589{
+  display:inline-block;
+  background:#00843d;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 8px;
+  margin:0 0 6px 0;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+}
+
+
+/* ===== V1.5.90 - Aduanas sin Ultimo ===== */
+.aduanaUltimo{
+  display:none !important;
+}
