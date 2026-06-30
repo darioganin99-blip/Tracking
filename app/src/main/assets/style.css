@@ -2272,3 +2272,38 @@ button#btn-aduanas.aduanasActive{
   background:#00843d !important;
   color:#fff !important;
 }
+
+
+/* ===== V1.5.93 - Alerta procesando compacto ===== */
+#alertaBusy1593{
+  display:none;
+  position:fixed;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.18);
+  z-index:999999;
+  pointer-events:none;
+}
+.alertaBusyCard1593{
+  background:#fff;
+  color:#111827;
+  border-radius:12px;
+  padding:10px 14px;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:900;
+  font-size:16px;
+  line-height:1;
+}
+.alertaBusySpin1593{
+  width:20px;
+  height:20px;
+  border:3px solid #d1fae5;
+  border-top-color:#00843d;
+  border-radius:50%;
+  animation:alertaSpin1593 .8s linear infinite;
+}
+@keyframes alertaSpin1593{to{transform:rotate(360deg)}}
