@@ -2307,3 +2307,46 @@ button#btn-aduanas.aduanasActive{
   animation:alertaSpin1593 .8s linear infinite;
 }
 @keyframes alertaSpin1593{to{transform:rotate(360deg)}}
+
+
+/* ===== V1.5.94 - Ajustes Aduanas y Cierre ===== */
+.aduanaName{
+  font-size:10px !important;
+  line-height:1.05 !important;
+  margin-bottom:4px !important;
+}
+.aduanaItem{
+  padding:7px 9px !important;
+}
+#cierreBusy1594{
+  display:none;
+  position:fixed;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.18);
+  z-index:999999;
+  pointer-events:none;
+}
+.cierreBusyCard1594{
+  background:#fff;
+  color:#111827;
+  border-radius:12px;
+  padding:10px 14px;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:900;
+  font-size:16px;
+  line-height:1;
+}
+.cierreBusySpin1594{
+  width:20px;
+  height:20px;
+  border:3px solid #d1fae5;
+  border-top-color:#00843d;
+  border-radius:50%;
+  animation:cierreSpin1594 .8s linear infinite;
+}
+@keyframes cierreSpin1594{to{transform:rotate(360deg)}}
