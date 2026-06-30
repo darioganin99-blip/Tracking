@@ -2504,3 +2504,16 @@ button#btn-aduanas.aduanasActive{
   border-radius:9px !important;
   font-weight:800 !important;
 }
+
+/* ===== V1.5.102 - Aduanas sin refresh visual ===== */
+.aduanaRegistroDato15102{
+  display:inline-block;
+  background:#00843d;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 8px;
+  margin:0 0 6px 0;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+}
