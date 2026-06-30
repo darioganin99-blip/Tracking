@@ -2517,3 +2517,13 @@ button#btn-aduanas.aduanasActive{
   line-height:1;
   font-weight:900;
 }
+
+/* ===== V1.5.103 - Vistas bloqueadas sin tránsito ===== */
+.vistaBloqueada15103{
+  opacity:.45 !important;
+  filter:grayscale(35%) !important;
+  pointer-events:auto !important;
+}
+.vistaBloqueada15103::after{
+  content:"";
+}
