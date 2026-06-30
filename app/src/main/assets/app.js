@@ -556,7 +556,7 @@ async function iniciarTransito(){
 
 
 
-/* ===== V1.5.98 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
+/* ===== V1.5.99 - Guardado Firebase antes de WhatsApp sin alterar mensaje ===== */
 async function guardarTransitoFirebaseAntesWhatsappV1528(t){
   if(!t) return;
   try{
@@ -591,7 +591,6 @@ async function cerrarTransito(){
 
   try{
     try{ if(typeof cierreBusy1594==="function") cierreBusy1594(true,"Procesando..."); }catch(e){}
-
     const gps=await getGps();
 
     if(!confirm("¿Desea confirmar la entrega y cerrar tránsito?")){
@@ -607,7 +606,6 @@ async function cerrarTransito(){
 
     save(LS.last,{msg,date:now()});
     saveTransitHistory(t);
-
     await guardarTransitoFirebaseAntesWhatsappV1528(t);
 
     localStorage.removeItem(LS.transit);
@@ -618,7 +616,16 @@ async function cerrarTransito(){
     aplicarColorResumenInicio();
 
     try{ if(typeof cierreBusy1594==="function") cierreBusy1594(false); }catch(e){}
-    sendToPhones(msg);
+
+    const u=user();
+    const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
+    const text=encodeURIComponent(String(msg||""));
+    if(phones.length>0){
+      window.location.href=`https://wa.me/${phones[0]}?text=${text}`;
+    }else{
+      openWhatsappSelector(msg);
+    }
+
     window.alert("Tránsito cerrado.");
     show("inicio");
 
@@ -798,7 +805,7 @@ async function getRoadRoute(origin,dest){
 }
 
 function drawFallbackLine(origin,cur,dest){
-  // V1.5.98: sin línea fallback.
+  // V1.5.99: sin línea fallback.
   return;
 }
 
@@ -925,7 +932,7 @@ function renderTrackingMap(t){
     return p;
   }
   async function firebaseReadyForMap(){
-    // V1.5.98: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
+    // V1.5.99: tpodInitFirebase puede inicializar Firebase pero devolver undefined.
     // No usar su return como boolean; validar realmente que exista db.
     try{
       if(typeof tpodInitFirebase === "function") tpodInitFirebase();
@@ -1289,7 +1296,7 @@ function reenviarUltimo(){
 }
 
 
-/* ===== V1.5.98 - Helper Aduanas compacto directo ===== */
+/* ===== V1.5.99 - Helper Aduanas compacto directo ===== */
 function aduanaTc1598(v){
   const s=String(v||"").trim();
   return s.split(/\s+/).map(w=>{
@@ -1327,23 +1334,15 @@ async function hidratarAduanas1598(t){
   try{
     if(typeof firebaseReady==="function" && firebaseReady()){
       const transitId=String(t.id||"");
-      const embarque=String(t.embarque||"");
-      const flota=String((t.user&&t.user.fleet)||t.flota||"");
       if(transitId){
         try{
           const s=await db.collection("aduana_registros").where("transitId","==",transitId).get();
           regs=aduanaMerge1598(regs,s.docs.map(d=>({id:d.id,...(d.data()||{})})));
         }catch(e){}
       }
-      if(embarque&&flota){
-        try{
-          const s2=await db.collection("aduana_registros").where("embarque","==",embarque).where("flota","==",flota).get();
-          regs=aduanaMerge1598(regs,s2.docs.map(d=>({id:d.id,...(d.data()||{})})));
-        }catch(e){}
-      }
     }
   }catch(e){}
-  if(regs.length)t.aduanas=regs;
+  t.aduanas=regs;
   return t;
 }
 function bloqueAduanas1598(t){
@@ -4353,7 +4352,7 @@ try{
 
 
 
-/* ===== v1.5.98 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
+/* ===== v1.5.99 VALIDACION EMBARQUE + ULTIMO ORIGINAL ===== */
 
 /*
 Nueva colección Firestore requerida:
@@ -4631,7 +4630,7 @@ try{
 
 
 
-/* ===== v1.5.98 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
+/* ===== v1.5.99 COLECCION EMBARQUE + LIMPIEZA + COMPARTIDOS ===== */
 
 /*
 Firestore:
@@ -4993,7 +4992,7 @@ try{
 
 
 
-/* ===== v1.5.98 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
+/* ===== v1.5.99 FIX VALIDACION / ULTIMO / EMBARQUES ===== */
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
 
@@ -5317,7 +5316,7 @@ try{
 
 
 
-/* ===== v1.5.98 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
+/* ===== v1.5.99 EMBARQUE DESTACADO + ULTIMO FORMATO ANTERIOR ===== */
 
 window.__tpodEmbarquesLoading = false;
 window.__tpodLastEmbarquesHtml = "";
@@ -5709,7 +5708,7 @@ try{
 
 
 
-/* ===== v1.5.98 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
+/* ===== v1.5.99 ULTIMO FORMATO REFERENCIA + DEDUP EMBARQUES ===== */
 
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
@@ -6074,7 +6073,7 @@ try{
 
 
 
-/* ===== v1.5.98 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
+/* ===== v1.5.99 ULTIMO FORMATO COMPLETO + EMBARQUES SOLO FLOTA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 function tpodFleet1505(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim();}
@@ -6105,7 +6104,7 @@ try{const oldShow1505=show;show=function(id){oldShow1505(id);if(id==="embarque")
 
 
 
-/* ===== v1.5.98 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
+/* ===== v1.5.99 EMBARQUE VALIDADO + ULTIMO COMPACTO ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6224,7 +6223,7 @@ try{
 
 
 
-/* ===== v1.5.98 TRACKING EMBARQUES POS FIX ===== */
+/* ===== v1.5.99 TRACKING EMBARQUES POS FIX ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml="";
 
@@ -6404,7 +6403,7 @@ setInterval(()=>{const box=document.getElementById("embarqueList");if(box&&/Leye
 
 
 
-/* ===== v1.5.98 CERRAR APP EN USUARIO ===== */
+/* ===== v1.5.99 CERRAR APP EN USUARIO ===== */
 function tpodClearRuntimeCaches1510(){
   try{ window.__tpodEmbarquesLoading=false; }catch(e){}
   try{ window.__tpodLastEmbarquesHtml=""; }catch(e){}
@@ -6443,7 +6442,7 @@ function cerrarApp(){
 
 
 
-/* ===== v1.5.98 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
+/* ===== v1.5.99 CERRAR APP NATIVO + POSICION PRECISA EMBARQUE ===== */
 function cerrarApp(){
   const ok=window.confirm("¿Desea salir de Track POD?");
   if(!ok)return;
@@ -6561,7 +6560,7 @@ function tpodRenderEmbarques1509(items,emb,flotaValidada){
 
 
 
-/* ===== v1.5.98 EMBARQUES ESTABLE + POSICION PRECISA ===== */
+/* ===== v1.5.99 EMBARQUES ESTABLE + POSICION PRECISA ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarquesAt=0;
@@ -6831,7 +6830,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
+/* ===== v1.5.99 EMBARQUES SIN LOADING + GPS ACTUAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastEmbarqueKey=window.__tpodLastEmbarqueKey||"";
@@ -6962,7 +6961,7 @@ setInterval(()=>{const b=document.getElementById("embarqueList");if(b&&/(Leyendo
 
 
 
-/* ===== v1.5.98 EMBARQUES ESTABLE FINAL ===== */
+/* ===== v1.5.99 EMBARQUES ESTABLE FINAL ===== */
 window.__tpodEmbarquesLoading=false;
 window.__tpodLastEmbarquesHtml=window.__tpodLastEmbarquesHtml||"";
 window.__tpodLastGoodEmbarquesHtml=window.__tpodLastGoodEmbarquesHtml||"";
@@ -7213,7 +7212,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 EMBARQUES ESTABLE + ULTIMO GPS ===== */
+/* ===== v1.5.99 EMBARQUES ESTABLE + ULTIMO GPS ===== */
 window.__tpodGoodEmbarquesHtml="";
 window.__tpodEmbarquesLoading=false;
 
@@ -7246,7 +7245,7 @@ setInterval(()=>{let b=document.getElementById("embarqueList");if(b&&/(Cargando|
 
 
 
-/* ===== v1.5.98 GPS ZARATE FIX ===== */
+/* ===== v1.5.99 GPS ZARATE FIX ===== */
 function tpodFallbackLocalidad1515(lat,lng){
   if(lat==null || lng==null) return "";
   if(lat < -34.02 && lat > -34.18 && lng < -59.00 && lng > -59.18) return "Zárate, Argentina";
@@ -7307,7 +7306,7 @@ if(typeof tpodUbicacionPrecisa1514 === "function" && !window.__tpodUbicacionPrec
 
 
 
-/* ===== v1.5.98 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
+/* ===== v1.5.99 UBICACION UNICA WHATSAPP / EMBARQUES / ULTIMO ===== */
 
 /*
 Objetivo:
@@ -7746,7 +7745,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
+/* ===== v1.5.99 UBICACION WHATSAPP COMPARTIDA FINAL ===== */
 
 /*
 Problema observado:
@@ -8041,7 +8040,7 @@ try{
 
 
 
-/* ===== v1.5.98 EMBARQUES RENDER FINAL ===== */
+/* ===== v1.5.99 EMBARQUES RENDER FINAL ===== */
 window.__emb19Busy=false;window.__emb19Good="";window.__emb19Title="-";
 function f19(t){return String((t&&t.user&&t.user.fleet)||t.flota||(t&&t.user&&t.user.flota)||"").trim()}
 function cf19(){try{let f=tpodCurrentFlota&&tpodCurrentFlota();if(f)return String(f).trim()}catch(e){}try{let u=user&&user();if(u&&u.fleet)return String(u.fleet).trim()}catch(e){}try{let u=JSON.parse(localStorage.getItem(LS.user)||"{}");return String(u.fleet||"").trim()}catch(e){return""}}
@@ -8068,7 +8067,7 @@ setInterval(()=>{let p=panel19();if(!p||!p.list)return;let txt=p.list.innerText|
 
 
 
-/* ===== v1.5.98 SCROLL EMBARQUES FIX ===== */
+/* ===== v1.5.99 SCROLL EMBARQUES FIX ===== */
 function tpodFixScrollEmbarques1520(){
   try{
     const sec=document.getElementById("embarque");
@@ -8121,7 +8120,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 SCROLL TOTAL EMBARQUES ===== */
+/* ===== v1.5.99 SCROLL TOTAL EMBARQUES ===== */
 function tpodFixScrollEmbarques1521(){
   try{
     const sec=document.getElementById("embarque");
@@ -8180,7 +8179,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 ESPACIADO EMBARQUES ===== */
+/* ===== v1.5.99 ESPACIADO EMBARQUES ===== */
 function tpodFixEspaciadoEmbarques1522(){
   try{
     const ids=["emb19list","embarqueList1519","embarqueList"];
@@ -8226,7 +8225,7 @@ setInterval(()=>{
 
 
 
-/* ===== v1.5.98 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
+/* ===== v1.5.99 GEO UNIFICADO LOCALIDAD PROVINCIA ===== */
 function tpodGetPath1523(o,p){try{return p.split(".").reduce((a,k)=>a&&a[k],o)}catch(e){return null}}
 function tpodNum1523(v){const n=Number(v);return isFinite(n)?n:null}
 function tpodClean1523(v){
@@ -8437,7 +8436,7 @@ setInterval(()=>{
 
 
 
-/* ===== V1.5.98 - Check List Firebase ===== */
+/* ===== V1.5.99 - Check List Firebase ===== */
 let checklistItemsActuales = [];
 let checklistRespuestas = {};
 
@@ -8640,7 +8639,7 @@ function renderChecklist(){
 
 
 
-/* ===== V1.5.98 - Habilitación Check List y alertas ===== */
+/* ===== V1.5.99 - Habilitación Check List y alertas ===== */
 function isFlotaValidadaV1528(){
   const u = user();
   return !!(u && String(u.fleet||"").trim());
@@ -8730,7 +8729,7 @@ setTimeout(updateChecklistTabState,300);
 setTimeout(updateChecklistTabState,1000);
 
 
-/* ===== V1.5.98 - Normalizar visual botón Check List ===== */
+/* ===== V1.5.99 - Normalizar visual botón Check List ===== */
 function fixChecklistButtonActiveV1530(currentId){
   const btn = $("btn-checklist");
   if(!btn) return;
@@ -8751,7 +8750,7 @@ document.addEventListener("DOMContentLoaded",()=>fixChecklistButtonActiveV1530("
 setTimeout(()=>fixChecklistButtonActiveV1530(""),300);
 
 
-/* ===== V1.5.98 - Inicio/Fin: Firebase combos + validar embarque =====
+/* ===== V1.5.99 - Inicio/Fin: Firebase combos + validar embarque =====
    Alcance: sólo vista Inicio / Fin.
    - Lote/Carga y Embarque quedan arriba por HTML.
    - Cliente, Origen y Destino se cargan desde Firebase antes de validar.
@@ -9082,7 +9081,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.98 - Recuperar Tracking sin tocar otras vistas =====
+/* ===== V1.5.99 - Recuperar Tracking sin tocar otras vistas =====
    Alcance:
    - Completar coordenadas de Origen/Destino desde Firebase para que Tracking vuelva a calcular ruta, Total, Avance, Restan y ETA.
    - Mantener cambios sólo ligados a Inicio/Fin + Tracking.
@@ -9309,7 +9308,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-/* ===== V1.5.98 - UI sin distancias/tarjetas =====
+/* ===== V1.5.99 - UI sin distancias/tarjetas =====
    Cambios pedidos:
    - Inicio / Fin: eliminar texto y dato Distancia.
    - Tracking: eliminar tarjetas Total, Avance, Restan y ETA.
@@ -9476,7 +9475,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 
 
-/* ===== V1.5.98 - optimización apertura =====
+/* ===== V1.5.99 - optimización apertura =====
    Limpia intervalos redundantes del mapa y difiere carga Firebase de Inicio/Fin.
 */
 const __e67Show = typeof show === "function" ? show : null;
@@ -9495,7 +9494,7 @@ if(__e67Show){
 
 
 
-/* ===== V1.5.98 - Tracking: nunca mostrar ruta, sí referencias ===== */
+/* ===== V1.5.99 - Tracking: nunca mostrar ruta, sí referencias ===== */
 function tpodRemoveOnlyRouteLinesV1573(){
   try{
     if(typeof trackingMap !== "undefined" && trackingMap){
@@ -9538,7 +9537,7 @@ if(__renderTrackingV1573){
 }
 
 
-/* ===== V1.5.98 - Tracking sin ruta azul definitivo ===== */
+/* ===== V1.5.99 - Tracking sin ruta azul definitivo ===== */
 function removeOnlyRoutePolylinesV1574(){
   try{
     const maps = [];
@@ -9572,7 +9571,7 @@ if(__renderTrackingMapV1574){
 }
 
 
-/* ===== V1.5.98 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
+/* ===== V1.5.99 - FIX RAIZ coordenadas 0 en Inicio/Fin y Tracking ===== */
 function tpodCoordValidV1577(v){
   const n = Number(v);
   return Number.isFinite(n) && Math.abs(n) > 0.000001 ? n : null;
@@ -9922,7 +9921,7 @@ try{
 
 
 
-/* ===== V1.5.98 - Vista Aduanas compacta confirmar orden ===== */
+/* ===== V1.5.99 - Vista Aduanas compacta confirmar orden ===== */
 const ADUANA_ALERTAS_REMOVIDAS = [
   "Ingreso Aduana USP.",
   "Salida Aduana USP.",
@@ -10026,7 +10025,7 @@ async function cargarAduanasPais(pais){
     return snap.docs.map(d=>({id:d.id,...(d.data()||{})}))
       .filter(a=>a.activo!==false)
       .filter(a=>{
-        // CORRECCION 1.5.98:
+        // CORRECCION 1.5.99:
         // La relacion correcta es destinos.pais/pasi -> aduana.destino.
         // No filtrar por aduana.pais, porque en aduana.pais puede venir el pais donde esta fisicamente la aduana.
         const destinoAduana=normalizePaisAduana(a.destino || a.destinoPais || a.paisDestino || "");
@@ -10211,7 +10210,7 @@ async function renderAduanas(){
 })();
 
 
-/* ===== V1.5.98 - Registros Aduana en vista, WhatsApp, cierre y último ===== */
+/* ===== V1.5.99 - Registros Aduana en vista, WhatsApp, cierre y último ===== */
 function aduanaTitleCaseMsg1584(v){
   if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
   return String(v||"").trim().replace(/\b\w/g, c=>c.toUpperCase());
@@ -10355,7 +10354,7 @@ if(__aduanaRenderAduanas1584){
 }
 
 
-/* ===== V1.5.98 - Aduanas reflejo directo en vista, WhatsApp y último ===== */
+/* ===== V1.5.99 - Aduanas reflejo directo en vista, WhatsApp y último ===== */
 function aduanaTitleCaseMsg1585(v){
   if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
   return String(v||"").trim().split(/\s+/).map(w=>w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : "").join(" ");
@@ -10501,7 +10500,7 @@ if(typeof renderAduanas === "function"){
 }
 
 
-/* ===== V1.5.98 - Aduanas desde Firebase en vista y WhatsApp ===== */
+/* ===== V1.5.99 - Aduanas desde Firebase en vista y WhatsApp ===== */
 function aduanaTitleCaseMsg1586(v){
   if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
   return String(v||"").trim().split(/\s+/).map(w=>w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : "").join(" ");
@@ -10737,7 +10736,7 @@ if(typeof registrarAduana === "function"){
 }
 
 
-/* ===== V1.5.98 - Aduanas compacto mensaje y vista ===== */
+/* ===== V1.5.99 - Aduanas compacto mensaje y vista ===== */
 function aduanaFechaHoraCompacta1587(r){
   const v = (r && (r.time || r.createdAt)) || "";
   if(!v) return "-";
@@ -10904,7 +10903,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 }
 
 
-/* ===== V1.5.98 - Aduanas FINAL ultimo por aduana ===== */
+/* ===== V1.5.99 - Aduanas FINAL ultimo por aduana ===== */
 (function(){
   function titleCase(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -11178,7 +11177,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Aduanas unificado en actualización, cierre y último ===== */
+/* ===== V1.5.99 - Aduanas unificado en actualización, cierre y último ===== */
 (function(){
   function titleCase(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -11403,7 +11402,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Aduanas sin texto Ultimo ===== */
+/* ===== V1.5.99 - Aduanas sin texto Ultimo ===== */
 (function(){
   function limpiarTextoUltimoAduanas1590(){
     try{
@@ -11436,7 +11435,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Aduanas única lógica compacta ===== */
+/* ===== V1.5.99 - Aduanas única lógica compacta ===== */
 (function(){
   function titleCase(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -11696,7 +11695,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Aduanas definitivo sin GPS ===== */
+/* ===== V1.5.99 - Aduanas definitivo sin GPS ===== */
 (function(){
   function title(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -11928,7 +11927,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Cierre con Aduanas compacto y alerta procesando ===== */
+/* ===== V1.5.99 - Cierre con Aduanas compacto y alerta procesando ===== */
 (function(){
   function title1593(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -12119,7 +12118,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Cierre Aduanas definitivo + Procesando cierre ===== */
+/* ===== V1.5.99 - Cierre Aduanas definitivo + Procesando cierre ===== */
 (function(){
   function tc1594(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -12298,7 +12297,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Cierre Aduanas forzado antes de limpiar tránsito ===== */
+/* ===== V1.5.99 - Cierre Aduanas forzado antes de limpiar tránsito ===== */
 (function(){
   function tc1595(v){
     if(typeof aduanaTitleCase1583 === "function") return aduanaTitleCase1583(v);
@@ -12447,7 +12446,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Correccion definitiva cierre Aduanas ===== */
+/* ===== V1.5.99 - Correccion definitiva cierre Aduanas ===== */
 (function(){
   function title1596(v){
     const s = String(v||"").trim();
@@ -12602,7 +12601,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Fix definitivo cierre Aduanas + inicio no bloqueado ===== */
+/* ===== V1.5.99 - Fix definitivo cierre Aduanas + inicio no bloqueado ===== */
 (function(){
   function tc(v){
     const s = String(v||"").trim();
@@ -12847,7 +12846,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - Control cartel inicio solo validado ===== */
+/* ===== V1.5.99 - Control cartel inicio solo validado ===== */
 (function(){
   const originalShow = window.showStartBusyMini;
   const originalHide = window.hideStartBusyMini;
@@ -12873,7 +12872,7 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
 })();
 
 
-/* ===== V1.5.98 - No reescribir cierre sin snapshot ===== */
+/* ===== V1.5.99 - No reescribir cierre sin snapshot ===== */
 (function(){
   if(typeof sendToPhones === "function" && !window.__sendFinal1598){
     const old=sendToPhones;
@@ -12889,6 +12888,85 @@ if(typeof show === "function" && !window.__aduanaShowBtn1587){
         return;
       }
       openWhatsappSelector(msg);
+    };
+  }
+})();
+
+
+/* ===== V1.5.99 - No reconstruir Aduanas ajenas ===== */
+(function(){
+  if(typeof sendToPhones === "function" && !window.__sendPreserve1599){
+    window.__sendPreserve1599 = true;
+    sendToPhones = function(msg){
+      save(LS.last,{msg:String(msg||""),date:now()});
+      const u=user();
+      const phones=String(u.phones||"").split(/[,;\n\r]+/).map(cleanPhone).filter(Boolean);
+      const text=encodeURIComponent(String(msg||""));
+      if(phones.length>0){
+        window.location.href=`https://wa.me/${phones[0]}?text=${text}`;
+        return;
+      }
+      openWhatsappSelector(msg);
+    };
+  }
+})();
+
+
+/* ===== V1.5.99 - Vista Aduanas sólo tránsito actual ===== */
+(function(){
+  function fecha1599(r){
+    const raw=(r&&(r.time||r.createdAt))||"";
+    if(!raw)return "";
+    const d=new Date(raw);
+    if(isNaN(d.getTime())) return String(raw).replace(/T/," ").slice(0,16);
+    return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  }
+  function ultimos1599(t){
+    const regs=Array.isArray(t&&t.aduanas)?t.aduanas.slice():[];
+    const m={};
+    regs.forEach(r=>{
+      const k=String((r.aduana||r.aduanaId)||"").trim().toLowerCase();
+      if(!k)return;
+      const d=new Date((r.time||r.createdAt)||"");
+      const ms=isNaN(d.getTime())?0:d.getTime();
+      if(!m[k]||ms>=m[k].ms)m[k]={r,ms};
+    });
+    return Object.values(m).map(x=>x.r);
+  }
+  function limpiarVista1599(){
+    try{
+      const t=typeof transit==="function"?transit():null;
+      const ult=ultimos1599(t);
+      document.querySelectorAll(".aduanaItem").forEach(item=>{
+        item.querySelectorAll(".aduanaUltimo,.aduanaRegistroDato1584,.aduanaRegistroDato1585,.aduanaRegistroDato1586,.aduanaRegistroDato1587,.aduanaRegistroDato1588,.aduanaRegistroDato1589,.aduanaRegistroDato1591,.aduanaRegistroDato1592,.aduanaRegistroDato1596,.aduanaRegistroDato1599").forEach(e=>e.remove());
+        const nameEl=item.querySelector(".aduanaName");
+        if(!nameEl)return;
+        const visible=String(nameEl.textContent||"").replace(/^\s*\d+\.\s*/,"").trim().toLowerCase();
+        const r=ult.find(x=>{
+          const n=String((x.aduana||x.aduanaId)||"").trim().toLowerCase();
+          return n && (visible.includes(n)||n.includes(visible));
+        });
+        const btn=item.querySelector(".aduanaBtn");
+        if(r){
+          const info=document.createElement("div");
+          info.className="aduanaRegistroDato1599";
+          info.textContent=fecha1599(r);
+          nameEl.insertAdjacentElement("afterend",info);
+          if(btn)btn.textContent="Registrar nuevo ingreso";
+        }else{
+          if(btn)btn.textContent="Registrar ingreso";
+        }
+      });
+    }catch(e){}
+  }
+  if(typeof renderAduanas==="function" && !window.__renderAduanas1599){
+    window.__renderAduanas1599=true;
+    const old=renderAduanas;
+    renderAduanas=async function(){
+      const r=await old.apply(this,arguments);
+      setTimeout(limpiarVista1599,90);
+      setTimeout(limpiarVista1599,350);
+      return r;
     };
   }
 })();

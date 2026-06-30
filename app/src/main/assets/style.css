@@ -2435,3 +2435,16 @@ button#btn-aduanas.aduanasActive{
   border-radius:9px !important;
   font-weight:800 !important;
 }
+
+/* ===== V1.5.99 - Registro Aduanas actual ===== */
+.aduanaRegistroDato1599{
+  display:inline-block;
+  background:#00843d;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 8px;
+  margin:0 0 6px 0;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+}
