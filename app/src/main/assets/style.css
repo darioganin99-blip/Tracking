@@ -2193,15 +2193,56 @@ nav.tabs #btn-checklist:disabled,
 
 
 
-/* ===== V1.5.86 - Registro Aduana visible desde Firebase ===== */
-.aduanaRegistroDato1586{
-  font-size:12px;
-  font-weight:800;
-  color:#047857;
-  background:#ecfdf5;
-  border:1px solid #a7f3d0;
+
+
+
+/* ===== V1.5.88 - Aduanas FINAL compacto ===== */
+#btn-aduanas,
+#btn-aduanas:not(.active):not(.aduanasActive),
+button#btn-aduanas:not(.active):not(.aduanasActive){
+  background:#fff !important;
+  color:#000 !important;
+  border-color:#d1d5db !important;
+}
+#btn-aduanas.active,
+#btn-aduanas.aduanasActive,
+button#btn-aduanas.active,
+button#btn-aduanas.aduanasActive{
+  background:#00843d !important;
+  color:#fff !important;
+  border-color:#00843d !important;
+}
+.aduanaRegistroDato1588{
+  display:inline-block;
+  background:#00843d;
+  color:#fff;
   border-radius:8px;
-  padding:5px 7px;
+  padding:4px 8px;
   margin:0 0 6px 0;
-  line-height:1.15;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+}
+.aduanaBtn{
+  padding:6px 9px !important;
+  font-size:14px !important;
+  line-height:1.05 !important;
+  min-height:34px !important;
+  border-radius:9px !important;
+  font-weight:800 !important;
+}
+.aduanaName{
+  font-size:17px !important;
+  line-height:1.08 !important;
+  margin-bottom:5px !important;
+}
+.aduanaItem{
+  padding:7px 9px !important;
+  border-radius:10px !important;
+}
+.aduanasEstado{
+  font-size:13px !important;
+  line-height:1.1 !important;
+  padding:6px 8px !important;
+  border-radius:9px !important;
 }
