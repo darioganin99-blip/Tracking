@@ -2241,3 +2241,34 @@ button#btn-aduanas.aduanasActive{
   color:#fff !important;
   border-color:#00843d !important;
 }
+
+/* ===== V1.5.92 - Aduanas definitivo visual ===== */
+.aduanaUltimo{display:none !important;}
+.aduanaRegistroDato1584,.aduanaRegistroDato1585,.aduanaRegistroDato1586,.aduanaRegistroDato1587,.aduanaRegistroDato1588,.aduanaRegistroDato1589,.aduanaRegistroDato1591{display:none !important;}
+.aduanaRegistroDato1592{
+  display:inline-block;
+  background:#00843d;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 8px;
+  margin:0 0 6px 0;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+}
+.aduanaBtn{
+  padding:6px 9px !important;
+  font-size:14px !important;
+  line-height:1.05 !important;
+  min-height:34px !important;
+  border-radius:9px !important;
+  font-weight:800 !important;
+}
+#btn-aduanas,#btn-aduanas:not(.active):not(.aduanasActive){
+  background:#fff !important;
+  color:#000 !important;
+}
+#btn-aduanas.active,#btn-aduanas.aduanasActive{
+  background:#00843d !important;
+  color:#fff !important;
+}
