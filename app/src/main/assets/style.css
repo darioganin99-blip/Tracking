@@ -2350,3 +2350,20 @@ button#btn-aduanas.aduanasActive{
   animation:cierreSpin1594 .8s linear infinite;
 }
 @keyframes cierreSpin1594{to{transform:rotate(360deg)}}
+
+
+/* ===== V1.5.95 - Tamaño nombres Aduanas corregido ===== */
+.aduanaName{
+  font-size:26px !important;
+  line-height:1.1 !important;
+  margin-bottom:7px !important;
+  font-weight:900 !important;
+}
+.aduanaItem{
+  padding:10px 12px !important;
+}
+.aduanaBtn{
+  font-size:18px !important;
+  padding:8px 10px !important;
+  min-height:40px !important;
+}
