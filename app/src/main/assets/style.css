@@ -2187,3 +2187,63 @@ nav.tabs #btn-checklist:disabled,
   animation:aduanaSpin .8s linear infinite;
 }
 @keyframes aduanaSpin{to{transform:rotate(360deg)}}
+
+/* ===== V1.5.83 - Estilo final Aduanas ===== */
+/* Aduanas deseleccionado siempre blanco/negro. Sólo verde si está activo real. */
+#btn-aduanas,
+#btn-aduanas:not(.active),
+#btn-aduanas:not(.aduanasActive),
+button#btn-aduanas:not(.active),
+button#btn-aduanas:not(.aduanasActive){
+  background:#fff !important;
+  color:#000 !important;
+  border-color:#d1d5db !important;
+}
+
+#btn-aduanas.active,
+#btn-aduanas.aduanasActive,
+button#btn-aduanas.active,
+button#btn-aduanas.aduanasActive{
+  background:#00843d !important;
+  color:#fff !important;
+  border-color:#00843d !important;
+}
+
+#btn-aduanas.tabDisabled,
+#btn-aduanas:disabled,
+button#btn-aduanas.tabDisabled,
+button#btn-aduanas:disabled{
+  background:#fff !important;
+  color:#000 !important;
+  opacity:.55 !important;
+  filter:grayscale(.25);
+}
+
+/* Botones Registrar ingreso más compactos */
+.aduanaBtn{
+  width:100%;
+  margin-top:2px !important;
+  padding:7px 10px !important;
+  font-size:15px !important;
+  line-height:1.1 !important;
+  border-radius:10px !important;
+  min-height:38px !important;
+  font-weight:800 !important;
+}
+
+.aduanaName{
+  font-size:18px !important;
+  line-height:1.1 !important;
+  margin-bottom:6px !important;
+}
+
+.aduanaItem{
+  padding:8px 10px !important;
+  border-radius:11px !important;
+}
+
+.aduanasEstado{
+  font-size:14px !important;
+  line-height:1.15 !important;
+  padding:7px 9px !important;
+}
