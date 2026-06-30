@@ -2367,3 +2367,25 @@ button#btn-aduanas.aduanasActive{
   padding:8px 10px !important;
   min-height:40px !important;
 }
+
+
+/* ===== V1.5.96 - Estilo Aduanas equilibrado ===== */
+.aduanaName{
+  font-size:20px !important;
+  line-height:1.08 !important;
+  margin-bottom:6px !important;
+  font-weight:900 !important;
+  text-transform:none !important;
+}
+.aduanaItem{
+  padding:8px 10px !important;
+  border-radius:11px !important;
+}
+.aduanaBtn{
+  font-size:15px !important;
+  padding:7px 9px !important;
+  min-height:34px !important;
+  line-height:1.05 !important;
+  border-radius:9px !important;
+  font-weight:800 !important;
+}
