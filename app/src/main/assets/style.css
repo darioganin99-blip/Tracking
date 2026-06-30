@@ -2196,23 +2196,18 @@ nav.tabs #btn-checklist:disabled,
 
 
 
-/* ===== V1.5.88 - Aduanas FINAL compacto ===== */
-#btn-aduanas,
-#btn-aduanas:not(.active):not(.aduanasActive),
-button#btn-aduanas:not(.active):not(.aduanasActive){
-  background:#fff !important;
-  color:#000 !important;
-  border-color:#d1d5db !important;
+
+/* ===== V1.5.90 - Aduanas sin Ultimo ===== */
+.aduanaUltimo{
+  display:none !important;
 }
-#btn-aduanas.active,
-#btn-aduanas.aduanasActive,
-button#btn-aduanas.active,
-button#btn-aduanas.aduanasActive{
-  background:#00843d !important;
-  color:#fff !important;
-  border-color:#00843d !important;
+
+
+/* ===== V1.5.91 - Aduanas vista compacta sin duplicados ===== */
+.aduanaUltimo{
+  display:none !important;
 }
-.aduanaRegistroDato1588{
+.aduanaRegistroDato1591{
   display:inline-block;
   background:#00843d;
   color:#fff;
@@ -2231,38 +2226,18 @@ button#btn-aduanas.aduanasActive{
   border-radius:9px !important;
   font-weight:800 !important;
 }
-.aduanaName{
-  font-size:17px !important;
-  line-height:1.08 !important;
-  margin-bottom:5px !important;
+#btn-aduanas,
+#btn-aduanas:not(.active):not(.aduanasActive),
+button#btn-aduanas:not(.active):not(.aduanasActive){
+  background:#fff !important;
+  color:#000 !important;
+  border-color:#d1d5db !important;
 }
-.aduanaItem{
-  padding:7px 9px !important;
-  border-radius:10px !important;
-}
-.aduanasEstado{
-  font-size:13px !important;
-  line-height:1.1 !important;
-  padding:6px 8px !important;
-  border-radius:9px !important;
-}
-
-
-/* ===== V1.5.89 - Aduanas registro compacto unificado ===== */
-.aduanaRegistroDato1589{
-  display:inline-block;
-  background:#00843d;
-  color:#fff;
-  border-radius:8px;
-  padding:4px 8px;
-  margin:0 0 6px 0;
-  font-size:12px;
-  line-height:1;
-  font-weight:900;
-}
-
-
-/* ===== V1.5.90 - Aduanas sin Ultimo ===== */
-.aduanaUltimo{
-  display:none !important;
+#btn-aduanas.active,
+#btn-aduanas.aduanasActive,
+button#btn-aduanas.active,
+button#btn-aduanas.aduanasActive{
+  background:#00843d !important;
+  color:#fff !important;
+  border-color:#00843d !important;
 }
